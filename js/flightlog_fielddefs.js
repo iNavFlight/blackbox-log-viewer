@@ -5,25 +5,25 @@ function makeReadOnly(x) {
     if (Object.freeze) {
         return Object.freeze(x);
     }
-    
+
     // Otherwise a no-op
     return x;
 }
 
-var 
+var
     FlightLogEvent = makeReadOnly({
         SYNC_BEEP: 0,
-        
+
         AUTOTUNE_CYCLE_START: 10,
         AUTOTUNE_CYCLE_RESULT: 11,
         AUTOTUNE_TARGETS: 12,
         INFLIGHT_ADJUSTMENT: 13,
         LOGGING_RESUME: 14,
-        
+
         GTUNE_CYCLE_RESULT: 20,
         FLIGHT_MODE: 30, // New Event type
         TWITCH_TEST: 40, // Feature for latency testing
-        
+
         CUSTOM : 250, // Virtual Event Code - Never part of Log File.
         CUSTOM_BLANK : 251, // Virtual Event Code - Never part of Log File. - No line shown
         LOG_END: 255
@@ -36,39 +36,23 @@ var
             YAW:   2
     }),
 
-        
+
     FLIGHT_LOG_FLIGHT_MODE_NAME = makeReadOnly([
-            'ARM',
-            'ANGLE',
-            'HORIZON',
-            'BARO',
-            'MAG',
-            'HEADFREE',
-            'HEADADJ',
-            'CAMSTAB',
-            'CAMTRIG',
-            'GPSHOME',
-            'GPSHOLD',
-            'PASSTHRU',
-            'BEEPER',
-            'LEDMAX',
-            'LEDLOW',
-            'LLIGHTS',
-            'CALIB',
-            'GOV',
-            'OSD',
-            'TELEMETRY',
-            'GTUNE',
-            'SONAR',
-            'SERVO1',
-            'SERVO2',
-            'SERVO3',
-            'BLACKBOX',
-            'FAILSAFE',
-            'AIRMODE',
-            'SUPEREXPO',
-            '3DDISABLESWITCH',
-            'CHECKBOX_ITEM_COUNT'
+        'ANGLE',
+        'HORIZON',
+        'MAG HOLD',
+        'NAV ALTHOLD',
+        'NAV RTH',
+        'NAV POSHOLD',
+        'HEADFREE',
+        'UNUSED_MODE', // old autotune
+        'PASSTHRU',
+        'FAILSAFE',
+        'UNUSED_MODE2', // old G-Tune
+        'NAV WP',
+        'HEADING LOCK',
+        'FLAPERON',
+        'TURN ASSISTANT'
     ]),
 
     FLIGHT_LOG_FEATURES = makeReadOnly([
@@ -172,7 +156,7 @@ var
         "SMALL_ANGLE",
         "FIXED_WING"
     ]),
-    
+
     FLIGHT_LOG_FAILSAFE_PHASE_NAME = makeReadOnly([
         "IDLE",
         "RX_LOSS_DETECTED",
