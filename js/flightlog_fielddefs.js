@@ -79,7 +79,10 @@ var
             'CHANNEL_FORWARDING',
             'TRANSPONDER',
             'AIRMODE',
-            'SUPEREXPO_RATES'
+            'SUPEREXPO_RATES',
+            'VTX',
+            'RX_NRF24',
+            'SOFTSPI'
     ]),
 
     PID_CONTROLLER_TYPE = makeReadOnly([
@@ -154,7 +157,10 @@ var
         "GPS_FIX",
         "CALIBRATE_MAG",
         "SMALL_ANGLE",
-        "FIXED_WING"
+        "FIXED_WING",
+        "ANTI_WINDUP",
+        "PID_ATTENUATE",
+        "FLAPERON_AVAILABLE"
     ]),
 
     FLIGHT_LOG_FAILSAFE_PHASE_NAME = makeReadOnly([
