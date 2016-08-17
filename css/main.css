@@ -43,7 +43,7 @@ html, body {
         margin: 15px 0;
     }
     /* since 3.1.0 */
-    .navbar-collapse.collapse.in { 
+    .navbar-collapse.collapse.in {
         display: block!important;
     }
     .collapsing {
@@ -181,15 +181,15 @@ html:not(.has-log):not(.has-video) .header-pane {
     background-color:#222;
     color:#bbb;
     padding:1em;
-    
+
     min-width: 135px;
-    
+
     -webkit-flex-grow: 0.02;
     flex-grow: 0.02;
-    
+
     -webkit-flex-direction:column;
     flex-direction:column;
-    
+
     display:none;
 }
 .log-graph-config h2 {
@@ -270,7 +270,7 @@ html.has-log .log-graph-config {
 
 .config-graph table tr{
     margin:0.5em 0;
-    width: 100%;    
+    width: 100%;
     line-height: 10px;
 }
 
@@ -678,10 +678,10 @@ html.isCF .navbar-logo {
 
 .navbar-logo img {
 	position:relative;
-	height: 35px;
-	width: 210px;
-	padding: 0px;
-	display:none;
+	/*height: 35px;*/
+	/*width: 210px;*/
+	padding: 5px;
+	/*display:none;*/
 }
 
 html.isCF img.isCF, html.isBF img.isBF {
@@ -697,11 +697,11 @@ html.isCF img.isCF, html.isBF img.isBF {
 }
 
 .navbar-logo span {
-	padding-left: 0px;
-	position: relative;
-	left: -150px;
-	top: 20px;
-	color: antiquewhite;
+    position: relative;
+    left: -142px;
+    top: 30px;
+    color: #ddd;
+    text-shadow: 1px 1px #444;
 }
 
 .navbar-static-top {
@@ -786,7 +786,7 @@ html:not(.has-log) #status-bar {
 }
 
 html:not(.has-config) #status-bar .configuration-file-name {
-    display: none;    
+    display: none;
 }
 
 
@@ -796,7 +796,7 @@ html:not(.has-config) #status-bar .configuration-file-name {
 
 ***/
 
-input[type="checkbox"] { 
+input[type="checkbox"] {
 	position: absolute;
 	opacity: 0;
 }
@@ -844,7 +844,7 @@ html.isCF input[type="checkbox"].ios-switch:checked + div {
 }
 
 /* Orange Track */
-input[type="checkbox"].orange.ios-switch:checked + div, 
+input[type="checkbox"].orange.ios-switch:checked + div,
 html.isBF input[type="checkbox"].ios-switch:checked + div {
 	background-color: #FFC638;
 	border: 1px solid rgba(158, 100, 0, 1);
