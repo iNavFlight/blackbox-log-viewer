@@ -215,7 +215,7 @@ GraphConfig.load = function(config) {
             } else if (fieldName.match(/^servo\[/)) {
                 return 5000;
             } else if (fieldName.match(/^gyroADC.*\[/)) {
-                return 3000;
+                return 0;
             } else if (fieldName.match(/^accSmooth\[/)) {
                 return 3000;
             } else if (fieldName.match(/^axis.+\[/)) {
