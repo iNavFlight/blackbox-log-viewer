@@ -26,14 +26,9 @@ var // inefficient; copied from grapher.js
 var that = this;
 	  
 try {
-	var sysConfig = flightLog.getSysConfig();
-	var gyroRate = (1000000/sysConfig['loopTime']).toFixed(0);
-	var pidRate = 1000; //default for old logs
-	
-	if (sysConfig.pid_process_denom != null) {
-		pidRate = gyroRate / sysConfig.pid_process_denom;
-	}
-	
+	var sysConfig = flightLog.getSysConfig(),
+        pidRate = (1000000 / sysConfig['loopTime']).toFixed(0);
+
 	var blackBoxRate = pidRate * (sysConfig['frameIntervalPNum'] / sysConfig['frameIntervalPDenom']);
 
 	var dataBuffer = {
