@@ -1,7 +1,7 @@
 {
     "name": "betaflight-blackbox-explorer",
     "description": "Crossplatform blackbox analitics tool for Betaflight flight control system.",
-    "version": "10.0.0-rc1",
+    "version": "3.0.0-rc1",
     "main": "index.html",
     "default_locale": "en",
     "scripts": {
@@ -15,7 +15,7 @@
       "icon": "images/bf_icon_128.png",
       "toolbar": true,
       "width": 1280,
-      "height": 800
+      "height": 830
     },
     "repository": {
       "type": "git",
