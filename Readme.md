@@ -66,13 +66,10 @@ time.
 
 ## Native app build via NW.js
 
-Linux build is disabled currently because of unmet dependecies with some distros, it can be enabled in the `gulpfile.js`.
-
 ### Development
 
 1. Install node.js
 2. Change to project folder and run `npm install`.
-3. Run `npm start`.
 
 ### App build and release
 
@@ -96,6 +93,7 @@ If no platform is provided, only for the platform you are builing from will be b
 * **MacOS** use `gulp <task-name> --osx64`
 * **Linux** use `gulp <task-name> --linux64`
 * **Windows** use `gulp <task-name> --win32`
+* **ChromeOS** use `gulp <task-name> --chromeos`
 
 You can also use multiple platforms e.g. `gulp <taskname> --osx64 --linux64`.
 
