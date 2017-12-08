@@ -2,7 +2,8 @@
     "name": "betaflight-blackbox-explorer",
     "description": "Crossplatform blackbox analitics tool for Betaflight flight control system.",
     "version": "3.0.0-rc1",
-    "main": "index.html",
+    "main": "main_nwjs.html",
+    "bg-script": "background.js",
     "default_locale": "en",
     "scripts": {
       "start": "node node_modules/gulp/bin/gulp.js debug",
@@ -11,11 +12,7 @@
       "gulp": "gulp"
     },
     "window": {
-      "title": "Betaflight Blackbox Explorer",
-      "icon": "images/bf_icon_128.png",
-      "toolbar": true,
-      "width": 1280,
-      "height": 830
+      "show": false
     },
     "repository": {
       "type": "git",
