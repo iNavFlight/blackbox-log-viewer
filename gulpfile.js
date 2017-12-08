@@ -20,6 +20,7 @@ var distDir = './dist/';
 var appsDir = './apps/';
 var debugDir = './debug/';
 var releaseDir = './release/';
+var destDir;
 
 var platforms = [];
 
@@ -207,6 +208,8 @@ gulp.task('apps', ['dist', 'clean-apps'], function (done) {
     platforms = getPlatforms();
     console.log('Release build.');
 
+    destDir = appsDir;
+
     var builder = new NwBuilder({
         files: './dist/**/*',
         buildDir: appsDir,
@@ -224,7 +227,10 @@ gulp.task('apps', ['dist', 'clean-apps'], function (done) {
                 process.exit(1);
             });
         }
-        done();
+        // Execute post build task
+        runSequence('post-build', function() {
+            done();
+        });
     });
 });
 
@@ -232,6 +238,8 @@ gulp.task('apps', ['dist', 'clean-apps'], function (done) {
 gulp.task('debug', ['dist', 'clean-debug'], function (done) {
     platforms = getPlatforms();
     console.log('Debug build.');
+
+    destDir = debugDir;
 
     var builder = new NwBuilder({
         files: './dist/**/*',
@@ -265,17 +273,26 @@ gulp.task('debug', ['dist', 'clean-debug'], function (done) {
 
 gulp.task('post-build', function(done) {
     if (platforms.indexOf('osx64') != -1) {
-        // Copy ffmpeg codec library into macOS app
-        var libSrc = './library/osx64/libffmpeg.dylib'
-        var libDest = path.join(debugDir, pkg.name, 'osx64', pkg.name + '.app', 'Contents', 'Versions', '62.0.3202.94') + '/';
-        console.log('Copy ffmpeg library to macOS app (' + libSrc + ' to ' + libDest + ')');
-        gulp.src(libSrc)
-            .pipe(gulp.dest(libDest));
+        // Determine the WebKit version distributed in nw.js
+        var pathToVersions = path.join(destDir, pkg.name, 'osx64', pkg.name + '.app', 'Contents', 'Versions');
+        var files = fs.readdirSync(pathToVersions);
+        if (files.length >= 1) {
+            var webKitVersion = files[0];
+            console.log('Found Webkit version: ' + webKitVersion)
+            // Copy ffmpeg codec library into macOS app
+            var libSrc = './library/osx64/libffmpeg.dylib'
+            var libDest = path.join(pathToVersions, webKitVersion) + '/';
+            console.log('Copy ffmpeg library to macOS app (' + libSrc + ' to ' + libDest + ')');
+            gulp.src(libSrc)
+                .pipe(gulp.dest(libDest));
+        } else {
+            console.log('Error: could not find the Version folder.');
+        }
     }
     if (platforms.indexOf('linux64') != -1) {
         // Copy ffmpeg codec library into Linux app
         var libSrc = './library/linux64/libffmpeg.so'
-        var libDest = path.join(debugDir, pkg.name, 'linux64', 'lib') + '/';
+        var libDest = path.join(destDir, pkg.name, 'linux64', 'lib') + '/';
         console.log('Copy ffmpeg library to Linux app (' + libSrc + ' to ' + libDest + ')');
         gulp.src(libSrc)
             .pipe(gulp.dest(libDest));
@@ -283,7 +300,7 @@ gulp.task('post-build', function(done) {
     if (platforms.indexOf('win32') != -1) {
         // Copy ffmpeg codec library into Windows app
         var libSrc = './library/win32/ffmpeg.dll'
-        var libDest = path.join(distDir, pkg.name, 'win32') + '/';
+        var libDest = path.join(destDir, pkg.name, 'win32') + '/';
         console.log('Copy ffmpeg library to Windows app (' + libSrc + ' to ' + libDest + ')');
         gulp.src(libSrc)
             .pipe(gulp.dest(libDest));
