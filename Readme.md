@@ -70,6 +70,7 @@ time.
 
 1. Install node.js
 2. Change to project folder and run `npm install`.
+3. Run `npm start` to build & run the debug flavor.
 
 ### App build and release
 
