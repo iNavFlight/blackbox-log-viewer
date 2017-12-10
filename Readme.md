@@ -64,6 +64,11 @@ instructions in the next section to convert your video using Handbrake.
 The best performing web browser tends to be Google Chrome, especially when trying to play your flight video at the same
 time.
 
+This tool is currently in the Beta stage, so a number of key features have yet to be implemented:
+
+- There is no control over the amount of smoothing applied to the graph lines
+- There is no way to single-step between loop iterations with the arrow keys
+
 ## Native app build via NW.js
 
 ### Development
@@ -98,10 +103,10 @@ If no platform is provided, only for the platform you are builing from will be b
 
 You can also use multiple platforms e.g. `gulp <taskname> --osx64 --linux64`.
 
-This tool is currently in the Beta stage, so a number of key features have yet to be implemented:
+#### macOS DMG installation background image
 
-- There is no control over the amount of smoothing applied to the graph lines
-- There is no way to single-step between loop iterations with the arrow keys
+The release distribution for macOS uses a DMG file to install the application.
+The PSD source for the DMG backgound image can be found in the root (`dmg-background.png`). After changing the source, export the image to PNG format in folder `./images/`.
 
 ## Flight video won't load, or jumpy flight video upon export
 
