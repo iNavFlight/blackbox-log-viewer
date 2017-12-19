@@ -59,14 +59,13 @@ function GraphConfig(graphConfig) {
             for (var j = 0; j < graph.fields.length; j++) {
                 var
                     field = graph.fields[j],
-                    matches,
-                    defaultCurve;
+                    matches;
                 
-                var adaptField = function(field, colorIndexOffset) {
-                    defaultCurve = GraphConfig.getDefaultCurveForField(flightLog, field.name);
+                var adaptField = function(field, colorIndexOffset, forceNewCurve) {
+                    const defaultCurve = GraphConfig.getDefaultCurveForField(flightLog, field.name);
                     
 
-                    if (field.curve === undefined) {
+                    if (field.curve === undefined || forceNewCurve) {
                         field.curve = defaultCurve;
                     } else {
                         /* The curve may have been originally created for a craft with different endpoints, so use the 
@@ -105,7 +104,8 @@ function GraphConfig(graphConfig) {
                     
                     for (var k = 0; k < logFieldNames.length; k++) {
                         if (logFieldNames[k].match(nameRegex)) {
-                            newGraph.fields.push(adaptField($.extend({}, field, {name: logFieldNames[k]}), colorIndexOffset));
+                            // add special condition for rcCommand as each of the fields requires a different scaling.
+                            newGraph.fields.push(adaptField($.extend({}, field, {name: logFieldNames[k]}), colorIndexOffset, (nameRoot=='rcCommand')));
                             colorIndexOffset++;
                         }
                     }
@@ -140,7 +140,7 @@ GraphConfig.PALETTE = [
     {color: "#d9d9d9", name: "Grey" },
     {color: "#bc80bd", name: "Dark Purple" },
     {color: "#ccebc5", name: "Light Green" },
-    {color: "#ffed6f", name: "Dark Yellow" },
+    {color: "#ffed6f", name: "Dark Yellow" }
 ];
 
 
@@ -205,7 +205,7 @@ GraphConfig.load = function(config) {
             {
                 label: "Accelerometers",
                 fields: ["accSmooth[all]"]
-            },
+            }
         ];
 
     GraphConfig.getDefaultSmoothingForField = function(flightLog, fieldName) {
@@ -233,9 +233,9 @@ GraphConfig.load = function(config) {
         try {
             if (fieldName.match(/^motor\[/)) {
                 return {
-                    offset: -(sysConfig.maxthrottle + sysConfig.minthrottle) / 2,
+                    offset: -(sysConfig.motorOutput[1] + sysConfig.motorOutput[0]) / 2,
                     power: 1.0,
-                    inputRange: (sysConfig.maxthrottle - sysConfig.minthrottle) / 2,
+                    inputRange: (sysConfig.motorOutput[1] - sysConfig.motorOutput[0]) / 2,
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^servo\[/)) {
@@ -249,14 +249,14 @@ GraphConfig.load = function(config) {
                 return {
                     offset: 0,
                     power: 0.25, /* Make this 1.0 to scale linearly */
-                    inputRange: 2.0e-5 / sysConfig.gyroScale,
+                    inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale,
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^accSmooth\[/)) {
                 return {
                     offset: 0,
                     power: 0.5,
-                    inputRange: sysConfig.acc_1G * 3.0, /* Reasonable typical maximum for acc */
+                    inputRange: sysConfig.acc_1G * 16.0, /* Reasonable typical maximum for acc */
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^axisError\[/)  ||     // Custom Gyro, rcCommand and axisError Scaling
@@ -265,7 +265,7 @@ GraphConfig.load = function(config) {
                 return {
                     offset: 0,
                     power: 0.25, /* Make this 1.0 to scale linearly */
-                    inputRange: flightLog.gyroRawToDegreesPerSecond(2.0e-5 / sysConfig.gyroScale),
+                    inputRange: flightLog.gyroRawToDegreesPerSecond((2.0e-3 * Math.PI/180) / sysConfig.gyroScale),
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^axis.+\[/)) {
@@ -286,7 +286,7 @@ GraphConfig.load = function(config) {
                 return {
                     offset: 0,
                     power: 0.8,
-                    inputRange: 500,
+                    inputRange: 500 * (sysConfig.rcYawRate ? sysConfig.rcYawRate : 100) / 100,
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^rcCommand\[/)) {
@@ -317,28 +317,148 @@ GraphConfig.load = function(config) {
                     inputRange: 200,
                     outputRange: 1.0
                 };
-            } else {
-                // Scale and center the field based on the whole-log observed ranges for that field
-                var
-                    stats = flightLog.getStats(),
-                    fieldIndex = flightLog.getMainFieldIndexByName(fieldName),
-                    fieldStat = fieldIndex !== undefined ? stats.field[fieldIndex] : false;
+            } else if (fieldName.match(/^debug.*/) && sysConfig.debug_mode!=null) {
 
-                if (fieldStat) {
-                    return {
-                        offset: -(fieldStat.max + fieldStat.min) / 2,
-                        power: 1.0,
-                        inputRange: Math.max((fieldStat.max - fieldStat.min) / 2, 1.0),
-                        outputRange: 1.0
-                    };
-                } else {
-                    return {
-                        offset: 0,
-                        power: 1.0,
-                        inputRange: 500,
-                        outputRange: 1.0
-                    };
+                var debugModeName = DEBUG_MODE[sysConfig.debug_mode]; 
+                switch (debugModeName) {
+                    case 'CYCLETIME':
+                        switch (fieldName) {
+                            case 'debug[1]': //CPU Load
+                                return {
+                                    offset: -50,
+                                    power: 1,
+                                    inputRange: 50,
+                                    outputRange: 1.0
+                                };                            
+                            default:
+                                return {
+                                    offset: -1000,    // zero offset
+                                    power: 1.0,
+                                    inputRange: 1000, //  0-2000uS
+                                    outputRange: 1.0
+                                };
+                        }
+                    case 'PIDLOOP': 
+                            return {
+                                offset: -250,    // zero offset
+                                power: 1.0,
+                                inputRange: 250, //  0-500uS
+                                outputRange: 1.0
+                            };       
+                    case 'GYRO':
+                    case 'NOTCH':
+                        return {
+                            offset: 0,
+                            power: 0.25,
+                            inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale,
+                            outputRange: 1.0
+                        };
+                    case 'ACCELEROMETER':
+                        return {
+                            offset: 0,
+                            power: 0.5,
+                            inputRange: sysConfig.acc_1G * 16.0, /* Reasonable typical maximum for acc */
+                            outputRange: 1.0
+                        };
+                    case 'MIXER':
+                        return {
+                            offset: -(sysConfig.motorOutput[1] + sysConfig.motorOutput[0]) / 2,
+                            power: 1.0,
+                            inputRange: (sysConfig.motorOutput[1] - sysConfig.motorOutput[0]) / 2,
+                            outputRange: 1.0
+                        };
+                    case 'BATTERY':
+                        switch (fieldName) {
+                            case 'debug[0]': //Raw Value (0-4095)
+                                return {
+                                    offset: -2048,
+                                    power: 1,
+                                    inputRange: 2048,
+                                    outputRange: 1.0
+                                };                            
+                            default:
+                                return {
+                                    offset: -130,
+                                    power: 1.0,
+                                    inputRange: 130, // 0-26.0v
+                                    outputRange: 1.0
+                                };
+                        }
+                    case 'RC_INTERPOLATION':
+                        switch (fieldName) {
+                            case 'debug[2]': //Yaw
+                                return {
+                                    offset: 0,
+                                    power: 0.8,
+                                    inputRange: 500,
+                                    outputRange: 1.0
+                                };                            
+                            case 'debug[3]': // refresh period
+                                return {
+                                    offset: -15000,
+                                    power: 1.0,
+                                    inputRange: 15000, // 30mS max
+                                    outputRange: 1.0  
+                                }; 
+                            default:
+                                return {
+                                    offset: 0,
+                                    power: 0.8,
+                                    inputRange: 500 * (sysConfig.rcRate ? sysConfig.rcRate : 100) / 100,
+                                    outputRange: 1.0
+                                };
+                        }
+                    case 'ANGLERATE':
+                        return {
+                            offset: 0,
+                            power: 0.25, /* Make this 1.0 to scale linearly */
+                            inputRange: flightLog.gyroRawToDegreesPerSecond((2.0e-3 * Math.PI/180) / sysConfig.gyroScale),
+                            outputRange: 1.0
+                        };
+                    case 'DEBUG_FFT':
+                        return {
+                            offset: 0,
+                            power: 0.25,
+                            inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale,
+                            outputRange: 1.0
+                        };      
+                    case 'DEBUG_FFT_FREQ':
+                        return {
+                            offset: 0,
+                            power: 0.25,
+                            inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale,
+                            outputRange: 1.0
+                        };     
+                    case 'DEBUG_FFT_TIME':
+                        return {
+                            offset: 0,
+                            power: 1.0,
+                            inputRange: 100,
+                            outputRange: 1.0
+                        };      
                 }
+            }
+            // if not found above then
+            // Scale and center the field based on the whole-log observed ranges for that field
+            var
+                stats = flightLog.getStats(),
+                fieldIndex = flightLog.getMainFieldIndexByName(fieldName),
+                fieldStat = fieldIndex !== undefined ? stats.field[fieldIndex] : false;
+
+            if (fieldStat) {
+                return {
+                    offset: -(fieldStat.max + fieldStat.min) / 2,
+                    power: 1.0,
+                    inputRange: Math.max((fieldStat.max - fieldStat.min) / 2, 1.0),
+                    outputRange: 1.0
+                };
+            } else {
+                return {
+                    offset: 0,
+                    power: 1.0,
+                    inputRange: 500,
+                    outputRange: 1.0
+                };
             }
         } catch(e) {
             return {
@@ -388,7 +508,7 @@ GraphConfig.load = function(config) {
                 var 
                     srcFieldName = srcGraph.fields[j],
                     destField = {
-                        name: srcFieldName, 
+                        name: srcFieldName
                     };
                 
                 destGraph.fields.push(destField);

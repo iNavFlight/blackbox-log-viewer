@@ -89,6 +89,10 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
     
     this.onSeek = null;
     
+    this.getAnalyser = function() {
+        return analyser;
+    }
+
     function extend(base, top) {
         var 
             target = {};
@@ -245,8 +249,101 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
         lapTimer.refresh(windowCenterTime, (3600*1000000/*a long time*/), blackboxLogViewer.getBookmarkTimes());
     	lapTimer.drawCanvas(canvas, options);
     }
+
+    function getStickValues(frame, stickPositions, stickLabel, config) {
+        var
+            stickIndex,
+            rcCommand = [], rcCommandLabels = [];
+
+        for (stickIndex = 0; stickIndex < 4; stickIndex++) {
+            //Check that stick data is present to be drawn:
+            if (idents.rcCommandFields[stickIndex] === undefined)
+                return;
+
+            rcCommand[stickIndex] = frame[idents.rcCommandFields[stickIndex]];
+            if(stickLabel!=null) {
+                rcCommandLabels[stickIndex] = (rcCommand[stickIndex] * ((stickIndex==2)?-1:1)) + ""; // correct the value for Yaw being inverted
+                if(options.stickUnits!=null) {
+                    if(options.stickUnits) {
+                        var currentFlightMode = frame[flightLog.getMainFieldIndexByName("flightModeFlags")];
+                        rcCommandLabels[stickIndex] = FlightLogFieldPresenter.decodeFieldToFriendly(flightLog, flightLog.getMainFieldNames()[idents.rcCommandFields[stickIndex]], frame[idents.rcCommandFields[stickIndex]], currentFlightMode);
+                    }
+                }
+            }            
+        }
+
+        var yawValue = ((userSettings.stickInvertYaw)?1:-1) * rcCommand[2];
+        // map the stick positions based upon selected stick mode (default is mode 2)
+
+        //Compute the position of the sticks in the range [-1..1] (left stick x, left stick y, right stick x, right stick y)
+        switch(options.stickMode) {
+            case STICK_MODE_1:
+                stickPositions[0] = yawValue / config.yawStickMax; //Yaw
+                stickPositions[1] = pitchStickCurve.lookup(-rcCommand[1]); //Pitch 
+                stickPositions[2] = pitchStickCurve.lookup(rcCommand[0]); //Roll
+                stickPositions[3] = (1500 - rcCommand[3]) / 500; //Throttle
+                
+                if(stickLabel!=null) {
+                    stickLabel[0] = rcCommandLabels[2];
+                    stickLabel[1] = rcCommandLabels[1];
+                    stickLabel[2] = rcCommandLabels[0];
+                    stickLabel[3] = rcCommandLabels[3];
+                }
+
+                break;
+            case STICK_MODE_3:
+                stickPositions[0] = pitchStickCurve.lookup(rcCommand[0]); //Roll
+                stickPositions[1] = pitchStickCurve.lookup(-rcCommand[1]); //Pitch
+                stickPositions[2] = yawValue / config.yawStickMax; //Yaw
+                stickPositions[3] = (1500 - rcCommand[3]) / 500; //Throttle
+
+                if(stickLabel!=null) {
+                    stickLabel[0] = rcCommandLabels[0];
+                    stickLabel[1] = rcCommandLabels[1];
+                    stickLabel[2] = rcCommandLabels[2];
+                    stickLabel[3] = rcCommandLabels[3];
+                }
+
+                break;
+            case STICK_MODE_4:
+                stickPositions[0] = pitchStickCurve.lookup(rcCommand[0]); //Roll
+                stickPositions[1] = (1500 - rcCommand[3]) / 500; //Throttle
+                stickPositions[2] = yawValue / config.yawStickMax; //Yaw
+                stickPositions[3] = pitchStickCurve.lookup(-rcCommand[1]); //Pitch
+
+                if(stickLabel!=null) {
+                    stickLabel[0] = rcCommandLabels[0];
+                    stickLabel[1] = rcCommandLabels[3];
+                    stickLabel[2] = rcCommandLabels[2];
+                    stickLabel[3] = rcCommandLabels[1];
+                }
+
+                break;
+            default: // Mode 2
+                stickPositions[0] = yawValue / config.yawStickMax; //Yaw
+                stickPositions[1] = (1500 - rcCommand[3]) / 500; //Throttle
+                stickPositions[2] = pitchStickCurve.lookup(rcCommand[0]); //Roll
+                stickPositions[3] = pitchStickCurve.lookup(-rcCommand[1]); //Pitch
+
+                if(stickLabel!=null) {
+                    stickLabel[0] = rcCommandLabels[2];
+                    stickLabel[1] = rcCommandLabels[3];
+                    stickLabel[2] = rcCommandLabels[0];
+                    stickLabel[3] = rcCommandLabels[1];
+                }
+        }
+
+        for (stickIndex = 0; stickIndex < 4; stickIndex++) {
+            //Clamp to [-1..1]
+            stickPositions[stickIndex] = stickPositions[stickIndex] > 1 ? 1 : (stickPositions[stickIndex] < -1 ? -1 : stickPositions[stickIndex]);
+
+            //Scale to our stick size
+            stickPositions[stickIndex] *= config.stickSurroundRadius;
+        }
+
+    }
     
-    function drawCommandSticks(frame) {
+    function drawCommandSticks(frame, chunks, startFrameIndex) {
 
             canvasContext.save();
 
@@ -264,84 +361,39 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
         
         var
             stickIndex,
-            rcCommand = [], rcCommandLabels = [],
             stickPositions = [],
             stickLabel = [];
 
-        var currentFlightMode = frame[flightLog.getMainFieldIndexByName("flightModeFlags")];
+        // Get the stick values
+        getStickValues(frame, stickPositions, stickLabel, {stickSurroundRadius:stickSurroundRadius, yawStickMax:yawStickMax});
 
-        for (stickIndex = 0; stickIndex < 4; stickIndex++) {
-            //Check that stick data is present to be drawn:
-            if (idents.rcCommandFields[stickIndex] === undefined)
-                return;
+        if(options.stickTrails) {
+            // Get the stick trail data
+            var stickPositionsTrail = [];
+            if(chunks && startFrameIndex) {
+                // we have the data for the stick trails
 
-            rcCommand[stickIndex] = frame[idents.rcCommandFields[stickIndex]];            
-            rcCommandLabels[stickIndex] = (rcCommand[stickIndex] * ((stickIndex==2)?-1:1)) + ""; // correct the value for Yaw being inverted
-            if(options.stickUnits!=null) {
-                if(options.stickUnits) {
-                    rcCommandLabels[stickIndex] = FlightLogFieldPresenter.decodeFieldToFriendly(flightLog, flightLog.getMainFieldNames()[idents.rcCommandFields[stickIndex]], frame[idents.rcCommandFields[stickIndex]], currentFlightMode);
-                }
+                 //We may start partway through the first chunk:
+                var frameIndex = startFrameIndex;
+                stickLoop:
+                for (var chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
+                    var 
+                        chunk = chunks[chunkIndex];
+
+                    for (; frameIndex < chunk.frames.length; frameIndex++) {
+                        var
+                            frameTime = chunk.frames[frameIndex][FlightLogParser.prototype.FLIGHT_LOG_FIELD_INDEX_TIME],
+                            frameStickPositions = [];
+
+                        if(frameTime > windowCenterTime - 500000) { // only go back 500ms
+                            getStickValues(chunk.frames[frameIndex], frameStickPositions, null, {stickSurroundRadius:stickSurroundRadius, yawStickMax:yawStickMax});
+                            stickPositionsTrail.push(frameStickPositions);
+                        } 
+                        if(frameTime >= windowCenterTime) break stickLoop; // we only get the trail up to the center line
+                    }
+                    frameIndex = 0;
+                }     
             }
-        }
-
-        // map the stick positions based upon selected stick mode (default is mode 2)
-
-        //Compute the position of the sticks in the range [-1..1] (left stick x, left stick y, right stick x, right stick y)
-        switch(options.stickMode) {
-            case STICK_MODE_1:
-                stickPositions[0] = -rcCommand[2] / yawStickMax; //Yaw
-                stickPositions[1] = pitchStickCurve.lookup(-rcCommand[1]); //Pitch 
-                stickPositions[2] = pitchStickCurve.lookup(rcCommand[0]); //Roll
-                stickPositions[3] = (1500 - rcCommand[3]) / 500; //Throttle
-
-                stickLabel[0] = rcCommandLabels[2];
-                stickLabel[1] = rcCommandLabels[1];
-                stickLabel[2] = rcCommandLabels[0];
-                stickLabel[3] = rcCommandLabels[3];
-
-                break;
-            case STICK_MODE_3:
-                stickPositions[0] = pitchStickCurve.lookup(rcCommand[0]); //Roll
-                stickPositions[1] = pitchStickCurve.lookup(-rcCommand[1]); //Pitch
-                stickPositions[2] = -rcCommand[2] / yawStickMax; //Yaw
-                stickPositions[3] = (1500 - rcCommand[3]) / 500; //Throttle
-
-                stickLabel[0] = rcCommandLabels[0];
-                stickLabel[1] = rcCommandLabels[1];
-                stickLabel[2] = rcCommandLabels[2];
-                stickLabel[3] = rcCommandLabels[3];
-
-                break;
-            case STICK_MODE_4:
-                stickPositions[0] = pitchStickCurve.lookup(rcCommand[0]); //Roll
-                stickPositions[1] = (1500 - rcCommand[3]) / 500; //Throttle
-                stickPositions[2] = -rcCommand[2] / yawStickMax; //Yaw
-                stickPositions[3] = pitchStickCurve.lookup(-rcCommand[1]); //Pitch
-
-                stickLabel[0] = rcCommandLabels[0];
-                stickLabel[1] = rcCommandLabels[3];
-                stickLabel[2] = rcCommandLabels[2];
-                stickLabel[3] = rcCommandLabels[1];
-
-                break;
-            default: // Mode 2
-                stickPositions[0] = -rcCommand[2] / yawStickMax; //Yaw
-                stickPositions[1] = (1500 - rcCommand[3]) / 500; //Throttle
-                stickPositions[2] = pitchStickCurve.lookup(rcCommand[0]); //Roll
-                stickPositions[3] = pitchStickCurve.lookup(-rcCommand[1]); //Pitch
-
-                stickLabel[0] = rcCommandLabels[2];
-                stickLabel[1] = rcCommandLabels[3];
-                stickLabel[2] = rcCommandLabels[0];
-                stickLabel[3] = rcCommandLabels[1];
-        }
-
-        for (stickIndex = 0; stickIndex < 4; stickIndex++) {
-            //Clamp to [-1..1]
-            stickPositions[stickIndex] = stickPositions[stickIndex] > 1 ? 1 : (stickPositions[stickIndex] < -1 ? -1 : stickPositions[stickIndex]);
-
-            //Scale to our stick size
-            stickPositions[stickIndex] *= stickSurroundRadius;
         }
 
         // Move origin to center of left stick
@@ -393,6 +445,16 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
                     canvasContext.fillText('Mode ' + options.stickMode, 0, stickSurroundRadius - (drawingParams.fontSizeCurrentValueLabel / 2));
                 }
 
+            }
+
+            if(options.stickTrails) {
+                //Draw circle to represent stick position trail
+                for(var j=0; j<stickPositionsTrail.length; j++) {
+                    canvasContext.beginPath();
+                    canvasContext.fillStyle = "rgba(255,255,255," + (j/stickPositionsTrail.length * 0.05) + ")";
+                    canvasContext.arc(stickPositionsTrail[j][i * 2 + 0], stickPositionsTrail[j][i * 2 + 1], stickSurroundRadius / 20, 0, 2 * Math.PI);
+                    canvasContext.fill();
+                }
             }
 
             //Draw circle to represent stick position
@@ -543,14 +605,14 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
 
     //Draw an background for the line for a graph (at the origin and spanning the window)
     function drawAxisBackground(plotHeight) {
-        canvasContext.strokeStyle = "rgba(255,255,255,0.1)";
-        canvasContext.lineWidth = plotHeight;
-        
-        canvasContext.beginPath();
-        canvasContext.moveTo(0, 0);
-        canvasContext.lineTo(canvas.width, 0);
-        
-        canvasContext.stroke();
+        var axisGradient = canvasContext.createLinearGradient(0,-plotHeight/2,0,plotHeight/2);
+        axisGradient.addColorStop(0.0,   'rgba(255,255,255,0.1)');
+        axisGradient.addColorStop(0.15,  'rgba(0,0,0,0)');
+        axisGradient.addColorStop(0.5,   'rgba(0,0,0,0)');
+        axisGradient.addColorStop(0.85,  'rgba(0,0,0,0)');
+        axisGradient.addColorStop(1.0,   'rgba(255,255,255,0.1)');
+        canvasContext.fillStyle = axisGradient;
+        canvasContext.fillRect(0,-plotHeight/2,canvas.width, plotHeight);
     }
 
     //Draw a grid
@@ -570,7 +632,7 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
         // horizontal lines
         for(var y=1; y<GRID_LINES; y++) {
             var yValue = curve.lookup(GRID_INTERVAL * y + min) * yScale;
-            if(yValue!=0) {
+            if(yValue!=0 && Math.abs(yValue < plotHeight/2)) {
                 canvasContext.moveTo(0, yValue );
                 canvasContext.lineTo(canvas.width, yValue);
             }
@@ -785,7 +847,7 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
                 inMarkerX = inTime === false ? false : timeToCanvasX(inTime),
                 outMarkerX = outTime === false ? false : timeToCanvasX(outTime); 
 
-            canvasContext.fillStyle = "rgba(200,200,200,0.4)";
+            canvasContext.fillStyle = "rgba(0,0,0,0.8)";
             
             if (inTime !== false && inTime >= windowStartTime) {
                 canvasContext.fillRect(0, 0, Math.min(inMarkerX, canvas.width), canvas.height);
@@ -951,8 +1013,12 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
 		         
             }
             
-            // Draw events
-            if(options.drawEvents) {
+            // Draw events - if option set or even if option is not set but there are graphs
+            // the option is for video export; if you export the video without any graphs set,
+            // then the events are not shown either (to keep the video clean. but
+            // if you export the video with a graph selected, then the events are also shown.
+            
+            if(options.drawEvents || (!options.drawEvents && graphs.length > 0)) {
                 drawEvents(chunks);
             }
 
@@ -966,7 +1032,7 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
                     
                     canvasContext.translate(canvas.width * parseInt(options.sticks.left) / 100.0, canvas.height * parseInt(options.sticks.top) / 100.0);
                     
-                    drawCommandSticks(centerFrame);
+                    drawCommandSticks(centerFrame, chunks, startFrameIndex);
                     
                     canvasContext.restore();
                 }
@@ -990,7 +1056,7 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
                 try{ // If we do not select a graph/field, then the analyser is hidden
                 var graph = graphs[graphConfig.selectedGraphIndex]; 		
 				var field = graph.fields[graphConfig.selectedFieldIndex];   	            
-                analyser.plotSpectrum(chunks, startFrameIndex, field.index, field.curve, graphConfig.selectedFieldName, windowCenterTime, windowEndTime);
+                analyser.plotSpectrum(field.index, field.curve, graphConfig.selectedFieldName);
                 } catch(err) {console.log('Cannot plot analyser');}            
             }
 
@@ -1099,17 +1165,21 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
     
     this.setInTime = function(time) {
         inTime = time;
-        
+        analyser.setInTime(inTime);
+
         if (outTime <= inTime) {
             outTime = false;
+            analyser.setOutTime(outTime);
         }
     };
 
     this.setOutTime = function(time) {
         outTime = time;
+        analyser.setOutTime(outTime);
         
         if (inTime >= outTime) {
             inTime = false;
+            analyser.setInTime(inTime);
         }
     };
 
@@ -1155,7 +1225,7 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
     this.refreshLogo();
     
     /* Create the FlightLogAnalyser object */
-	analyser = new FlightLogAnalyser(flightLog, graphConfig, canvas, analyserCanvas, options);
+	analyser = new FlightLogAnalyser(flightLog, canvas, analyserCanvas);
 
     /* Create the Lap Timer object */
 	lapTimer = new LapTimer();
@@ -1167,4 +1237,5 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
     this.refreshGraphConfig();
     
     this.resize(canvas.width, canvas.height);
+
 }

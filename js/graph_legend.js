@@ -14,12 +14,12 @@ function GraphLegend(targetElem, config, onVisibilityChange, onNewSelectionChang
         for (i = 0; i < graphs.length; i++) {
             var 
                 graph = graphs[i],
-                graphDiv = $('<div class="graph-legend" id="' + i +'"><h3 graph="' + i + '"></h3><ul class="list-unstyled graph-legend-field-list"></ul></div>'),
+                graphDiv = $('<div class="graph-legend no-wheel" id="' + i +'"><h3 class="graph-legend-group" graph="' + i + '"></h3><ul class="list-unstyled graph-legend-field-list no-wheel"></ul></div>'),
                 graphTitle = $("h3", graphDiv),
                 fieldList = $("ul", graphDiv);
             
             graphTitle.text(graph.label);
-            graphTitle.prepend('<span class="glyphicon glyphicon-minus"></span>');
+            graphTitle.prepend('<span class="glyphicon glyphicon-minus no-wheel"></span>');
             
             for (j = 0; j < graph.fields.length; j++) { 
                 var 
@@ -36,6 +36,9 @@ function GraphLegend(targetElem, config, onVisibilityChange, onNewSelectionChang
 
         // Add a trigger on legend; select the analyser graph/field to plot
         $('.graph-legend-field').on('click', function(e) {
+
+            if(e.which!=1) return; // only accept left mouse clicks
+
             var
                selectedGraphIndex    = $(this).attr('graph'),
                selectedFieldIndex    = $(this).attr('field');
@@ -56,10 +59,14 @@ function GraphLegend(targetElem, config, onVisibilityChange, onNewSelectionChang
                    onNewGraphConfig(graphs);
                }
            };
+           e.preventDefault();
         });
 
         // Add a trigger on legend list title; select the graph to expland
         $('.graph-legend h3').on('click', function(e) {
+
+               if(e.which!=1) return; // only accept left mouse clicks
+
                var selectedGraph = $(this).attr('graph');
                if(!e.altKey) {
                    if (onZoomGraph) {                   
@@ -70,6 +77,7 @@ function GraphLegend(targetElem, config, onVisibilityChange, onNewSelectionChang
                        onExpandGraph(selectedGraph);
                    }
                }
+           e.preventDefault();
         });
 
         // Make the legend dragabble
@@ -107,9 +115,14 @@ function GraphLegend(targetElem, config, onVisibilityChange, onNewSelectionChang
           var currentFlightMode = frame[flightLog.getMainFieldIndexByName("flightModeFlags")];
           
               $(".graph-legend-field").each(function(index, value) {
-                 var value = FlightLogFieldPresenter.decodeFieldToFriendly(flightLog, $(this).attr('name'), frame[flightLog.getMainFieldIndexByName($(this).attr('name'))], currentFlightMode);
-                 $(this).text(FlightLogFieldPresenter.fieldNameToFriendly($(this).attr('name')) + ((value)?' (' + value + ')':' ') );
-                 $(this).append('<span class="glyphicon glyphicon-equalizer"></span>');
+                  var value = frame[flightLog.getMainFieldIndexByName($(this).attr('name'))]; // get the raw value from log
+                  if(userSettings.legendUnits) { // if we want the legend to show engineering units
+                      value = FlightLogFieldPresenter.decodeFieldToFriendly(flightLog, $(this).attr('name'), value, currentFlightMode);
+                  } else { // raw value
+                    if(value%1!=0) { value = value.toFixed(2); }
+                  }
+                  $(this).text(FlightLogFieldPresenter.fieldNameToFriendly($(this).attr('name'), flightLog.getSysConfig().debug_mode) + ((value!=null)?' (' + value + ')':' ') );
+                  $(this).append('<span class="glyphicon glyphicon-equalizer no-wheel"></span>');
               });
           } catch(e) {
               console.log('Cannot update legend with values');

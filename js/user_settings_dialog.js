@@ -41,6 +41,9 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 		customMix 			: null,				// Default to no mixer configuration
 		stickMode 			: 2,				// Default to Mode 2
 		stickUnits			: false,			// Show units on stick display?
+		stickTrails			: false,			// Show stick trails?
+		stickInvertYaw		: false,			// Invert yaw in stick display?
+        legendUnits			: true,	            // Show units on legend?
 		gapless				: false,
 		drawCraft			: "3D", 
 		drawPidTable		: true, 
@@ -53,9 +56,8 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 		graphSmoothOverride : false, 			// Ability to toggle smoothing off=normal/ on=force 0%
         graphExpoOverride   : false, 			// Ability to toggle Expo off=normal/ on=force 100%
         graphGridOverride   : false, 			// Ability to toggle Expo off=normal/ on=force 100%
-        
-
 		analyserSampleRate	: 2000/*Hz*/,  		// the loop time for the log
+		analyserHanning	    : false,  			// use a hanning window on the analyser sample data
 		eraseBackground		: true,           	// Set to false if you want the graph to draw on top of an existing canvas image
 		craft				: {
 									left  : '15%',	// position from left (as a percentage of width)
@@ -229,7 +231,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
         currentSettings.stickMode = val;
 
 		if(val>0 && val <= 5) {
-				$('.modePreview img').attr('src', './images/stick_modes/mode_' + val + '.png');
+				$('.modePreview img').attr('src', './images/stick_modes/Mode_' + val + '.png');
 			}
 	}
 
@@ -275,6 +277,22 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 
     $(".stick-units").click(function() {
     	currentSettings.stickUnits = $(this).is(":checked");
+    });
+
+    $(".stick-trails").click(function() {
+    	currentSettings.stickTrails = $(this).is(":checked");
+    });
+
+	$(".invert-yaw").click(function() {
+		currentSettings.stickInvertYaw = $(this).is(":checked");
+	});
+
+	$(".analyser-hanning").click(function() {
+		currentSettings.analyserHanning = $(this).is(":checked");
+	});
+
+    $(".legend-units").click(function() {
+        currentSettings.legendUnits = $(this).is(":checked");
     });
 
     // Load Custom Logo
@@ -328,7 +346,28 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
     			$(".stick-units").prop('checked', currentSettings.stickUnits);
     		} 
 
-    		mixerListSelection(currentSettings.mixerConfiguration); // select current mixer configuration
+    		if(currentSettings.stickTrails!=null) {
+    			// set the toggle switch
+    			$(".stick-trails").prop('checked', currentSettings.stickTrails);
+    		}
+
+			if(currentSettings.stickInvertYaw!=null) {
+				// set the toggle switch
+				$(".invert-yaw").prop('checked', currentSettings.stickInvertYaw);
+			}
+
+			if(currentSettings.analyserHanning!=null) {
+				// set the toggle switch
+				$(".analyser-hanning").prop('checked', currentSettings.analyserHanning);
+			}
+
+			if(currentSettings.legendUnits!=null) {
+				// set the toggle switch
+				$(".legend-units").prop('checked', currentSettings.legendUnits);
+			}
+
+
+        mixerListSelection(currentSettings.mixerConfiguration); // select current mixer configuration
     		stickModeSelection(currentSettings.stickMode);
 
     		// setup the stick mode and dropdowns;

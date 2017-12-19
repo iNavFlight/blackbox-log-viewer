@@ -34,7 +34,7 @@ function GraphConfigurationDialog(dialog, onSave) {
     		for(var i=1; i<=MAX_HEIGHT; i++) {
     			var option = $('<option></option>')
     				.text(i)
-    				.attr('value', i)
+    				.attr('value', i);
     			if(currentSelection == i || (currentSelection==null && i==1)) {
     				option.attr('selected', 'selected');
     			}
@@ -44,10 +44,32 @@ function GraphConfigurationDialog(dialog, onSave) {
     	return selectHeight;
     }
 
+    // Show/Hide remove all button
+     function updateRemoveAllButton() {
+         var graphCount = $('.config-graph').length;
+
+         if (graphCount > 0) {
+            $('.config-graphs-remove-all-graphs').show();
+         } else {
+            $('.config-graphs-remove-all-graphs').hide();
+         }
+                renumberGraphIndexes();
+     }
+
+    // Renumber the "Graph X" blocks after additions/deletions
+    function renumberGraphIndexes() {
+            var graphIndexes = $('.graph-index-number');
+            var graphCount = graphIndexes.length;
+            for (var i = 0; i < graphCount; i++) {
+                    var currentGraphNumber = i+1;
+                    $(graphIndexes[i]).html(currentGraphNumber);
+                }
+            }
+
     function renderFieldOption(fieldName, selectedName) {
         var 
             option = $("<option></option>")
-                .text(FlightLogFieldPresenter.fieldNameToFriendly(fieldName))
+                .text(FlightLogFieldPresenter.fieldNameToFriendly(fieldName, activeFlightLog.getSysConfig().debug_mode))
                 .attr("value", fieldName);
     
         if (fieldName == selectedName) {
@@ -61,14 +83,14 @@ function GraphConfigurationDialog(dialog, onSave) {
     function renderSmoothingOptions(elem, flightLog, field) {
         if(elem) {
             // the smoothing is in uS rather than %, scale the value somewhere between 0 and 10000uS
-            $('input[name=smoothing]',elem).val((field.smoothing!=null)?(field.smoothing/100)+'%':(GraphConfig.getDefaultSmoothingForField(flightLog, field.name)/100)+'%');
+            $('input[name=smoothing]',elem).val((field.smoothing!=null)?(field.smoothing/100).toFixed(0)+'%':(GraphConfig.getDefaultSmoothingForField(flightLog, field.name)/100)+'%');
             if(field.curve!=null) {
-                $('input[name=power]',elem).val((field.curve.power!=null)?(field.curve.power*100)+'%':(GraphConfig.getDefaultCurveForField(flightLog, field.name).power*100)+'%');
-                $('input[name=scale]',elem).val((field.curve.outputRange!=null)?(field.curve.outputRange*100)+'%':(GraphConfig.getDefaultCurveForField(flightLog, field.name).outputRange*100)+'%');
+                $('input[name=power]',elem).val((field.curve.power!=null)?(field.curve.power*100).toFixed(0)+'%':(GraphConfig.getDefaultCurveForField(flightLog, field.name).power*100)+'%');
+                $('input[name=scale]',elem).val((field.curve.outputRange!=null)?(field.curve.outputRange*100).toFixed(0)+'%':(GraphConfig.getDefaultCurveForField(flightLog, field.name).outputRange*100)+'%');
             } else
             {
-                $('input[name=power]',elem).val((GraphConfig.getDefaultCurveForField(flightLog, field.name).power*100)+'%');
-                $('input[name=scale]',elem).val((GraphConfig.getDefaultCurveForField(flightLog, field.name).outputRange*100)+'%');
+                $('input[name=power]',elem).val((GraphConfig.getDefaultCurveForField(flightLog, field.name).power*100).toFixed(0)+'%');
+                $('input[name=scale]',elem).val((GraphConfig.getDefaultCurveForField(flightLog, field.name).outputRange*100).toFixed(0)+'%');
             }
         }
     }
@@ -82,12 +104,12 @@ function GraphConfigurationDialog(dialog, onSave) {
             elem = $(
                 '<li class="config-graph-field">'
                     + '<select class="form-control"><option value="">(choose a field)</option></select>'
-                    + '<input name="smoothing" class="form-control" type="text"></input>'
-                    + '<input name="power" class="form-control" type="text"></input>'
-                    + '<input name="scale" class="form-control" type="text"></input>'
-                    + '<input name="linewidth" class="form-control" type="text"></input>'
+                    + '<input name="smoothing" class="form-control" type="text"/>'
+                    + '<input name="power" class="form-control" type="text"/>'
+                    + '<input name="scale" class="form-control" type="text"/>'
+                    + '<input name="linewidth" class="form-control" type="text"/>'
                     + '<select class="color-picker"></select>'
-                    + '<button type="button" class="btn btn-default btn-sm">Remove</button>'
+                    + '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash"></span></button>'
                     + '<div id="grid" value=""/>'
                 + '</li>'
             ),
@@ -113,7 +135,7 @@ function GraphConfigurationDialog(dialog, onSave) {
         
 
         // Ade event when selection changed to retreive the current smoothing settings.
-        $('select.form-control', elem).change( function(e) {
+        $('select.form-control', elem).change( function() {
             var selectedField = {
                 name: $('select.form-control option:selected', elem).val()
                     };
@@ -121,7 +143,7 @@ function GraphConfigurationDialog(dialog, onSave) {
         });
 
         // Add event when color picker is changed to change the dropdown coloe
-        $('select.color-picker', elem).change( function(e) {
+        $('select.color-picker', elem).change( function() {
             $(this).css('background', $('select.color-picker option:selected', elem).val())
                    .css('color', $('select.color-picker option:selected', elem).val());
         });
@@ -135,8 +157,11 @@ function GraphConfigurationDialog(dialog, onSave) {
             graphElem = $(
                 '<li class="config-graph" id="'+index+'">'
                     + '<dl>'
-                        + '<dt><h4><span class="glyphicon glyphicon-minus"></span> Graph ' + (index + 1) + '</dt>'
-                        + '<dd>'
+                        + '<dt><span>'
+                            + '<h4 style="display:inline-block;vertical-align: baseline;"><span class="glyphicon glyphicon-minus"></span>Graph ' + '<span class="graph-index-number">' + (index + 1) + '</span>' + '</h4>'
+                                + '<button type="button" class="btn btn-default btn-sm pull-right remove-single-graph-button" style="display:inline-block;vertical-align: baseline;"><span class="glyphicon glyphicon-trash"></span> Remove graph ' + '</button>'
+                            + '</span></dt>'
+                            + '<dd>'
                             + '<div class="form-horizontal">'
                                 + '<div class="form-group">'
                                     + '<label class="col-sm-2 control-label">Axis label</label>'
@@ -167,7 +192,7 @@ function GraphConfigurationDialog(dialog, onSave) {
                                     + '<label class="col-sm-2 control-label">Fields</label>'
                                     + '<div class="col-sm-10">'
                                         + '<ul class="config-graph-field-list form-inline list-unstyled"></ul>'
-                                        + '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Add field</button>'
+                                        + '<button type="button" class="btn btn-default btn-sm add-field-button"><span class="glyphicon glyphicon-plus"></span> Add field</button>'
                                     + '</div>'
                                 + '</div>'
                             + '</div>'
@@ -182,11 +207,19 @@ function GraphConfigurationDialog(dialog, onSave) {
         var fieldCount = graph.fields.length;
 
         // "Add field" button
-        $("button", graphElem).click(function(e) {
+        $(".add-field-button", graphElem).click(function(e) {
             fieldList.append(renderField(flightLog, {}, GraphConfig.PALETTE[fieldCount++].color));
             e.preventDefault();
         });
-        
+
+        // "Remove Graph" button
+        $(".remove-single-graph-button", graphElem).click(function(e) {
+            var parentGraph = $(this).parents('.config-graph');
+            parentGraph.remove();
+            updateRemoveAllButton();
+            e.preventDefault();
+        });
+
         //Populate the Height seletor
         $('select.graph-height', graphElem).replaceWith(chooseHeight(graph.height?(graph.height):1));        
 
@@ -209,9 +242,12 @@ function GraphConfigurationDialog(dialog, onSave) {
             if ($(".config-graph-field", parentGraph).length === 0) {
                 parentGraph.remove();
             }
-            
+            updateRemoveAllButton();
+
             e.preventDefault();
         });
+
+        updateRemoveAllButton();
         
         return graphElem;
     }
@@ -281,10 +317,15 @@ function GraphConfigurationDialog(dialog, onSave) {
                         power: parseInt($("input[name=power]", this).val())/100.0,          // Value 0-100%    = 0-1.0 (lower values exagerate center values - expo)
                         outputRange: parseInt($("input[name=scale]", this).val())/100.0     // Value 0-100%    = 0-1.0 (higher values > 100% zoom in graph vertically)
                     },
+                    default: { // These are used to restore configuration if using mousewheel adjustments
+                        smoothing: parseInt($("input[name=smoothing]", this).val())*100,
+                        power: parseInt($("input[name=power]", this).val())/100.0,
+                        outputRange: parseInt($("input[name=scale]", this).val())/100.0
+                    },
                     color: $('select.color-picker option:selected', this).val(),
                     lineWidth: parseInt($("input[name=linewidth]", this).val()),
-                    grid: (($('div#grid', this).attr("value")==="true")?true:false),
-                }
+                    grid: (($('div#grid', this).attr("value")==="true")?true:false)
+                };
                 
                 if (field.name.length > 0) {
                     graph.fields.push(field);
@@ -362,34 +403,44 @@ function GraphConfigurationDialog(dialog, onSave) {
         renderGraphs(flightLog, config);
     };
  
-    $(".graph-configuration-dialog-save").click(function(e) {
+    $(".graph-configuration-dialog-save").click(function() {
         onSave(convertUIToGraphConfig());
     });
 
-    // Make the graph order dragabble
-    $('.config-graphs-list').sortable( 
-        {
-            cursor: "move",
-        }
-    );
-    $('.config-graphs-list').disableSelection();  
-    
-    $(".config-graphs-add").dropdown();
-    
+
     var
         exampleGraphsButton = $(".config-graphs-add"),
-        exampleGraphsMenu = $(".config-graphs-add ~ .dropdown-menu");
-    
+        exampleGraphsMenu = $(".config-graphs-add ~ .dropdown-menu"),
+        configGraphsList = $('.config-graphs-list');
+
+    // Make the graph order drag-able
+    configGraphsList
+        .sortable(
+            {
+                cursor: "move"
+            }
+        )
+        .disableSelection();
+
+    exampleGraphsButton.dropdown();
     exampleGraphsMenu.on("click", "a", function(e) {
         var 
             graph = exampleGraphs[$(this).data("graphIndex")],
             graphElem = renderGraph(activeFlightLog, $(".config-graph", dialog).length, graph);
         
-        $(".config-graphs-list", dialog).append(graphElem);
+        $(configGraphsList, dialog).append(graphElem);
+        updateRemoveAllButton();
         
         // Dismiss the dropdown button
         exampleGraphsButton.dropdown("toggle");
         
         e.preventDefault();
+    });
+
+    // Remove all Graphs button
+    var removeAllGraphsButton = $(".config-graphs-remove-all-graphs");
+    removeAllGraphsButton.on("click", function() {
+            $('.config-graph').remove();
+            updateRemoveAllButton();
     });
 }
