@@ -3,7 +3,7 @@
 // Global Level Variables
 var userSettings = {};
 
-var VIEWER_VERSION = '2.5.13'; // Current version
+var VIEWER_VERSION = '3.0.0'; // Current version
 
 var INNER_BOUNDS_WIDTH  = 1340,
     INNER_BOUNDS_HEIGHT = 900;
@@ -814,7 +814,7 @@ function BlackboxLogViewer() {
         $("#viewer-version").text('You are using version ' + VIEWER_VERSION);
         $(".viewer-version", statusBar).text('v'+VIEWER_VERSION);
         try {
-            $.getJSON('https://api.github.com/repos/betaflight/blackbox-log-viewer/releases/latest',{},function(data){
+            $.getJSON('https://api.github.com/repos/iNavFlight/blackbox-log-viewer/releases/latest',{},function(data){
                 latestVersion = data;
                 if(latestVersion) {
                     $(".btn-viewer-download").text(latestVersion.tag_name);

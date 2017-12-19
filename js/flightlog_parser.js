@@ -497,7 +497,6 @@ var FlightLogParser = function(logData) {
             case "setpoint_relaxation_ratio":
                 that.sysConfig.setpointRelaxRatio = parseInt(fieldValue, 10);
                 break;
-                dynThrPID
             case "dterm_setpoint_weight":
                 that.sysConfig.dtermSetpointWeight = parseInt(fieldValue, 10);
                 break
@@ -617,6 +616,7 @@ var FlightLogParser = function(logData) {
                 that.sysConfig.currentMeterScale = currentMeterParams[1];
             break;
             case "gyro.scale":
+            case "gyro_scale":
                 //TODO find all places radians are converted to dps and remove it instead on doing this
                 //This negates radians to dps conversion
                 that.sysConfig.gyroScale = hexToFloat(fieldValue) / (1000000 / (Math.PI / 180.0));
