@@ -98,7 +98,7 @@ function getRunDebugAppCommand() {
 }
 
 function get_release_filename(platform, ext) {
-    return 'Betaflight-BlackboxExplorer_' + platform + '_' + pkg.version + '.' + ext;
+    return 'INAV-BlackboxExplorer_' + platform + '_' + pkg.version + '.' + ext;
 }
 
 // -----------------
@@ -251,8 +251,8 @@ gulp.task('debug', ['dist', 'clean-debug'], function (done) {
         platforms: platforms,
         flavor: 'sdk',
         macIcns: './images/bf_icon.icns',
-        macPlist: { 'CFBundleDisplayName': 'Betaflight Blackbox Explorer'},
-        winIco: './images/bf_icon.ico',
+        macPlist: { 'CFBundleDisplayName': 'INAV Blackbox Explorer'},
+        winIco: './images/bf_icon.ico'
     });
     builder.on('log', console.log);
     builder.build(function (err) {

@@ -75,7 +75,8 @@ This tool is currently in the Beta stage, so a number of key features have yet t
 
 1. Install node.js
 2. Change to project folder and run `npm install`.
-3. Run `npm start` to build & run the debug flavor.
+3. Run `npm start` to start.
+3. Run `npm debug` to build & run the debug flavor (optional).
 
 ### App build and release
 
