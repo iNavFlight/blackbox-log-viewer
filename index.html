@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title></title>
+<title>INAV - Blackbox Explorer</title>
+<link rel="icon" type="image/png" href="images/icon-128.png">
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,42 +19,15 @@
 <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
 </head>
 <body>
-	<!-- Navigation Bar -->
-    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-        <div class="container header-pane">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-                </button>
-                <div class="navbar-logo">
-                	<div>
-						<img src="./images/inav_logo.png" class="navbar-brand"/>
-						<span>Blackbox&nbspExplorer</span>
-					</div>
-	                <a class="navbar-brand log-filename" html="#"></a>
-				</div>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <div class="navbar-form navbar-right" role="form">
-                	<div class="btn-group">
-						<a class="btn btn-default btn-video-export"> Export video...</a>
-						<a class="btn btn-primary btn-workspaces-export"> Export Workspaces...</a>
-						<span class="btn btn-primary btn-file"> Open log file/video <input type="file" class="file-open" multiple></span>
-	                </div>
-                </div>
-            </div>
-        </div>
-    </nav>
 	<!--  Welcome Page -->
     <div class="welcome-pane">
         <div class="container">
             <div class="jumbotron">
-                <h1>Welcome to the Enhanced Blackbox Explorer!</h1>
-                <p>This tool allows you to view and analyze logs created by Cleanflight's and Betaflight's Blackbox feature.</p>
-                <span class="btn btn-primary btn-lg btn-file"> Open log file/video <input type="file" class="file-open" multiple></span>
+                <h1>INAV Blackbox Explorer!</h1>
+                <p>This tool allows you to view and analyze logs created by INAV Blackbox feature.</p>
+                <span class="btn btn-primary btn-lg btn-file"  data-toggle="tooltip" title="Start by opening a log or video file"> Open log file/video <input type="file" class="file-open" multiple></span>
             </div>
         </div>
-
         <div class="container">
             <div class="row">
                 <div class="col-sm-4">
@@ -144,92 +118,216 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-	<!-- Main Page -->
-    <div class="container-fluid main-pane">
-    	<!-- Removed as not necessary to display this information
-        <div class="log-metadata">
-            <div class="log-info form-horizontal">
-                <div class="form-group log-device-uid-header">
-                    <label class="col-sm-3 control-label">Device UID</label>
-                    <div class="col-sm-9">
-                        <p class="log-device-uid form-control-static"></p>
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Version
+                        </div>
+                        <div class="panel-body">
+                            <p>
+                                <div id="viewer-version"><!-- current version shown here --></div>
+                            </p>
+                            <p class="viewer-download">
+								The latest official version is <a class="btn btn-default btn-md btn-viewer-download"  data-toggle="tooltip" title="Goto the latest version download page" href="https://github.com/betaflight/blackbox-log-viewer/releases/latest"> vX.X.XX </a>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-		-->
+        <!-- the changelog floats outside of the page. -->
+        <!--We more less dop not care about changelog, noone is updating it, so let's be honest and remove it-->
+        <div id="changelog" style="display: none">
+            <div class="button">
+                <a id="changelog_toggle" href="#">Changelog</a>
+            </div>
+            <div class="wrapper">
+                <iframe src="./changelog.html"></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container header-pane">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-logo">
+                    <div>
+                        <img src="./images/cf_logo_white.svg" class="navbar-brand"/>
+                        <span>Blackbox&nbspExplorer</span>
+                    </div>
+                    <a class="navbar-brand log-filename" html="#"></a>
+                </div>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <div class="navbar-form navbar-right" role="form">
+                    <div class="btn-group">
+                        <a class="btn btn-default btn-new-window" data-toggle="tooltip" title="Open a new Blackbox Log Viewer window"> New Window </a>
+                        <a class="btn btn-primary btn-video-export" data-toggle="tooltip" title="Export your vide and chart setup to file"> Export video...</a>
+                        <a class="btn btn-primary btn-workspaces-export" data-toggle="tooltip" title="Export your workspace configurations to file"> Export Workspaces...</a>
+                        <span class="btn btn-primary btn-file" data-toggle="tooltip" title="Open another log file, video file, exported workspace file or configuration dump file"> Open log file/video <input type="file" class="file-open" multiple></span>
+                        <button type="button" class="btn btn-default view-zoom-in" data-toggle="tooltip" title="Zoom In Window" style="display: none;">
+                            <span class="glyphicon glyphicon-zoom-in"></span>
+                        </button>
+                        <button type="button" class="btn btn-default view-zoom-out" data-toggle="tooltip" title="Zoom Out Window" style="display: none;">
+                            <span class="glyphicon glyphicon-zoom-out"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+	<!-- Main Page -->
+    <div class="container-fluid main-pane">
         <ul class="video-top-controls list-unstyled">
             <li class="log-view-panel">
                 <h4>View</h4>
                 <div>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-default open-user-settings-dialog" title="Show User Settings">
-                            <span class="glyphicon glyphicon-cog"></span>
-                        </button>
-                        <button type="button" class="btn btn-default open-header-dialog" title="View/hide header">
+                    <div class="btn-group view-buttons" role="group">
+                        <button type="button" class="btn btn-default open-header-dialog" data-toggle="tooltip" title="View/hide header">
                             <span class="glyphicon glyphicon-info-sign"></span>
                         </button>
-                        <button type="button" class="btn btn-default view-video" title="View/hide video display">
+                    </div>
+                    <div class="btn-group view-menu">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="view-menu" >
+                                View <span class="caret"></span></button>
+                            <ul class="dropdown-menu" role="menu"  aria-labelledby="view-menu">
+                                <li>
+                                    <a href="#" class="open-header-dialog auto-hide-menu" data-toggle="tooltip" title="View/hide header">
+                                        <span class="glyphicon glyphicon-info-sign"></span> Header<span class="pull-right">H</span>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="dropdown-header">Overlays</li>
+                                <li>
+                                    <a href="#"  id="auto-hide-menu" class="view-video auto-hide-menu" data-toggle="tooltip" title="View/hide video display">
+                                        <span class="glyphicon glyphicon-film"></span> Video
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#"  id="auto-hide-menu" class="view-craft auto-hide-menu" data-toggle="tooltip" title="View/hide craft display">
+                                        <span class="glyphicon glyphicon-plane"></span> Craft
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#"  id="auto-hide-menu" class="view-sticks auto-hide-menu" data-toggle="tooltip" title="View/hide stick display">
+                                        <span class="glyphicon glyphicon-pawn"></span> Sticks
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="dropdown-header">Details</li>
+                                <li>
+                                    <a href="#" class="view-table auto-hide-menu" data-toggle="tooltip" title="View/hide statistics display">
+                                        <span class="glyphicon glyphicon-list-alt"></span> Values Table<span class="pull-right">T</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="view-config auto-hide-menu" data-toggle="tooltip" title="View/hide configuration file">
+                                        <span class="glyphicon glyphicon-list-alt"></span> Config<span class="pull-right">C</span>
+                                    </a>
+                                </li>
+                                <li class="divider has-analyser"></li>
+                                <li class="dropdown-header has-analyser">Analyser</li>
+                                <li>
+                                    <a href="#" class="view-analyser auto-hide-menu" data-toggle="tooltip" title="View/hide analyser display">
+                                        <span class="glyphicon glyphicon-equalizer"></span> Show/Hide<span class="pull-right">A</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="view-analyser-fullscreen auto-hide-menu" data-toggle="tooltip" title="Zoom Analyser Window">
+                                        <span class="glyphicon glyphicon-resize-full"></span><span class="glyphicon glyphicon-resize-small"></span> Re-size<span class="pull-right">&#x21E7;A</span>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="#" class="open-user-settings-dialog auto-hide-menu" data-toggle="tooltip" title="Show User Settings">
+                                        <span class="glyphicon glyphicon-cog"></span> Preferences
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="btn-group view-buttons-expanded" role="group">
+                        <button type="button" class="btn btn-default view-video" data-toggle="tooltip" title="View/hide video display">
                             <span class="glyphicon glyphicon-film"></span>
                         </button>
-                        <button type="button" class="btn btn-default view-craft" title="View/hide craft display">
+                        <button type="button" class="btn btn-default view-craft" data-toggle="tooltip" title="View/hide craft display">
                             <span class="glyphicon glyphicon-plane"></span>
                         </button>
-                        <button type="button" class="btn btn-default view-sticks" title="View/hide stick display">
+                        <button type="button" class="btn btn-default view-sticks" data-toggle="tooltip" title="View/hide stick display">
                             <span class="glyphicon glyphicon-pawn"></span>
                         </button>
-                        <button type="button" class="btn btn-default view-table" title="View/hide statistics display">
+                        <button type="button" class="btn btn-default view-table" data-toggle="tooltip" title="View/hide statistics display">
                             <span class="glyphicon glyphicon-list-alt"></span>
                         </button>
-                        <button type="button" class="btn btn-default view-analyser-sticks" style="display:none" title="View/hide stick analyser">
+                        <button type="button" class="btn btn-default view-analyser-sticks" style="display:none" data-toggle="tooltip" title="View/hide stick analyser">
                             <span class="glyphicon glyphicon-screenshot"></span>
                         </button>
-                        <button type="button" class="btn btn-default view-analyser" title="View/hide analyser display">
+                        <button type="button" class="btn btn-default view-analyser" data-toggle="tooltip" title="View/hide analyser display">
                             <span class="glyphicon glyphicon-equalizer"></span>
                         </button>
-                        <button type="button" class="btn btn-default view-analyser-fullscreen" title="Zoom Analyser Window">
+                        <button type="button" class="btn btn-default view-analyser-fullscreen" data-toggle="tooltip" title="Zoom Analyser Window">
                             <span class="glyphicon glyphicon-resize-full"></span><span class="glyphicon glyphicon-resize-small"></span>
                         </button>
-                   </div>
+                    </div>
                 </div>
             </li>
             <li class="log-playback-panel">
                 <h4>Playback</h4>
                 <div>
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-default video-jump-start" title="Jump to start of video">
+                        <button type="button" class="btn btn-default video-jump-start" data-toggle="tooltip" title="Jump to start of video">
                             <span class="glyphicon glyphicon-fast-backward"></span> <span class="glyphicon-text-alike">VID</span>
                         </button>
-                        <button type="button" class="btn btn-default log-jump-start" title="Jump to start of log">
+                        <button type="button" class="btn btn-default log-jump-start" data-toggle="tooltip" title="Jump to start of log">
                             <span class="glyphicon glyphicon-fast-backward"></span>
                         </button>
-                        <button type="button" class="btn btn-default log-jump-back">
+                        <button type="button" class="btn btn-default log-jump-back" data-toggle="tooltip" title="Jump back">
                             <span class="glyphicon glyphicon-step-backward"></span>
                         </button>
-                        <button type="button" class="btn btn-default log-play-pause">
+                        <button type="button" class="btn btn-default log-play-pause" data-toggle="tooltip" title="Play/Pause log/video">
                             <span class="glyphicon glyphicon-play"></span>
                         </button>
-                        <button type="button" class="btn btn-default log-jump-forward">
+                        <button type="button" class="btn btn-default log-jump-forward" data-toggle="tooltip" title="Jump forward">
                             <span class="glyphicon glyphicon-step-forward"></span>
                         </button>
-                        <button type="button" class="btn btn-default log-jump-end" title="Jump to end of log">
+                        <button type="button" class="btn btn-default log-jump-end" data-toggle="tooltip" title="Jump to end of log">
                             <span class="glyphicon glyphicon-fast-forward"></span>
                         </button>
-                        <button type="button" class="btn btn-default video-jump-end" title="Jump to end of video">
+                        <button type="button" class="btn btn-default video-jump-end" data-toggle="tooltip" title="Jump to end of video">
                             <span class="glyphicon-text-alike">VID</span> <span class="glyphicon glyphicon-fast-forward"></span>
                         </button>
                     </div>
                 </div>
             </li>
             <li class="log-playback-rate-panel">
-                <h4>Playback speed</h4>
+                <h4>Speed</h4>
                 <div class="form-inline">
                     <div class="form-group">
-                        <div class="playback-rate-control btn-group btn-group-vertical"></div>
-                        <input type="text" class="form-control playback-rate" value="1.0" size="5">
+                        <div class="btn-group playback-menu">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="playback-menu" >
+                                    Speed <span class="caret"></span></button>
+                                <ul class="dropdown-menu pull-right" role="menu"  aria-labelledby="playback-menu">
+                                    <li>
+                                        <div class="pull-right">
+                                            <div class="panel-body">
+                                                Speed
+                                                <div class="playback-rate-control btn-group btn-group-vertical"></div>
+                                                <input type="text" class="form-control playback-rate small-screen" value="1.0" size="5" data-toggle="tooltip" title="Directly set the playback speed">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="playback-rate-expanded">
+                            <div class="playback-rate-control btn-group btn-group-vertical"></div>
+                            <input type="text" class="form-control playback-rate small-screen" value="1.0" size="5" data-toggle="tooltip" title="Directly set the playback speed">
+                        </div>
                     </div>
                 </div>
             </li>
@@ -237,16 +335,50 @@
                 <h4>Zoom</h4>
                 <div class="form-inline">
                     <div class="form-group">
-                        <div class="graph-zoom-control btn-group btn-group-vertical"></div>
-                        <input type="text" class="form-control graph-zoom" value="-" size="6">
+                        <div class="btn-group zoom-menu">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="zoom-menu" >
+                                    Zoom <span class="caret"></span></button>
+                                <ul class="dropdown-menu pull-right" role="menu"  aria-labelledby="zoom-menu">
+                                    <li>
+                                        <div class="pull-right">
+                                            <div class="panel-body">
+                                                Zoom
+                                                <div class="graph-zoom-control btn-group btn-group-vertical"></div>
+                                                <input type="text" class="form-control graph-zoom small-screen" value="-" size="6" data-toggle="tooltip" title="Directly set the zoom level"/>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="#"  class="toggle-smoothing auto-hide-menu" data-toggle="tooltip" title="Smoothing On/Off">
+                                            <span class="glyphicon glyphicon-ok has-smoothing-override"></span> Disable Smoothing<span class="pull-right">S</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#"  class="toggle-expo auto-hide-menu" data-toggle="tooltip" title="Expo On/Off">
+                                            <span class="glyphicon glyphicon-ok has-expo-override"></span> Disable Expo<span class="pull-right">X</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#"  class="toggle-grid auto-hide-menu" data-toggle="tooltip" title="Grid On/Off">
+                                            <span class="glyphicon glyphicon-ok has-grid-override"></span> Disable Grid Lines<span class="pull-right">G</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="graph-zoom-expanded">
+                            <div class="graph-zoom-control btn-group btn-group-vertical"></div>
+                            <input type="text" class="form-control graph-zoom small-screen" value="-" size="6" data-toggle="tooltip" title="Directly set the zoom level">
+                        </div>
                     </div>
                 </div>
             </li>
-            <li class="log-chart-time-panel">
+            <li class="log-chart-time-panel small-screen">
                 <h4>Time</h4>
                 <div class="form-inline">
                     <div class="form-group">
-                        <input type="text" class="form-control graph-time" value="1.0" size="8">
+                        <input type="text" class="form-control graph-time" value="1.0" size="8" data-toggle="tooltip" title="Enter a time to jump to">
                     </div>
                 </div>
             </li>
@@ -254,61 +386,116 @@
                 <h4>Log sync</h4>
                 <div class="form-inline">
                     <div class="form-group">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default log-sync-back" title="Move log earlier">
-                                <span class="glyphicon glyphicon-step-backward"></span>
-                            </button>
-                            <button type="button" class="btn btn-default log-sync-here">Start log here</button>
-                            <button type="button" class="btn btn-default log-sync-forward" title="Move log later">
-                                <span class="glyphicon glyphicon-step-forward"></span>
-                            </button>
+                        <div class="btn-group sync-menu">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="sync-menu" >
+                                    Sync <span class="caret"></span></button>
+                                <ul class="dropdown-menu pull-right" role="menu"  aria-labelledby="sync-menu">
+                                    <li>
+                                        <div class="pull-right">
+                                            <div class="panel-body">
+                                                Sync
+                                                <button type="button" class="btn btn-default log-sync-back" data-toggle="tooltip" title="Move log earlier">
+                                                    <span class="glyphicon glyphicon-step-backward"></span>
+                                                </button>
+                                                <input type="text" class="form-control video-offset" value="+0.0" size="7" data-toggle="tooltip" title="Enter a time offset">
+                                                <button type="button" class="btn btn-default log-sync-forward" data-toggle="tooltip" title="Move log later">
+                                                    <span class="glyphicon glyphicon-step-forward"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="#"  class="log-sync-here auto-hide-menu" data-toggle="tooltip" title="Set the log start to this video frame">
+                                            <span class="glyphicon glyphicon-fast-backward"></span> Start Log Here
+                                        </a>
+                                    </li>
+                                    <li  class="has-marker">
+                                        <a href="#"  class="log-smart-sync auto-hide-menu" data-toggle="tooltip" title="Set the marked position to here...">
+                                            <span class="glyphicon glyphicon-object-align-left"></span> Smart Sync<span class="pull-right">&#x2325;M</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <input type="text" class="form-control video-offset" value="+0.0" size="7">
+                        <div class="log-sync-expanded">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default log-sync-back" data-toggle="tooltip" title="Move log earlier">
+                                    <span class="glyphicon glyphicon-step-backward"></span>
+                                </button>
+                                <button type="button" class="btn btn-default log-sync-here">Start log here</button>
+                                <button type="button" class="btn btn-default log-sync-forward" data-toggle="tooltip" title="Move log later">
+                                    <span class="glyphicon glyphicon-step-forward"></span>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control video-offset" value="+0.0" size="7" data-toggle="tooltip" title="Enter a time offset">
+                        </div>
                     </div>
                 </div>
             </li>
         </ul>
-        <div class="craft"></div>
         <div class="graph-row">
             <div class="log-graph">
                 <video></video>
                 <canvas width="200" height="100" id="graphCanvas"></canvas>
                 <canvas width="0" height="0" id="craftCanvas"></canvas>
-                <canvas width="0" height="0" id="analyserCanvas"></canvas>
+                <div class="analyser">
+                	<canvas width="0" height="0" id="analyserCanvas"></canvas>
+                	<input id="analyserZoomX" type="range" name="analyserZoomX" value="100" min="100" max="500" step="10" title="" list="analyserZoomXTicks"/>
+					<input id="analyserZoomY" type="range" name="analyserZoomY" value="100" min="10" max="1000" step="10" list="analyserZoomYTicks"/>
+                    <datalist id="analyserZoomXTicks">
+                        <option>100</option>
+                        <option>200</option>
+                        <option>300</option>
+                        <option>400</option>
+                        <option>500</option>
+                    </datalist>
+                    <datalist id="analyserZoomYTicks">
+                        <option>100</option>
+                    </datalist>
+				</div>
                 <canvas width="0" height="0" id="analyserStickCanvas"></canvas>
-                <span class="log-open-legend-dialog glyphicon glyphicon-cog"></span>
+                <span class="log-open-legend-dialog glyphicon glyphicon-cog" data-toggle="tooltip" title="Show the legend"></span>
             </div>
-            <div class="log-graph-config">
-                <h2>Legend <span class="log-close-legend-dialog glyphicon glyphicon-remove"></span><span class="open-keys-dialog glyphicon glyphicon-question-sign"></span></h2>
-				<div class="log-index"></div>
-                <div class="log-graph-legend">
+            <div class="log-graph-config no-wheel">
+                <h2 class="no-wheel">Legend <span class="log-close-legend-dialog glyphicon glyphicon-remove no-wheel" data-toggle="tooltip" title="Hide the legend"></span><span class="open-keys-dialog glyphicon glyphicon-question-sign no-wheel" data-toggle="tooltip" title="Show the keyboard shortcuts"></span></h2>
+				<div class="log-index no-wheel"></div>
+                <div class="log-graph-legend no-wheel">
                 </div>
-                <button type="button" class="btn btn-default btn-block open-graph-configuration-dialog">Graph setup</button>
+                <button type="button" class="btn btn-default btn-block open-graph-configuration-dialog no-wheel" data-toggle="tooltip" title="Setup chart pens">Graph setup</button>
             </div>
-        </div>
-        <div class="log-seek-bar">
-            <canvas width="200" height="100"></canvas>
+            <div class="mouseNotification"></div>
         </div>
         <div class="log-field-values" id="log-field-values">
             <a href="#log-field-values"><h4>Field values</h4></a>
             <table class="table table-condensed">
-                <tr>
-                    <th>&nbsp;</th>
-                    <th>Raw value</th>
-                    <th>Decoded</th>
-                    <th>&nbsp;</th>
-                    <th>Raw value</th>
-                    <th>Decoded</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Raw value</th>
+                        <th>Decoded</th>
+                        <th>&nbsp;</th>
+                        <th>Raw value</th>
+                        <th>Decoded</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><!-- auto filled by updateValues function --></tr>
+                </tbody>
             </table>
         </div>
         <div class="configuration-file" id="configuration-file">
 			<!-- auto filled by configuration function -->
         </div>
+	</div>
+    <!-- Log Scroll bar -->
+    <div class="log-seek-bar">
+        <canvas width="200" height="100"></canvas>
+    </div>
     <!-- Status Bar -->
     <div id="status-bar">
         <div>
-			<span class="version">-</span>
+            <span class="version">-</span>
         </div>
         <div>
             <span class="log-cells">-</span>
@@ -317,57 +504,60 @@
             <span class="looptime">-</span>
         </div>
         <div>
-             <span class="lograte">-</span>
+            <span class="lograte">-</span>
         </div>
         <div>
-			<span class="flight-mode">-</span>
+            <span class="flight-mode">-</span>
         </div>
         <div>
-			<span class="marker-offset">00:00.000</span>
+            <span class="marker-offset">00:00.000</span>
         </div>
         <div>
-			<span class="overrides"></span>
+            <span class="overrides"></span>
         </div>
         <div class="bookmark-1">
-			<span>1</span>
+            <span>1</span>
         </div>
         <div class="bookmark-2">
-			<span>2</span>
+            <span>2</span>
         </div>
         <div class="bookmark-3">
-			<span>3</span>
+            <span>3</span>
         </div>
         <div class="bookmark-4">
-			<span>4</span>
+            <span>4</span>
         </div>
         <div class="bookmark-5">
-			<span>5</span>
+            <span>5</span>
         </div>
-       	<div class="bookmark-6">
-			<span>6</span>
+        <div class="bookmark-6">
+            <span>6</span>
         </div>
         <div class="bookmark-7">
-			<span>7</span>
+            <span>7</span>
         </div>
         <div class="bookmark-8">
-			<span>8</span>
+            <span>8</span>
         </div>
         <div class="bookmark-9">
-			<span>9</span>
+            <span>9</span>
         </div>
         <div class="bookmark-clear">
-			<span>Clear All</span>
+            <span>Clear All</span>
         </div>
         <div>
-			<span class="configuration-file-name">-</span>
+            <span class="configuration-file-name">-</span>
         </div>
-      </div>
+        <div>
+            <span class="viewer-version">-</span>
+        </div>
+    </div>
 	<!-- Dialog Boxes and Popup Windows -->
     <div class="modal fade graph-configuration-dialog" id="dlgGraphConfiguration">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-toggle="tooltip" title="Close without saving changes">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <h4 class="modal-title">Configure graphs</h4>
@@ -375,17 +565,18 @@
                 <div class="modal-body">
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary dropdown-toggle config-graphs-add" data-toggle="dropdown" aria-expanded="false">
-                            Add graph <span class="caret"></span>
+                            <span class="glyphicon glyphicon-plus"></span> Add graph <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
                         </ul>
                     </div>
+                    <button type="button" class="btn btn-default config-graphs-remove-all-graphs pull-right" style="display:none;" ><span class="glyphicon glyphicon-trash"></span> Remove all graphs</button>
                     <ul class="list-unstyled config-graphs-list">
                     </ul>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default graph-configuration-dialog-cancel" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary graph-configuration-dialog-save" data-dismiss="modal">Save changes</button>
+                    <button type="button" class="btn btn-default graph-configuration-dialog-cancel" data-dismiss="modal" data-toggle="tooltip" title="Close without saving changes">Cancel</button>
+                    <button type="button" class="btn btn-primary graph-configuration-dialog-save" data-dismiss="modal" data-toggle="tooltip" title="Close and save changes">Save changes</button>
                 </div>
             </div>
         </div>
@@ -394,12 +585,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-toggle="tooltip" title="Close without saving changes">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <h4 class="modal-title">Log Header Information</h4>
                     <h5 class="modal-title-revision"></h5>
                     <h5 class="modal-title-date"></h5>
+                    <h5 class="modal-title-craft"></h5>
                 </div>
                 <div class="modal-body">
 					<form name="header-information" id="pid-tuning">
@@ -433,22 +625,22 @@
 										<tr class="rollPID">
 											<!-- 0 -->
 											<td>ROLL</td>
-											<td><input type="number" name="p" step="0.1" min="0" max="25.5" /></td>
-											<td><input type="number" name="i" step="0.001" min="0" max="0.255" /></td>
+											<td><input type="number" name="p" step="1" min="0" max="255" /></td>
+											<td><input type="number" name="i" step="1" min="0" max="255" /></td>
 											<td><input type="number" name="d" step="1" min="0" max="255" /></td>
 										</tr>
 										<tr class="pitchPID">
 											<!-- 1 -->
 											<td>PITCH</td>
-											<td><input type="number" name="p" step="0.1" min="0" max="25.5" /></td>
-											<td><input type="number" name="i" step="0.001" min="0" max="0.255" /></td>
+											<td><input type="number" name="p" step="1" min="0" max="255" /></td>
+											<td><input type="number" name="i" step="1" min="0" max="255" /></td>
 											<td><input type="number" name="d" step="1" min="0" max="255" /></td>
 										</tr>
 										<tr class="yawPID">
 											<!-- 2 -->
 											<td>YAW</td>
-											<td><input type="number" name="p" step="0.1" min="0" max="25.5" /></td>
-											<td><input type="number" name="i" step="0.001" min="0" max="0.255" /></td>
+											<td><input type="number" name="p" step="1" min="0" max="255" /></td>
+											<td><input type="number" name="i" step="1" min="0" max="255" /></td>
 											<td><input type="number" name="d" step="1" min="0" max="255" /></td>
 										</tr>
 									</table>
@@ -543,6 +735,24 @@
 										<div class="spacer_box_title">PID Other</div>
 									</div>
 									<div class="spacer_box">
+									<table class="parameter cf">
+										<tbody>
+											<tr>
+												<td name="ptermSRateWeight" class="bf-only"><label>P-Term<br>&nbsp;</label><input type="number" step="0.01" min="0" max="999" /></td>
+                                                <td name="setpointRelaxRatio" class="bf-only"><label>Setpoint Relax<br>Ratio</label><input type="number" step="0.01" min="0" max="999" /></td>
+												<td name="dtermSetpointWeight" class="bf-only"><label>D-Term Setpoint<br>Weight</label><input type="number" step="0.01" min="0" max="999" /></td>
+												<td name="rateAccelLimit" class="bf-only"><label>Roll/Pitch Rate<br>Acceleration Limit</label><input type="number" step="1" min="0" max="999" /></td>
+												<td name="yawRateAccelLimit" class="bf-only"><label>Yaw Rate<br>Acceleration Limit</label><input type="number" step="1" min="0" max="999" /></td>
+											</tr>
+                                            <tr>
+                                                <td name="antiGravityGain" class="bf-only"><label>AG Gain</label><input type="number" step="0.01" min="0" max="999" /></td>
+                                                <td name="antiGravityThreshold" class="bf-only"><label>AG Threshold</label><input type="number" step="0.01" min="0" max="999" /></td>
+                                                <td name="itermWindupPointPercent" class="bf-only"><label>Windup Threshold</label><input type="number" step="1" min="0" max="999" /></td>
+                                            </tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="spacer_box">
 									<table class="no-inav parameter cf">
 										<tbody>
 											<tr>
@@ -551,13 +761,13 @@
 										</tbody>
 									</table>
 									<table class="parameter cf">
-										<thead>
+										<thead class="BFPIDController">
 											<tr>
 												<th colspan="2">P-Term</th>
 												<th class="bf-only" colspan="2">I-Term</th>
 											</tr>
 										</thead>
-										<tbody>
+										<tbody class="BFPIDController">
 											<tr>
 											    <td name='dynamic_pterm' class="bf-only"><label>Dynamic P</label><select><!-- list generated here --></select></td>
 												<td name="yaw_p_limit"><label>Yaw Limit</label><input type="number" step="1" min="0" max="999" /></td>
@@ -567,24 +777,21 @@
 												<td name="yawItermIgnoreRate" class="bf-only"><label>Yaw Ignore Rate</label><input type="number" step="1" min="0" max="999" /></td>
 											</tr>
 										</tbody>
-										<tbody>
+										<tbody class="BFPIDController">
 											<tr>
 												<td></td>
-												<td name="yaw_lpf_hz" class="bf-only"><label>Yaw (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
 												<td name="iterm_reset_offset" class="bf-only"><label>Reset Offset</label><input type="number" step="1" min="0" max="999" /></td>
 											</tr>
 										</tbody>
 									</table>
-									<table class="parameter cf">
-										<thead>
+								</div>
+								<div class="spacer_box">
+									<table class="bf-only" cellpadding="0" cellspacing="0">
+										<tbody class="static-features noline">
 											<tr>
-												<th colspan="5">D-Term</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td name="dterm_lpf_hz" ><label>Filter (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-												<td name="dterm_average_count" class="bf-only"><label>Average Count</label><input type="number" step="1" min="0" max="12" /></td>
+												<td name="pidAtMinThrottle"><label class="option"><input class="ios-switch" type="checkbox"/><div><div></div></div></label></td>
+												<td><label>pidAtMinThrottle</label></td>
+												<td><span>Stabilisation at zero throttle ?</span></td>
 											</tr>
 										</tbody>
 									</table>
@@ -596,24 +803,52 @@
 									</div>
 									<div class="spacer_box">
 									<table class="parameter cf">
-										<tbody>
+										<thead>
 											<tr>
-												<td name='gyro_lpf'><label>Gyro Hardware</label><select><!-- list generated here --></select></td>
-												<td name="gyro_lowpass_hz"><label>Gyro Soft (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+												<th colspan="4">Gyro Filters</th>
 											</tr>
-										</tbody>
+										</thead>
 										<tbody>
 											<tr>
-												<td name="acc_lpf_hz"><label>Acc (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+												<td name='gyro_lpf'><label>Hardware</label><select><!-- list generated here --></select></td>
+                                                <td name='gyro_soft_type'><label>Type</label><select><!-- list generated here --></select></td>
+                                                <td name="gyro_lowpass_hz"><label>Soft (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+												<td></td>
+											</tr>
+											<tr>
+												<td name='gyro_notch_hz'><label>Notch 1<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+												<td name="gyro_notch_cutoff"><label>Notch 1 Cutoff<br>(Hz)</label><input type="number" step="0.1" min="0" max="999.00" /></td>
+                                                <td name='gyro_notch_hz_2'><label>Notch 2<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+                                                <td name="gyro_notch_cutoff_2"><label>Notch 2 Cutoff<br>(Hz)</label><input type="number" step="0.1" min="0" max="999.00" /></td>
+                                            </tr>
+										</tbody>
+									</table>
+									<table class="parameter cf">
+										<thead>
+											<tr>
+												<th colspan="4">D-Term Filters</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td name='dterm_filter_type'><label>Type<br>&nbsp;</label><select><!-- list generated here --></select></td>
+												<td name="dterm_lpf_hz" ><label>Cut-off<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+												<td name="dterm_average_count" class="bf-only"><label>Average Count</label><input type="number" step="1" min="0" max="12" /></td>
+												<td name='dterm_notch_hz'><label>Notch<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+												<td name="dterm_notch_cutoff"><label>Notch Cutoff<br>(Hz)</label><input type="number" step="0.1" min="0" max="999.00" /></td>
 											</tr>
 										</tbody>
 									</table>
-									<table class="bf-only" cellpadding="0" cellspacing="0">
-										<tbody class="static-features noline">
+									<table class="parameter cf">
+										<thead>
 											<tr>
-												<td name="gyro_cal_on_first_arm"><label class="option"><input class="ios-switch" type="checkbox"/><div><div></div></div></label></td>
-												<td><label>GYRO_CAL_ON_FIRST_ARM</label></td>
-												<td><span>Calibrate Gyro on first arm</span></td>
+												<th colspan="4">Other Filters</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td name="acc_lpf_hz"><label>Acc (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+												<td name="yaw_lpf_hz" class="bf-only"><label>Yaw (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
 											</tr>
 										</tbody>
 									</table>
@@ -636,6 +871,14 @@
 											<!-- table generated here -->
 										</tbody>
 									</table>
+									<table class="parameter cf">
+										<tbody>
+											<tr>
+												<td name='serialrx_provider'><label>Provider</label><select><!-- list generated here --></select></td>
+											</tr>
+										</tbody>
+									</table>
+
 								</div>
 							</div>
 							<div class="gui_box grey hardware">
@@ -647,6 +890,8 @@
 										<tbody>
 											<tr>
 												<td name="loopTime"><label>Looptime</label><input type="number" step="25" min="0" max="3000"/></td>
+												<td name="gyro_sync_denom"><label>Gyro Sync</label><input type="number" step="1" min="0" max="8"/></td>
+												<td name="pid_process_denom"><label>PID Process</label><input type="number" step="1" min="0" max="8"/></td>
 											</tr>
 										</tbody>
 										<tbody>
@@ -657,34 +902,41 @@
 											</tr>
 										</tbody>
 									</table>
-								</div>
-							</div>
-							<div class="gui_box grey unknown">
-								<div class="gui_box_titlebar">
-									<div class="spacer_box_title">Unknown Header Fields</div>
-								</div>
-								<div class="spacer_box">
-									<table class="parameter cf">
+									<table class="bf-only" cellpadding="0" cellspacing="0">
+										<tbody class="static-features noline">
 											<tr>
-												<td>Name</td>
-												<td>Value</td>
+												<td name="gyro_cal_on_first_arm"><label class="option"><input class="ios-switch" type="checkbox"/><div><div></div></div></label></td>
+												<td><label>GYRO_CAL_ON_FIRST_ARM</label></td>
+												<td><span>Calibrate Gyro on first arm</span></td>
 											</tr>
+										</tbody>
 									</table>
 								</div>
 							</div>
+                            <div class="gui_box grey debug">
+                                <div class="gui_box_titlebar">
+                                    <div class="spacer_box_title">Debug Settings</div>
+                                </div>
+                                <div class="spacer_box">
+                                    <table class="parameter cf">
+                                        <tbody>
+                                        <tr>
+                                            <td name='debug_mode'><label>Debug Mode</label><select><!-- list generated here --></select></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
 						</div>
 						<div class="cf_column half right">
 							<div class="spacer_left">
 								<div class="gui_box grey rates">
 									<div class="gui_box_titlebar">
-										<div class="spacer_box_title">Rates and Expo</div>
+										<div class="spacer_box_title">RC Command and Motor Protocols</div>
 									</div>
 									<div class="spacer_box">
 										<table class="parameter cf">
 											<thead>
-												<tr>
-													<th colspan="6">RC Command</th>
-												</tr>
 												<tr>
 													<th colspan="3">ROLL/PITCH</th>
 												</tr>
@@ -708,7 +960,7 @@
 										<table class="parameter cf">
 											<thead>
 												<tr>
-													<th colspan="5">Expo Rates</th>
+													<th colspan="5">Super Expo Rates</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -729,12 +981,34 @@
 												</tr>
 											</tbody>
 										</table>
+										<table class="parameter cf">
+											<tbody>
+												<tr>
+													<td name='rc_interpolation'><label>RC Interpolation</label><select><!-- list generated here --></select></td>
+													<td name="rc_interpolation_interval"><label>RC Interval (ms)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+												</tr>
+											</tbody>
+										</table>
 										<table class="noline" cellpadding="0" cellspacing="0">
 											<tbody class="static-features misc noline">
 												<tr>
 													<td name="rc_smoothing"><label class="option"><input class="ios-switch orange" type="checkbox"/><div><div></div></div></label></td>
 													<td><label>RC_SMOOTHING</label></td>
 													<td><span>RC Smoothing Enabled</span></td>
+												</tr>
+											</tbody>
+										</table>
+										<table class="parameter cf">
+											<thead>
+												<tr>
+													<th colspan="5">Motors</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td name='fast_pwm_protocol'><label>Protocol</label><select><!-- list generated here --></select></td>
+													<td name='unsynced_fast_pwm'><label>Motors</label><select><!-- list generated here --></select></td>
+													<td name="motor_pwm_rate"><label>Motor Rate</label><input type="number" step="1" min="0" max="32000"/></td>
 												</tr>
 											</tbody>
 										</table>
@@ -754,15 +1028,26 @@
 													<td name="maxthrottle"><label>Max Throttle</label><input type="number" step="10" min="1000" max="2000" /></td>
 												</tr>
 											</tbody>
+                                        </table>
+                                        <table class="parameter cf">
 											<tbody>
 												<tr>
-													<td name="dynThrPID" colspan="2"><label>TPA</label><input type="number" step="0.01" min="0" max="1.00" /></td>
-													<td name="tpa-breakpoint"><label>TPA Breakpoint</label><input type="number" step="10" min="1000" max="2000" /></td>
+													<td name="dynThrPID"><label>TPA</label><input type="number" step="0.01" min="0" max="1.00" /></td>
+													<td name="tpa-breakpoint"><label>TPA&nbsp;Breakpoint</label><input type="number" step="10" min="1000" max="2000" /></td>
 													<td name="airmode_activate_throttle" class="bf-only"><label>Airmode Activate</label><input type="number" step="10" min="1000" max="2000" /></td>
 												</tr>
 											</tbody>
 										</table>
-									</div>
+                                        <table class="parameter cf">
+                                            <tbody>
+                                            <tr>
+                                                <td name="digitalIdleOffset"><label>D-Shot Offset (%)</label><input type="number" step="0.01" min="0" max="1" /></td>
+                                                <td name="motorOutputLow"><label>D-Shot Motor Low</label><input type="number" step="10" min="0" max="2047" /></td>
+                                                <td name="motorOutputHigh"><label>D-Shot Motor High</label><input type="number" step="10" min="0" max="2047" /></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
 								</div>
 								<div class="gui_box grey voltagecurrent">
 									<div class="gui_box_titlebar">
@@ -785,8 +1070,8 @@
 										<tbody>
 											<tr>
 												<td name="vbatmincellvoltage"><label>Min Cell Voltage</label><input type="number" step="0.01" min="0" max="1.00"/></td>
-												<td name="vbatmaxcellvoltage"><label>Max Cell Voltage</label><input type="number" step="0.01" min="0" max="1.00"/></td>
 												<td name="vbatwarningcellvoltage"><label>Warning Voltage</label><input type="number" step="0.01" min="0" max="2.55" /></td>
+                                                <td name="vbatmaxcellvoltage"><label>Max Cell Voltage</label><input type="number" step="0.01" min="0" max="1.00"/></td>
 											</tr>
 										</tbody>
 										</table>
@@ -825,15 +1110,28 @@
 										</table>
 									</div>
 								</div>
+                                <div class="gui_box grey unknown">
+                                    <div class="gui_box_titlebar">
+                                        <div class="spacer_box_title">Unknown Header Fields</div>
+                                    </div>
+                                    <div class="spacer_box">
+                                        <table class="parameter cf">
+                                            <tr>
+                                                <td>Name</td>
+                                                <td>Value</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
 							</div>
 						</div>
 					</form>
                 	<div class="clear-both"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default header-dialog-toggle">Cleanflight</button>
-                    <button type="button" class="btn btn-default header-dialog-cancel" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary header-dialog-save" data-dismiss="modal">Save changes</button>
+                    <button type="button" class="btn btn-default header-dialog-toggle"  data-toggle="tooltip" title="Change the header display for the respective firmware type">Cleanflight</button>
+                    <button type="button" class="btn btn-default header-dialog-cancel" data-dismiss="modal" data-toggle="tooltip" title="Close without saving changes">Cancel</button>
+                    <button type="button" class="btn btn-primary header-dialog-save" style="display:none;" data-dismiss="modal" data-toggle="tooltip" title="Close and save changes">Save changes</button>
                 </div>
             </div>
         </div>
@@ -842,7 +1140,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-toggle="tooltip" title="Close the dialog box">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <h4 class="modal-title">Shortcut Keys</h4>
@@ -918,9 +1216,9 @@
 									<ul>
 										<li></li>
 										<li><span class=keys"><div class="key">I</div></span>
-													<div class="description">Mark the start of (IN) video export.</div></li>
+													<div class="description">Mark the start of (IN) video export or analyser start.</div></li>
 										<li><span class=keys"><div class="key">O</div></span>
-													<div class="description">Mark the end of (OUT) video export.</div></li>
+													<div class="description">Mark the end of (OUT) video export or analyser end.</div></li>
 									</ul>
 								</div>
 							</div>
@@ -955,7 +1253,7 @@
                 	<div class="clear-both"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default keys-dialog-cancel" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-default keys-dialog-cancel" data-dismiss="modal" data-toggle="tooltip" title="Close the dialog box">Cancel</button>
                 </div>
             </div>
         </div>
@@ -1065,9 +1363,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default video-export-dialog-cancel" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-default video-export-dialog-close" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary video-export-dialog-start">Begin export</button>
+                    <button type="button" class="btn btn-default video-export-dialog-cancel" data-dismiss="modal" data-toggle="tooltip" title="Cancel video generation">Cancel</button>
+                    <button type="button" class="btn btn-default video-export-dialog-close" data-dismiss="modal" data-toggle="tooltip" title="Close dialog box">Close</button>
+                    <button type="button" class="btn btn-primary video-export-dialog-start" data-toggle="tooltip" title="Start generating video file">Begin export</button>
                 </div>
             </div>
         </div>
@@ -1106,7 +1404,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="gui_box grey mixer-settings">
+							<div class="gui_box grey stick-settings">
 								<div class="gui_box_titlebar">
 									<div class="spacer_box_title">Stick Settings</div>
 								</div>
@@ -1114,6 +1412,12 @@
 									<div>
 		                               <label class="option">Units<input class="stick-units ios-switch" type="checkbox"/><div><div></div></div><span>Display actual units on stick display.</span></label>
 		                            </div>
+									<div>
+		                               <label class="option">Stick Trails<input class="stick-trails ios-switch" type="checkbox"/><div><div></div></div><span>Show stick trails.</span></label>
+		                            </div>
+                                    <div>
+                                        <label class="option">Invert Yaw<input class="invert-yaw ios-switch" type="checkbox"/><div><div></div></div><span>Invert Yaw in Stick Display</span></label>
+                                    </div>
 		                            <div class="stick-mode-group">
 										<table>
 											<tr>
@@ -1124,7 +1428,7 @@
 		  												<input type="radio" name="stick-mode" value="3">Mode 3</input><br>
 		  												<input type="radio" name="stick-mode" value="4">Mode 4</input><br>
 												</td>
-												<td class="modePreview"><img src="./images/stick_modes/mode_2.png"/></td>
+												<td class="modePreview"><img src="./images/stick_modes/Mode_2.png"/></td>
 											</tr>
 										</table>
 										<table>
@@ -1146,6 +1450,16 @@
 									</div>
 								</div>
 							</div>
+                            <div class="gui_box grey legend-settings">
+                                <div class="gui_box_titlebar">
+                                    <div class="spacer_box_title">Legend Settings</div>
+                                </div>
+                                <div class="spacer_box">
+                                    <div>
+                                        <label class="option">Units<input class="legend-units ios-switch" type="checkbox"/><div><div></div></div><span>Display actual units on legend.</span></label>
+                                    </div>
+                                </div>
+                            </div>
 	                    </div>
 					</div>
                 	<div class="cf_column half right">
@@ -1178,7 +1492,10 @@
 									<div class="spacer_box_title">Analyser Settings</div>
 								</div>
 								<div class="spacer_box">
-									<table>
+                                    <div>
+                                        <label class="option">Hanning<input class="analyser-hanning ios-switch" type="checkbox"/><div><div></div></div><span>Use Hanning Window for Analyser</span></label>
+                                    </div>
+                                    <table>
 										<tr>
 											<td>
 												<label>Position</label>
@@ -1317,7 +1634,8 @@
     <script src="js/vendor/three.min.js"></script>
     <script src="js/vendor/jquery.nouislider.all.min.js"></script>
     <script src="js/vendor/FileSaver.js"></script>
-    <script src="js/vendor/webm-writer-0.1.0.js"></script>
+    <script src="js/vendor/webm-writer-0.1.1.js"></script>
+    <script src="js/vendor/semver.js"></script>
     <script src="js/pref_storage.js"></script>
     <script src="js/tools.js"></script>
     <script src="js/cache.js"></script>

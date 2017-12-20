@@ -252,8 +252,15 @@ function FlightLog(logData) {
             i,
             fieldNames = that.getMainFieldNames(),
             sysConfig = that.getSysConfig(),
-            refVoltage = that.vbatADCToMillivolts(sysConfig.vbatref) / 100,
             found = false;
+
+        var refVoltage;
+        if((sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(sysConfig.firmwareVersion, '3.1.0')) || 
+           (sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(sysConfig.firmwareVersion, '2.0.0'))) {
+            refVoltage = sysConfig.vbatref;
+        } else {
+            refVoltage = that.vbatADCToMillivolts(sysConfig.vbatref) / 100;
+        }
 
         //Are we even logging VBAT?
         if (!fieldNameToIndex.vbatLatest) {
@@ -959,26 +966,79 @@ FlightLog.prototype.gyroRawToDegreesPerSecond = function(value) {
 // Convert rcCommand to degrees per second
 FlightLog.prototype.rcCommandRawToDegreesPerSecond = function(value, axis, currentFlightMode) {
 
-    if(this.getSysConfig().firmware >= 2.8) {
+    var sysConfig = this.getSysConfig();
+
+    if(sysConfig.firmware >= 3.0 || (sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && sysConfig.firmware >= 2.0)) {
+
+        const RC_RATE_INCREMENTAL = 14.54;
+        const RC_EXPO_POWER = 3;
+
+        var rcInput = [];
+        var that = this;
+
+        var calculateSetpointRate = function(axis, rc) {
+            var angleRate, rcRate, rcSuperfactor, rcCommandf;
+            var rcExpo;
+
+            if (axis != AXIS.YAW) {
+                rcExpo = sysConfig.rcExpo;
+                rcRate = sysConfig.rcRate / 100.0;
+            } else {
+                rcExpo = sysConfig.rcYawExpo;
+                rcRate = sysConfig.rcYawRate / 100.0;
+            }
+
+            if (rcRate > 2.0) rcRate = rcRate + (RC_RATE_INCREMENTAL * (rcRate - 2.0));
+            rcCommandf = rc / 500.0;
+            rcInput[axis] = Math.abs(rcCommandf);
+
+            if (rcExpo) {
+                var expof = rcExpo / 100.0;
+                rcCommandf = rcCommandf * Math.pow(rcInput[axis], RC_EXPO_POWER) * expof + rcCommandf * (1-expof);
+            }
+
+            angleRate = 200.0 * rcRate * rcCommandf;
+
+            if (sysConfig.rates[axis]) {
+                rcSuperfactor = 1.0 / (constrain(1.0 - (Math.abs(rcCommandf) * (sysConfig.rates[axis] / 100.0)), 0.01, 1.00));
+                angleRate *= rcSuperfactor;
+            }
+
+            /*
+            if (debugMode == DEBUG_ANGLERATE) {
+                debug[axis] = angleRate;
+            }
+            */
+
+            if (sysConfig.pidController == 0 /* LEGACY */)
+                return  constrain(angleRate * 4.1, -8190.0, 8190.0) >> 2; // Rate limit protection
+        else
+            return  constrain(angleRate, -1998.0, 1998.0); // Rate limit protection (deg/sec)
+        };
+
+        return calculateSetpointRate(axis, value);
+
+    }
+    else if(sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT && sysConfig.firmware >= 2.8) {
 
             var that = this;
 
             var isSuperExpoActive = function() {
                var FEATURE_SUPEREXPO_RATES = 1 << 23;
 
-               return (that.getSysConfig().features & FEATURE_SUPEREXPO_RATES);
+               return (sysConfig.features & FEATURE_SUPEREXPO_RATES);
             }
 
             var calculateRate = function(value, axis) {
                 var angleRate;
 
                 if (isSuperExpoActive()) {
-                    var rcFactor = (axis === AXIS.YAW) ? (Math.abs(value) / (500.0 * (validate(that.getSysConfig().rcYawRate,100) / 100.0))) : (Math.abs(value) / (500.0 * (validate(that.getSysConfig().rcRate,100) / 100.0)));
-                    rcFactor = 1.0 / (constrain(1.0 - (rcFactor * (validate(that.getSysConfig().rates[axis],100) / 100.0)), 0.01, 1.00));
+                    var rcFactor = (axis === AXIS.YAW) ? (Math.abs(value) / (500.0 * (validate(sysConfig.rcYawRate,100) / 100.0))) : (Math.abs(value) / (500.0 * (validate(sysConfig.rcRate,100) / 100.0)));
+                    rcFactor = 1.0 / (constrain(1.0 - (rcFactor * (validate(sysConfig.rates[axis],100) / 100.0)), 0.01, 1.00));
 
                     angleRate = rcFactor * ((27 * value) / 16.0);
                 } else {
-                    angleRate = ((validate(that.getSysConfig().rates[axis],100) + 27) * value) / 16.0;
+                    angleRate = ((validate(sysConfig.rates[axis],100) + 27) * value) / 16.0;
                 }
 
                 return constrain(angleRate, -8190.0, 8190.0); // Rate limit protection
@@ -1008,16 +1068,16 @@ FlightLog.prototype.rcCommandRawToDegreesPerSecond = function(value, axis, curre
 
 
             if(axis===AXIS.YAW /*YAW*/) {
-                if(this.getSysConfig().superExpoYawMode==SUPER_EXPO_YAW.ON && currentFlightMode==null) superExpoFactor = 1.0; // If we don't know the flight mode, then reset the super expo mode.
-                if((this.getSysConfig().superExpoYawMode==SUPER_EXPO_YAW.ALWAYS)||(this.getSysConfig().superExpoYawMode==SUPER_EXPO_YAW.ON && this.getFlightMode(currentFlightMode).SuperExpo)) {
-                    return superExpoFactor * ((this.getSysConfig().rates[AXIS.YAW] + 47) * value ) >> 7;
+                if(sysConfig.superExpoYawMode==SUPER_EXPO_YAW.ON && currentFlightMode==null) superExpoFactor = 1.0; // If we don't know the flight mode, then reset the super expo mode.
+                if((sysConfig.superExpoYawMode==SUPER_EXPO_YAW.ALWAYS)||(sysConfig.superExpoYawMode==SUPER_EXPO_YAW.ON && this.getFlightMode(currentFlightMode).SuperExpo)) {
+                    return superExpoFactor * ((sysConfig.rates[AXIS.YAW] + 47) * value ) >> 7;
                 } else {
-                    return ((this.getSysConfig().rates[AXIS.YAW] + 47) * value ) >> 7;
+                    return ((sysConfig.rates[AXIS.YAW] + 47) * value ) >> 7;
                 }
 
             } else { /*ROLL or PITCH */
                 if(currentFlightMode==null) superExpoFactor = 1.0; // If we don't know the flight mode, then reset the super expo mode.
-                return superExpoFactor * ((((axis===AXIS.ROLL)?this.getSysConfig().rates[AXIS.ROLL]:this.getSysConfig().rates[AXIS.PITCH]) + 27) * value ) >> 6;
+                return superExpoFactor * ((((axis===AXIS.ROLL)?sysConfig.rates[AXIS.ROLL]:sysConfig.rates[AXIS.PITCH]) + 27) * value ) >> 6;
             }
     }
 };
@@ -1027,6 +1087,11 @@ FlightLog.prototype.rcCommandRawToThrottle = function(value) {
     return Math.min(Math.max(((value - this.getSysConfig().minthrottle) / (this.getSysConfig().maxthrottle - this.getSysConfig().minthrottle)) * 100.0, 0.0),100.0);
 };
 
+FlightLog.prototype.rcMotorRawToPct = function(value) {
+    // Motor displayed as percentage
+    return Math.min(Math.max(((value - this.getSysConfig().motorOutput[0]) / (this.getSysConfig().motorOutput[1] - this.getSysConfig().motorOutput[0])) * 100.0, 0.0),100.0);
+};
+
 FlightLog.prototype.getPIDPercentage = function(value) {
     // PID components and outputs are displayed as percentage (raw value is 0-1000)
     return (value / 10.0);
@@ -1034,7 +1099,13 @@ FlightLog.prototype.getPIDPercentage = function(value) {
 
 
 FlightLog.prototype.getReferenceVoltageMillivolts = function() {
-    return this.vbatADCToMillivolts(this.getSysConfig().vbatref);
+    if((this.getSysConfig().firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(this.getSysConfig().firmwareVersion, '3.1.0')) ||
+       (this.getSysConfig().firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(this.getSysConfig().firmwareVersion, '2.0.0'))) {
+        return this.getSysConfig().vbatref * 100;
+    } else {
+        return this.vbatADCToMillivolts(this.getSysConfig().vbatref);
+    }
+
 };
 
 FlightLog.prototype.vbatADCToMillivolts = function(vbatADC) {
@@ -1062,7 +1133,7 @@ FlightLog.prototype.getFlightMode = function(currentFlightMode) {
             Angle:                 (currentFlightMode & (1<<1))!=0,
             Horizon:               (currentFlightMode & (1<<2))!=0,
             Baro:                  (currentFlightMode & (1<<3))!=0,
-            Mag:                   (currentFlightMode & (1<<4))!=0,
+            AntiGravity:           (currentFlightMode & (1<<4))!=0,
             Headfree:              (currentFlightMode & (1<<5))!=0,
             HeadAdj:               (currentFlightMode & (1<<6))!=0,
             CamStab:               (currentFlightMode & (1<<7))!=0,
@@ -1118,5 +1189,6 @@ FlightLog.prototype.getFeatures = function(enabledFeatures) {
             TRANSPONDER         : (enabledFeatures & (1 << 21))!=0,
             AIRMODE             : (enabledFeatures & (1 << 22))!=0,
             SUPEREXPO_RATES     : (enabledFeatures & (1 << 23))!=0,
+            ANTI_GRAVITY        : (enabledFeatures & (1 << 24))!=0,
         };
 };

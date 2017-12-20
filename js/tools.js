@@ -52,9 +52,19 @@ function signExtend8Bit(byte) {
     return (byte & 0x80) ? (byte | 0xFFFFFF00) : byte;
 }
 
+function signExtend7Bit(byte) {
+    //If sign bit is set, fill the top bits with 1s to sign-extend
+    return (byte & 0x40) ? (byte | 0xFFFFFF80) : byte;
+}
+
 function signExtend6Bit(byte) {
     //If sign bit is set, fill the top bits with 1s to sign-extend
     return (byte & 0x20) ? (byte | 0xFFFFFFC0) : byte;
+}
+
+function signExtend5Bit(byte) {
+    //If sign bit is set, fill the top bits with 1s to sign-extend
+    return (byte & 0x10) ? (byte | 0xFFFFFFE0) : byte;
 }
 
 function signExtend4Bit(nibble) {
@@ -92,22 +102,74 @@ function memmem(haystack, needle, startIndex) {
     return -1;
 }
 
-function parseCommaSeparatedIntegers(string) {
-    var 
+function parseCommaSeparatedString(string, length) {
+    /***
+     * Parse a comma separated string for individual values.
+     *
+     * string               is the comma separated string to parse
+     * length (optional)    the returned array will be forced to be this long; extra fields will be discarded,
+     *                      missing fields will be padded. if length is not specified, then array will be auto
+     *                      sized.
+     *
+     * returns              if the string does not contain a comma, then the first integer/float/string is returned
+     *                      else an Array is returned containing all the values up to the length (if specified)
+     ***/
+    var
         parts = string.split(","),
-        result = new Array(parts.length);
-    
-    for (var i = 0; i < parts.length; i++) {
-        result[i] = parseInt(parts[i], 10);
-    }
+        result, value;
 
-    return result;
+    length = length || parts.length; // we can force a length if we like
+
+    if (length < 2) {
+        // this is not actually a list, just return the value
+        value = (parts.indexOf('.'))?parseFloat(parts):parseInt(parts, 10);
+        return (isNaN(value) ? string : value);
+    } else {
+        // this really is a list; build an array
+        result = new Array(length);
+        for (var i = 0; i < length; i++) {
+            if(i<parts.length) {
+                value = (parts[i].indexOf('.'))?parseFloat(parts[i]):parseInt(parts[i], 10);
+                result[i] = isNaN(value) ? parts[i] : value;
+            } else {
+                result[i] = null;
+            }
+        }
+        return result;
+    }
+}
+
+/**
+ * Browser Zoom Facilities
+**/
+var zoomLevels = [
+        0.25, 0.33, 0.50, 0.67, 0.75, 0.80, 0.90, 1.00, 1.10, 1.25, 1.50, 1.75, 2.00, 2.50, 3.00, 4.00, 5.00
+    ];
+
+function zoomIn() {
+    var currentZoom = document.body.style.zoom || 1.0; //parseInt(documentElem.css("zoom"));
+    for(var i=0; i<zoomLevels.length; i++) {
+        if(zoomLevels[i] > currentZoom) {
+            document.body.style.zoom = zoomLevels[i];
+            return;
+        }
+    }
+}
+
+function zoomOut() {
+    var currentZoom = document.body.style.zoom || 1.0; //parseInt(documentElem.css("zoom"));
+    for(var i=zoomLevels.length-1; i>0; i--) {
+        if(zoomLevels[i] < currentZoom) {
+            document.body.style.zoom = zoomLevels[i];
+            return;
+        }
+    }
 }
 
 /**
  * Find the index of `item` in `list`, or if `item` is not contained in `list` then return the index
  * of the next-smaller element (or 0 if `item` is smaller than all values in `list`).
- */
+ **/
 function binarySearchOrPrevious(list, item) {
     var
         min = 0,
@@ -187,6 +249,21 @@ function formatTime(msec, displayMsec) {
         + (displayMsec ? "." + leftPad(ms, "0", 3) : "");
 }
 
+function stringLoopTime(loopTime, pid_process_denom, unsynced_fast_pwm, motor_pwm_rate) {
+    var returnString = '';
+    if(loopTime!=null) {
+        returnString = (loopTime +'\u03BCS (' + parseFloat((1000/loopTime).toFixed(3)) + 'kHz');
+        if(pid_process_denom!=null) {
+            returnString += "/" + (parseFloat((1000/(loopTime*pid_process_denom)).toFixed(3)) +'kHz');
+            if(unsynced_fast_pwm!=null) {
+                returnString += (unsynced_fast_pwm==0)?('/SYNCED') : ( (motor_pwm_rate!=null)?('/' + parseFloat((motor_pwm_rate/1000).toFixed(3)) + "kHz"):('UNSYNCED') ); 
+            }
+        }
+    returnString += ')';
+    }
+    return returnString;
+}
+
 function stringTimetoMsec(input) {
     try {
             var matches = input.match(/([-])?([0-9]+)(\D)*([0-9]+)*\D*([0-9]+)*/);
@@ -244,3 +321,99 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
       ctx.stroke();
     }
   }
+
+var mouseNotification = {
+    enabled: true,
+    elem: $('.mouseNotification'),
+    timeout: null,
+    show: function(target, x, y, message, delay, messageClass, align, margin) {
+
+        /**
+         target 			is the target element that triggered the mouse notification
+         x,y				are the mouse coordinates (if required)
+         message 		is the text to display (supports html endcoding)
+         delay 			is how long the message will remain before auto clearing
+         messageClass 	is the css class that should be used to draw the box, null for default
+         align 			is the position to put the popup to, null means at the mouse position, 'top-left' etc,
+         margin 			is the margin from the mouse cursor or border, null for default 10px
+
+         the index.html should have an entry <div class="mouseNotification"></div>
+         and the .css should have two definitions...
+
+         .mouseNotification {
+                position: absolute;
+                margin 0 auto;
+                white-space: pre-wrap;
+            }
+
+         .mouseNotification-box {
+                padding: 4px;
+                color: black;
+                background-color: #EAEAEA;
+                border: 2px solid white;
+                border-radius: 3px;
+            }
+
+         **/
+
+        if (!this.enabled) return false;
+
+        this.elem = this.elem || $('.mouseNotification');
+
+        messageClass = messageClass || 'mouseNotification-box';
+        margin = margin || 10;
+
+        var mouseNotificationElem = $('#mouse-notification');
+        if (mouseNotificationElem.length != 0) {
+            clearTimeout(this.timeout);
+            mouseNotificationElem.replaceWith('<div class="' + messageClass + '" id="mouse-notification">' + message  + "</div>");
+        } else {
+            this.elem.append('<div class="' + messageClass + '" id="mouse-notification">' + message + "</div>");
+        }
+        this.timeout = setTimeout(function() {
+            $('#mouse-notification').remove();
+        }, (delay || 1000));
+
+        var popupRect  = $(this.elem).get(0).getBoundingClientRect(); // get the popup metrics
+        var targetRect = $(target).get(0).getBoundingClientRect();
+
+        var left = 0, top = 0;
+
+        // reposition the notification;
+        if (align != null) { // default is at the mouse position
+            if (align.indexOf('right') !== -1) {
+                left = targetRect.width - (popupRect.width + margin);
+            } else if (align.indexOf('center') !== -1) {
+                left = targetRect.width / 2 - (popupRect.width + margin) / 2;
+            } else { // default left
+                left = margin;
+            }
+            if (align.indexOf('bottom') !== -1) {
+                top = targetRect.height - (popupRect.height + margin);
+            } else if (align.indexOf('middle') !== -1) {
+                top = targetRect.height / 2 - (popupRect.height + margin) / 2;
+            } else { // default top
+                top = margin;
+            }
+            this.elem.css('left', left);
+            this.elem.css('top', top);
+
+        } else { // default is at the mouse position
+            this.elem.css('left', (x || 0) - targetRect.left  + margin);
+            this.elem.css('top', (y || 0) - targetRect.top  + margin);
+        }
+
+        // now re-position the box if it goes out of the target element
+        popupRect = $(this.elem).get(0).getBoundingClientRect(); // now get them again now that we have positioned it.
+        if (popupRect.right > (targetRect.right - margin)) {
+            this.elem.css('left', targetRect.right - popupRect.width - margin);
+        }
+        /* // disable the overflow to the bottom as single elements will overflow.
+         if (popupRect.bottom > (targetRect.bottom - margin)) {
+         this.elem.css('top', targetRect.bottom - popupRect.height - margin);
+         }
+         */
+
+        return true;
+    }
+};

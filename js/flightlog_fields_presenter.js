@@ -68,10 +68,10 @@ function FlightLogFieldPresenter() {
         'axisError[2]' : 'PID_Error[yaw]',
 
         //Virtual fields - add the Scaled rcCommands
-        'rcCommands[all]': 'rcCommands',
-        'rcCommands[0]' : 'rcCommands[roll]',
-        'rcCommands[1]' : 'rcCommands[pitch]',
-        'rcCommands[2]' : 'rcCommands[yaw]',
+        'rcCommands[all]': 'setpointRates',
+        'rcCommands[0]' : 'setpointRate[roll]',
+        'rcCommands[1]' : 'setpointRate[pitch]',
+        'rcCommands[2]' : 'setpointRate[yaw]',
 
         //Virtual fields - add the Scaled gyros
         'gyroADCs[all]': 'gyros',
@@ -80,6 +80,179 @@ function FlightLogFieldPresenter() {
         'gyroADCs[2]': 'gyros[yaw]'        
 
     };
+    
+    	var DEBUG_FRIENDLY_FIELD_NAMES = { 
+			'NONE' : 	{
+							'debug[all]':'debug[all]',	
+							'debug[0]':'debug[0]',
+							'debug[1]':'debug[1]',
+							'debug[2]':'debug[2]',
+							'debug[3]':'debug[3]',
+						},
+			'CYCLETIME' : 	{	
+							'debug[all]':'Debug Cycle Time',	
+							'debug[0]':'Cycle Time',
+							'debug[1]':'CPU Load',
+							'debug[2]':'Motor Update',
+							'debug[3]':'Motor Deviation',
+						},
+			'BATTERY' : 	{	
+							'debug[all]':'Debug Battery',	
+							'debug[0]':'vbat_ADC',
+							'debug[1]':'vbat',
+							'debug[2]':'Not Used',
+							'debug[3]':'Not Used',
+						},
+			'GYRO' : 	{	
+							'debug[all]':'Debug Gyro',	
+							'debug[0]':'gyro_raw[X]',
+							'debug[1]':'gyro_raw[Y]',
+							'debug[2]':'gyro_raw[Z]',
+							'debug[3]':'Not Used',
+						},
+			'ACCELEROMETER' : 	{	
+							'debug[all]':'Debug Acc',	
+							'debug[0]':'acc_raw[X]',
+							'debug[1]':'acc_raw[Y]',
+							'debug[2]':'acc_raw[Z]',
+							'debug[3]':'Not Used',
+						},
+			'MIXER' : 	{	
+							'debug[all]':'Debug Mixer',	
+							'debug[0]':'rollPitchYawMix[0]',
+							'debug[1]':'rollPitchYawMix[1]',
+							'debug[2]':'rollPitchYawMix[2]',
+							'debug[3]':'rollPitchYawMix[3]',
+						},
+			'AIRMODE' : 	{	
+							'debug[all]':'debug[all]',	
+							'debug[0]':'debug[0]',
+							'debug[1]':'debug[1]',
+							'debug[2]':'debug[2]',
+							'debug[3]':'debug[3]',
+						},
+			'PIDLOOP' : 	{	
+							'debug[all]':'Debug PID',	
+							'debug[0]':'Wait Time',
+							'debug[1]':'Sub Update Time',
+							'debug[2]':'PID Update Time',
+							'debug[3]':'Motor Update Time',
+						},
+			'NOTCH' : 	{	
+							'debug[all]':'Debug Notch',	
+							'debug[0]':'gyro_preNotch[roll]',
+							'debug[1]':'gyro_preNotch[pitch]',
+							'debug[2]':'gyro_preNotch[yaw]',
+							'debug[3]':'Not Used',
+						},
+			'RC_INTERPOLATION' : 	{	
+							'debug[all]':'Debug RC',	
+							'debug[0]':'rcCommand_raw[roll]',
+							'debug[1]':'rcCommand_raw[pitch]',
+							'debug[2]':'rcCommand_raw[yaw]',
+							'debug[3]':'rxRefreshRate',
+						},
+			'VELOCITY' : 	{	
+							'debug[all]':'debug[all]',	
+							'debug[0]':'debug[0]',
+							'debug[1]':'debug[1]',
+							'debug[2]':'debug[2]',
+							'debug[3]':'debug[3]',
+						},
+			'DTERM_FILTER' : 	{	
+							'debug[all]':'Debug Filter',	
+							'debug[0]':'dterm_filter[roll]',
+							'debug[1]':'dterm_filter[pitch]',
+							'debug[2]':'Not Used',
+							'debug[3]':'Not Used',
+						},
+			'ANGLERATE' : 	{	
+							'debug[all]':'Debug Anglerate',	
+							'debug[0]':'Anglerate[roll]',
+							'debug[1]':'Anglerate[pitch]',
+							'debug[2]':'Anglerate[yaw]',
+							'debug[3]':'Not Used',
+						},						
+            'ESC_SENSOR' : 	{
+                            'debug[all]':'ESC Sensor',
+                            'debug[0]':'Motor Index',
+                            'debug[1]':'Timeouts',
+                            'debug[2]':'Temperature',
+                            'debug[3]':'RPM',
+            },
+            'SCHEDULER' : 	{
+                            'debug[all]':'Scheduler',
+                            'debug[0]':'Not Used',
+                            'debug[1]':'Not Used',
+                            'debug[2]':'Schedule Time',
+                            'debug[3]':'Function Exec Time',
+            },
+            'STACK' : 	{
+                            'debug[all]':'Stack',
+                            'debug[0]':'Stack High Mem',
+                            'debug[1]':'Stack Low Mem',
+                            'debug[2]':'Stack Current',
+                            'debug[3]':'Stack p',
+            },
+            'DEBUG_ESC_SENSOR_RPM' : {
+                            'debug[all]':'Debug ESC Sensor RPM',
+							'debug[0]':'debug[0]',
+							'debug[1]':'debug[1]',
+							'debug[2]':'debug[2]',
+							'debug[3]':'debug[3]',
+            
+            },
+    		'DEBUG_ESC_SENSOR_TMP' : {
+                            'debug[all]':'Debug ESC Sensor TMP',
+							'debug[0]':'debug[0]',
+							'debug[1]':'debug[1]',
+							'debug[2]':'debug[2]',
+							'debug[3]':'debug[3]',    		
+    		},
+    		'DEBUG_ALTITUDE' : {
+                            'debug[all]':'Debug Altitude',
+							'debug[0]':'debug[0]',
+							'debug[1]':'debug[1]',
+							'debug[2]':'debug[2]',
+							'debug[3]':'debug[3]',    		
+    		},
+    		'DEBUG_FFT' : {
+    		                'debug[all]':'Debug FFT',
+    		                'debug[0]':'gyro_raw[roll]',
+    		                'debug[1]':'gyro_dyn_notch[roll]',
+    		                'debug[2]':'gyro_bpf[roll]',
+    		                'debug[3]':'fft_center_index[roll]',    		
+    		},
+            'DEBUG_FFT_TIME' : {
+                            'debug[all]':'Debug FFT TIME',
+                            'debug[0]':'Active calc step',
+                            'debug[1]':'Step duration',
+                            'debug[2]':'Additional steps',
+                            'debug[3]':'Not used',
+            },
+            'DEBUG_FFT_FREQ' : {
+                            'debug[all]':'Debug FFT FREQ',
+                            'debug[0]':'center_freq[roll]',
+                            'debug[1]':'center_freq[pitch]',
+                            'debug[2]':'center_freq[yaw]',
+                            'debug[3]':'Not used',
+            },
+            'DEBUG_FRSKY_D_RX' : {
+                            'debug[all]':'Debug FRSKY_D_RX',
+                            'debug[0]':'debug[0]',
+                            'debug[1]':'debug[1]',
+                            'debug[2]':'debug[2]',
+                            'debug[3]':'debug[3]',
+            
+            },
+            'DEBUG_GYRO_RAW' :   {   
+                            'debug[all]':'Debug Gyro Raw', 
+                            'debug[0]':'gyro_raw[X]',
+                            'debug[1]':'gyro_raw[Y]',
+                            'debug[2]':'gyro_raw[Z]',
+                            'debug[3]':'Not Used',
+                        },
+            };
     
     function presentFlags(flags, flagNames) {
         var 
@@ -170,7 +343,8 @@ function FlightLogFieldPresenter() {
                 return Math.round(flightLog.rcCommandRawToDegreesPerSecond(value,2), currentFlightMode) + " deg/s";
 
             case 'rcCommand[3]':
-            case 'motor[0]':            
+                return Math.round(flightLog.rcCommandRawToThrottle(value)) + " %";
+            case 'motor[0]':
             case 'motor[1]':            
             case 'motor[2]':            
             case 'motor[3]':            
@@ -178,7 +352,7 @@ function FlightLogFieldPresenter() {
             case 'motor[5]':            
             case 'motor[6]':            
             case 'motor[7]':            
-                return Math.round(flightLog.rcCommandRawToThrottle(value)) + " %";
+                return Math.round(flightLog.rcMotorRawToPct(value)) + " %";
 
             case 'rcCommands[0]':
             case 'rcCommands[1]':
@@ -205,11 +379,21 @@ function FlightLogFieldPresenter() {
                 return flightLog.accRawToGs(value).toFixed(2) + "g";
             
             case 'vbatLatest':
-                return (flightLog.vbatADCToMillivolts(value) / 1000).toFixed(2) + "V" + ", " + (flightLog.vbatADCToMillivolts(value) / 1000 / flightLog.getNumCellsEstimate()).toFixed(2) + "V/cell";
-    
+                if((flightLog.getSysConfig().firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(flightLog.getSysConfig().firmwareVersion, '3.1.0')) ||
+                   (flightLog.getSysConfig().firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(flightLog.getSysConfig().firmwareVersion, '2.0.0'))) {
+                    return (value / 10).toFixed(2) + "V" + ", " + (value / 10 / flightLog.getNumCellsEstimate()).toFixed(2) + "V/cell";
+                } else {
+                    return (flightLog.vbatADCToMillivolts(value) / 1000).toFixed(2) + "V" + ", " + (flightLog.vbatADCToMillivolts(value) / 1000 / flightLog.getNumCellsEstimate()).toFixed(2) + "V/cell";
+                }
+
             case 'amperageLatest':
-                return (flightLog.amperageADCToMillivolts(value) / 1000).toFixed(2) + "A" + ", " + (flightLog.amperageADCToMillivolts(value) / 1000 / flightLog.getNumMotors()).toFixed(2) + "A/motor";
-    
+                if((flightLog.getSysConfig().firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(flightLog.getSysConfig().firmwareVersion, '3.1.0')) ||
+                   (flightLog.getSysConfig().firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(flightLog.getSysConfig().firmwareVersion, '2.0.0'))) {
+                    return (value / 100).toFixed(2) + "A" + ", " + (value / 100 / flightLog.getNumMotors()).toFixed(2) + "A/motor";
+                } else {
+                    return (flightLog.amperageADCToMillivolts(value) / 1000).toFixed(2) + "A" + ", " + (flightLog.amperageADCToMillivolts(value) / 1000 / flightLog.getNumMotors()).toFixed(2) + "A/motor";
+                }
+
             case 'heading[0]':
             case 'heading[1]':
             case 'heading[2]':
@@ -228,13 +412,94 @@ function FlightLogFieldPresenter() {
                 return presentEnum(value, FLIGHT_LOG_FAILSAFE_PHASE_NAME);
                 
             case 'features':
-                return presentEnum(value, FLIGHT_LOG_FEATURES);                
+                return presentEnum(value, FLIGHT_LOG_FEATURES); 
+
+            case 'debug[0]':
+            case 'debug[1]':
+            case 'debug[2]':
+            case 'debug[3]':
+            	return FlightLogFieldPresenter.decodeDebugFieldToFriendly(flightLog, fieldName, value, currentFlightMode);
+
             default:
                 return "";
         }
     };
+    
+    FlightLogFieldPresenter.decodeDebugFieldToFriendly = function(flightLog, fieldName, value, currentFlightMode) {
+		if(flightLog) {
+			var debugModeName = DEBUG_MODE[flightLog.getSysConfig().debug_mode]; // convert to recognisable name
+			switch (debugModeName) {
+				case 'NONE':
+				case 'AIRMODE':
+				case 'VELOCITY':
+					return "";
+				case 'CYCLETIME':
+					switch (fieldName) {
+						case 'debug[1]':
+							return value.toFixed(0) + "%";
+						default:
+							return value.toFixed(0) + "\u03BCS";
+					}				
+				case 'PIDLOOP': 
+					return value.toFixed(0) + "\u03BCS";
+				case 'BATTERY':
+					switch (fieldName) {
+						case 'debug[0]':
+							return value.toFixed(0);
+						default:
+							return (value/10).toFixed(1) + "V"
+					}	
+				case 'GYRO':
+				case 'NOTCH':
+					return Math.round(flightLog.gyroRawToDegreesPerSecond(value)) + "deg/s";
+				case 'ACCELEROMETER':
+				    return flightLog.accRawToGs(value).toFixed(2) + "g";
+				case 'MIXER':
+					return Math.round(flightLog.rcCommandRawToThrottle(value)) + " %";
+				case 'RC_INTERPOLATION':
+					switch (fieldName) {
+						case 'debug[3]':
+							return (value / 1000).toFixed(0) + 'mS';
+						default:
+							return value.toFixed(0);
+					}				
+				case 'DFILTER':
+					return "";
+                case 'ANGLERATE':
+                    return value.toFixed(0) + "deg/s";
+                case 'ESC_SENSOR':
+                    switch (fieldName) {
+                        case 'debug[2]':
+                            return value.toFixed(0) + "°C";
+                        case 'debug[3]':
+                            return value.toFixed(0) + "rpm";
+                        default:
+                            return value.toFixed(0) + "\u03BCS";
+                    }
+                case 'SCHEDULER':
+                    return value.toFixed(0) + "\u03BCS";
+                case 'STACK':
+                    return value.toFixed(0);
+                case 'DEBUG_FFT':
+                    return Math.round(flightLog.gyroRawToDegreesPerSecond(value)) + "deg/s";
+                case 'DEBUG_FFT_TIME':
+                    return value.toFixed(0) + "\u03BCS";
+                case 'DEBUG_FFT_FREQ':
+                    return value.toFixed(0) + "Hz";
+                default:
+					return "";
+			}	
+		}
+		return "";
+	};
         
-    FlightLogFieldPresenter.fieldNameToFriendly = function(fieldName) {
+    FlightLogFieldPresenter.fieldNameToFriendly = function(fieldName, debugMode) {
+    	if(debugMode) {
+			if(fieldName.includes('debug')) {
+				var debugFields = DEBUG_FRIENDLY_FIELD_NAMES[debugMode < DEBUG_MODE.length ? DEBUG_MODE[debugMode] : DEBUG_MODE[0]];
+				return debugFields[fieldName];
+			}			
+    	}
         if (FRIENDLY_FIELD_NAMES[fieldName]) {
             return FRIENDLY_FIELD_NAMES[fieldName];
         }

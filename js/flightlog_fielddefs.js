@@ -23,7 +23,6 @@ var
         GTUNE_CYCLE_RESULT: 20,
         FLIGHT_MODE: 30, // New Event type
         TWITCH_TEST: 40, // Feature for latency testing
-
         CUSTOM : 250, // Virtual Event Code - Never part of Log File.
         CUSTOM_BLANK : 251, // Virtual Event Code - Never part of Log File. - No line shown
         LOG_END: 255
@@ -85,7 +84,7 @@ var
             'SOFTSPI'
     ]),
 
-    PID_CONTROLLER_TYPE = makeReadOnly([
+    PID_CONTROLLER_TYPE = ([
             'UNUSED',
             'MWREWRITE',
             'LUXFLOAT'
@@ -99,6 +98,75 @@ var
     OFF_ON = makeReadOnly([
             "OFF",
             "ON"
+    ]),
+
+    FAST_PROTOCOL = makeReadOnly([
+            "PWM",
+            "ONESHOT125",
+            "ONESHOT42",
+            "MULTISHOT",
+            "BRUSHED",
+            "DSHOT150",
+            "DSHOT300",
+            "DSHOT600",
+            "DSHOT1200"
+    ]),
+
+    MOTOR_SYNC = makeReadOnly([
+            "SYNCED",
+            "UNSYNCED"
+    ]),
+
+    SERIALRX_PROVIDER = makeReadOnly([
+			"SPEK1024",
+			"SPEK2048",
+			"SBUS",
+			"SUMD",
+			"SUMH",
+			"XB-B",
+			"XB-B-RJ01",
+			"IBUS",
+			"JETIEXBUS"
+    ]),
+
+    RC_INTERPOLATION = makeReadOnly([
+            "OFF",
+            "DEFAULT",
+            "AUTO",
+            "MANUAL"
+    ]),
+
+    FILTER_TYPE = makeReadOnly([
+            "PT1",
+            "BIQUAD",
+            "FIR",
+    ]),
+
+    DEBUG_MODE = makeReadOnly([
+			"NONE",
+			"CYCLETIME",
+			"BATTERY",
+			"GYRO",
+			"ACCELEROMETER",
+			"MIXER",
+			"AIRMODE",
+			"PIDLOOP",
+			"NOTCH",
+			"RC_INTERPOLATION",
+			"VELOCITY",
+			"DTERM_FILTER",
+            "ANGLERATE",
+            "ESC_SENSOR",
+            "SCHEDULER",
+            "STACK",
+            "DEBUG_ESC_SENSOR_RPM",
+            "DEBUG_ESC_SENSOR_TMP",
+            "DEBUG_ALTITUDE",
+            "DEBUG_FFT",
+            "DEBUG_FFT_TIME",
+            "DEBUG_FFT_FREQ",
+            "DEBUG_FRSKY_D_RX",
+            "DEBUG_GYRO_RAW"
     ]),
 
     SUPER_EXPO_YAW = makeReadOnly([
