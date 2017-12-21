@@ -1,3 +1,4 @@
+/*global $ */
 "use strict";
 
 var FlightLogIndex,
@@ -11,7 +12,6 @@ var FlightLogIndex,
 var FlightLogParser = function(logData) {
     //Private constants:
     var
-        FLIGHT_LOG_MAX_FIELDS = 128,
         FLIGHT_LOG_MAX_FRAME_LENGTH = 256,
 
         //Assume that even in the most woeful logging situation, we won't miss 10 seconds of frames
@@ -70,8 +70,6 @@ var FlightLogParser = function(logData) {
         FLIGHT_LOG_FIELD_ENCODING_TAG8_4S16       = 8,
         FLIGHT_LOG_FIELD_ENCODING_NULL            = 9, // Nothing is written to the file, take value to be zero
         FLIGHT_LOG_FIELD_ENCODING_TAG2_3SVARIABLE = 10,
-
-        FLIGHT_LOG_EVENT_LOG_END = 255,
 
         EOF = ArrayDataStream.prototype.EOF,
         NEWLINE  = '\n'.charCodeAt(0),
@@ -345,11 +343,9 @@ var FlightLogParser = function(logData) {
     function parseHeaderLine() {
         var
             COLON = ":".charCodeAt(0),
-
             fieldName, fieldValue,
             lineStart, lineEnd, separatorPos = false,
-            matches,
-            i, c;
+            matches;
 
         if (stream.peekChar() != ' ')
             return;
@@ -516,16 +512,16 @@ var FlightLogParser = function(logData) {
                 break;
             case "thr_expo":
                 that.sysConfig.thrExpo = parseInt(fieldValue, 10);
-                break
+                break;
             case "setpoint_relaxation_ratio":
                 that.sysConfig.setpointRelaxRatio = parseInt(fieldValue, 10);
                 break;
             case "dterm_setpoint_weight":
                 that.sysConfig.dtermSetpointWeight = parseInt(fieldValue, 10);
-                break
+                break;
             case "gyro_lowpass_type":
                 that.sysConfig.gyro_soft_type = parseInt(fieldValue, 10);
-                break
+                break;
             case "vbat_pid_gain":
                 that.sysConfig.vbat_pid_compensation = parseInt(fieldValue, 10);
                 break;
@@ -534,22 +530,22 @@ var FlightLogParser = function(logData) {
                 break;
             case "acc_limit":
                 that.sysConfig.rateAccelLimit = parseInt(fieldValue, 10);
-                break
+                break;
             case "acc_limit_yaw":
                 that.sysConfig.yawRateAccelLimit = parseInt(fieldValue, 10);
-                break
+                break;
             case "iterm_windup":
                 that.sysConfig.itermWindupPointPercent = parseInt(fieldValue, 10);
-                break
+                break;
             case "use_unsynced_pwm":
                 that.sysConfig.unsynced_fast_pwm = parseInt(fieldValue, 10);
-                break
+                break;
             case "motor_pwm_protocol":
                 that.sysConfig.fast_pwm_protocol = parseInt(fieldValue, 10);
-                break
+                break;
             case "tpa_rate":
                 that.sysConfig.dynThrPID = parseInt(fieldValue, 10);
-                break
+                break;
 
             case "yawRateAccelLimit":
             case "rateAccelLimit":
@@ -649,8 +645,9 @@ var FlightLogParser = function(logData) {
                 //TODO Unify this somehow...
 
                 // Extract the firmware revision in case of Betaflight/Raceflight/Cleanfligh 2.x/Other
-                var matches = fieldValue.match(/(.*flight).* (\d+)\.(\d+)(\.(\d+))*/i);
-                if(matches!=null) {
+                matches = fieldValue.match(/(.*flight).* (\d+)\.(\d+)(\.(\d+))*/i);
+
+                if (matches != null) {
 
                     // Detecting Betaflight requires looking at the revision string
                     if (matches[1] === "Betaflight") {
@@ -670,8 +667,8 @@ var FlightLogParser = function(logData) {
                     /*
                      * Try to detect INAV
                      */
-                    var matches = fieldValue.match(/(INAV).* (\d+)\.(\d+).(\d+)*/i);
-                    if(matches!=null) {
+                    matches = fieldValue.match(/(INAV).* (\d+)\.(\d+).(\d+)*/i);
+                    if (matches != null) {
                         that.sysConfig.firmwareType  = FIRMWARE_TYPE_INAV;
                         that.sysConfig.firmware      = parseFloat(matches[2] + '.' + matches[3]);
                         that.sysConfig.firmwarePatch = (matches[5] != null)?parseInt(matches[5]):'';
@@ -718,7 +715,7 @@ var FlightLogParser = function(logData) {
                             count: 0,
                             signed: [],
                             predictor: [],
-                            encoding: [],
+                            encoding: []
                         };
                     }
 
@@ -751,7 +748,7 @@ var FlightLogParser = function(logData) {
                     }
                 } else {
                     console.log("Ignoring unsupported header \"" + fieldName + "\"");
-                    if(that.sysConfig.unknownHeaders==null) that.sysConfig.unknownHeaders = new Array();
+                    if(that.sysConfig.unknownHeaders==null) that.sysConfig.unknownHeaders = [];
                     that.sysConfig.unknownHeaders.push({ name: fieldName, value: fieldValue });// Save the unknown headers
                 }
             break;
@@ -952,6 +949,7 @@ var FlightLogParser = function(logData) {
         parseFrame(that.frameDefs.I, current, previous, null, 0, raw);
     }
 
+    //noinspection JSUnusedLocalSymbols
     function completeGPSHomeFrame(frameType, frameStart, frameEnd, raw) {
         updateFieldStatistics(frameType, gpsHomeHistory[0]);
 
@@ -964,6 +962,7 @@ var FlightLogParser = function(logData) {
         return true;
     }
 
+    //noinspection JSUnusedLocalSymbols
     function completeGPSFrame(frameType, frameStart, frameEnd, raw) {
         if (gpsHomeIsValid) {
             updateFieldStatistics(frameType, lastGPS);
@@ -976,6 +975,7 @@ var FlightLogParser = function(logData) {
         return true;
     }
 
+    //noinspection JSUnusedLocalSymbols
     function completeSlowFrame(frameType, frameStart, frameEnd, raw) {
         updateFieldStatistics(frameType, lastSlow);
 
@@ -1181,6 +1181,7 @@ var FlightLogParser = function(logData) {
         }
     }
 
+    //noinspection JSUnusedLocalSymbols
     function completeEventFrame(frameType, frameStart, frameEnd, raw) {
         if (lastEvent) {
             switch (lastEvent.event) {
@@ -1204,11 +1205,12 @@ var FlightLogParser = function(logData) {
         return false;
     }
 
+    //noinspection JSUnusedLocalSymbols
     function parseEventFrame(raw) {
         var
             END_OF_LOG_MESSAGE = "End of log\0",
-
-            eventType = stream.readByte();
+            eventType = stream.readByte(),
+            tmp;
 
         lastEvent = {
             event: eventType,
@@ -1258,7 +1260,7 @@ var FlightLogParser = function(logData) {
                 lastEvent.data.newP = stream.readS16();
             break;
             case FlightLogEvent.INFLIGHT_ADJUSTMENT:
-                var tmp = stream.readU8();
+                tmp = stream.readU8();
                 lastEvent.data.name = 'Unknown';
                 lastEvent.data.func = tmp & 127;
                 lastEvent.data.value = tmp < 128 ? stream.readSignedVB() : uint32ToFloat(stream.readU32());
@@ -1277,7 +1279,7 @@ var FlightLogParser = function(logData) {
             break;
             case FlightLogEvent.TWITCH_TEST:
                 //lastEvent.data.stage = stream.readU8();
-                var tmp = stream.readU8();
+                tmp = stream.readU8();
                 switch (tmp) {
                     case(1):
                         lastEvent.data.name = "Response Time->";
@@ -1590,9 +1592,5 @@ FlightLogParser.prototype.resetStats = function() {
 };
 
 FlightLogParser.prototype.FLIGHT_LOG_START_MARKER = asciiStringToByteArray("H Product:Blackbox flight data recorder by Nicholas Sherlock\n");
-
-FlightLogParser.prototype.FLIGHT_LOG_FIELD_UNSIGNED = 0;
-FlightLogParser.prototype.FLIGHT_LOG_FIELD_SIGNED   = 1;
-
 FlightLogParser.prototype.FLIGHT_LOG_FIELD_INDEX_ITERATION = 0;
 FlightLogParser.prototype.FLIGHT_LOG_FIELD_INDEX_TIME = 1;
