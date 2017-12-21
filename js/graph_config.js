@@ -384,30 +384,6 @@ GraphConfig.load = function(config) {
                                     outputRange: 1.0
                                 };
                         }
-                    case 'RC_INTERPOLATION':
-                        switch (fieldName) {
-                            case 'debug[2]': //Yaw
-                                return {
-                                    offset: 0,
-                                    power: 0.8,
-                                    inputRange: 500,
-                                    outputRange: 1.0
-                                };                            
-                            case 'debug[3]': // refresh period
-                                return {
-                                    offset: -15000,
-                                    power: 1.0,
-                                    inputRange: 15000, // 30mS max
-                                    outputRange: 1.0  
-                                }; 
-                            default:
-                                return {
-                                    offset: 0,
-                                    power: 0.8,
-                                    inputRange: 500 * (sysConfig.rcRate ? sysConfig.rcRate : 100) / 100,
-                                    outputRange: 1.0
-                                };
-                        }
                     case 'ANGLERATE':
                         return {
                             offset: 0,

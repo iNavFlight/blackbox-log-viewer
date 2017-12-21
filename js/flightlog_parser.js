@@ -389,20 +389,10 @@ var FlightLogParser = function(logData) {
                 dataVersion = parseInt(fieldValue, 10);
             break;
             case "Firmware type":
-                switch (fieldValue) {
-                    case "Cleanflight":
-                        that.sysConfig.firmwareType = FIRMWARE_TYPE_CLEANFLIGHT;
-                        $('html').removeClass('isBaseF');
-    					$('html').addClass('isCF');
-                        $('html').removeClass('isBF');
-                        $('html').removeClass('isINAV');
-                    break;
-                    default:
-                        that.sysConfig.firmwareType = FIRMWARE_TYPE_BASEFLIGHT;
-                        $('html').addClass('isBaseF');
-    					$('html').removeClass('isCF');
-                        $('html').removeClass('isBF');
-                        $('html').removeClass('isINAV');
+                if (fieldValue === "Cleanflight") {
+                    that.sysConfig.firmwareType = FIRMWARE_TYPE_CLEANFLIGHT;
+                } else {
+                    that.sysConfig.firmwareType = FIRMWARE_TYPE_UNKNOWN;
                 }
             break;
 
@@ -470,6 +460,13 @@ var FlightLogParser = function(logData) {
             case "dtermSetpointWeight":
             case "gyro_soft_type":
             case "debug_mode":
+            case "dterm_cut_hz":
+            case "acc_cut_hz":
+            case "yaw_lpf_hz":
+            case "gyro_lowpass_hz":
+            case "dterm_notch_hz":
+            case "dterm_notch_cutoff":
+            case "dterm_lpf_hz":
                 that.sysConfig[fieldName] = parseInt(fieldValue, 10);
             break;
 
@@ -537,9 +534,6 @@ var FlightLogParser = function(logData) {
             case "iterm_windup":
                 that.sysConfig.itermWindupPointPercent = parseInt(fieldValue, 10);
                 break;
-            case "use_unsynced_pwm":
-                that.sysConfig.unsynced_fast_pwm = parseInt(fieldValue, 10);
-                break;
             case "motor_pwm_protocol":
                 that.sysConfig.fast_pwm_protocol = parseInt(fieldValue, 10);
                 break;
@@ -550,46 +544,17 @@ var FlightLogParser = function(logData) {
             case "yawRateAccelLimit":
             case "rateAccelLimit":
             case "anti_gravity_gain":
-                if((that.sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(that.sysConfig.firmwareVersion, '3.1.0')) ||
-                   (that.sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(that.sysConfig.firmwareVersion, '2.0.0'))) {
-                    that.sysConfig[fieldName] = uint32ToFloat(fieldValue, 10);
-                } else {
-                    that.sysConfig[fieldName] = parseInt(fieldValue, 10);
-                }
+                that.sysConfig[fieldName] = uint32ToFloat(fieldValue, 10);
                 break;
-
-            case "yaw_lpf_hz":
-            case "gyro_lowpass_hz":
-            case "dterm_notch_hz":
-            case "dterm_notch_cutoff":
-            case "dterm_lpf_hz":
-                if((that.sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(that.sysConfig.firmwareVersion, '3.0.1')) ||
-                   (that.sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(that.sysConfig.firmwareVersion, '2.0.0'))) {
-                    that.sysConfig[fieldName] = parseInt(fieldValue, 10);
-                } else {
-                    that.sysConfig[fieldName] = parseInt(fieldValue, 10) / 100.0;
-                }
-            break;
 
             case "gyro_notch_hz":
             case "gyro_notch_cutoff":
-                if((that.sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(that.sysConfig.firmwareVersion, '3.0.1')) ||
-                   (that.sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(that.sysConfig.firmwareVersion, '2.0.0'))) {
-                    that.sysConfig[fieldName] = parseCommaSeparatedString(fieldValue);
-                } else {
-                    that.sysConfig[fieldName] = parseInt(fieldValue, 10) / 100.0;
-                }
-            break;
+                that.sysConfig[fieldName] = parseCommaSeparatedString(fieldValue);
+                break;
 
             case "digitalIdleOffset":
-                    that.sysConfig[fieldName] = parseInt(fieldValue, 10) / 100.0;
-
-            /**  Cleanflight Only log headers **/
-            case "dterm_cut_hz":
-            case "acc_cut_hz":
-                 that.sysConfig[fieldName] = parseInt(fieldValue, 10);
-            break;
-            /** End of cleanflight only log headers **/
+                that.sysConfig[fieldName] = parseInt(fieldValue, 10) / 100.0;
+                break;
 
             case "superExpoFactor":
                 if(fieldValue.match(/.*,.*/)!=null) {
@@ -641,54 +606,26 @@ var FlightLogParser = function(logData) {
                 that.sysConfig.gyroScale = hexToFloat(fieldValue) / (1000000 / (Math.PI / 180.0));
             break;
             case "Firmware revision":
-
-                //TODO Unify this somehow...
-
-                // Extract the firmware revision in case of Betaflight/Raceflight/Cleanfligh 2.x/Other
-                matches = fieldValue.match(/(.*flight).* (\d+)\.(\d+)(\.(\d+))*/i);
-
+                /*
+                 * Try to detect INAV
+                 */
+                matches = fieldValue.match(/(INAV).* (\d+)\.(\d+).(\d+)*/i);
                 if (matches != null) {
-
-                    // Detecting Betaflight requires looking at the revision string
-                    if (matches[1] === "Betaflight") {
-                        that.sysConfig.firmwareType = FIRMWARE_TYPE_BETAFLIGHT;
-                        $('html').removeClass('isBaseF');
-                        $('html').removeClass('isCF');
-                        $('html').addClass('isBF');
-                        $('html').removeClass('isINAV');
-                    }
-
-                    that.sysConfig.firmware        = parseFloat(matches[2] + '.' + matches[3]).toFixed(1);
-                    that.sysConfig.firmwarePatch   = (matches[5] != null)?parseInt(matches[5]):'0';
-                    that.sysConfig.firmwareVersion = that.sysConfig.firmware + '.' + that.sysConfig.firmwarePatch;
-
+                    that.sysConfig.firmwareType  = FIRMWARE_TYPE_INAV;
+                    that.sysConfig.firmware      = parseFloat(matches[2] + '.' + matches[3]);
+                    that.sysConfig.firmwarePatch = (matches[5] != null)?parseInt(matches[5]):'';
+                    //added class definition as the isBF, isCF etc classes are only used for colors and
+                    //a few images in the css.
+                    $('html').addClass('isINAV');
                 } else {
-
-                    /*
-                     * Try to detect INAV
-                     */
-                    matches = fieldValue.match(/(INAV).* (\d+)\.(\d+).(\d+)*/i);
-                    if (matches != null) {
-                        that.sysConfig.firmwareType  = FIRMWARE_TYPE_INAV;
-                        that.sysConfig.firmware      = parseFloat(matches[2] + '.' + matches[3]);
-                        that.sysConfig.firmwarePatch = (matches[5] != null)?parseInt(matches[5]):'';
-                        //added class definition as the isBF, isCF etc classes are only used for colors and
-                        //a few images in the css.
-                        $('html').removeClass('isBaseF');
-                        $('html').removeClass('isCF');
-                        $('html').removeClass('isBF');
-                        $('html').addClass('isINAV');
-                    } else {
-
-                    	// Cleanflight 1.x and others
-                        that.sysConfig.firmwareVersion = '0.0.0';
-                        that.sysConfig.firmware        = 0.0;
-                        that.sysConfig.firmwarePatch   = 0;
-                    }
+                    that.sysConfig.firmwareType    = FIRMWARE_TYPE_UNKNOWN;
+                    that.sysConfig.firmwareVersion = '0.0.0';
+                    that.sysConfig.firmware        = 0.0;
+                    that.sysConfig.firmwarePatch   = 0;
                 }
                 that.sysConfig[fieldName] = fieldValue;
+                break;
 
-            break;
             case "Product":
             case "Blackbox version":
             case "Firmware date":

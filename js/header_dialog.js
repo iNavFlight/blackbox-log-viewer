@@ -1,3 +1,4 @@
+/*global $ */
 'use strict';
 
 function HeaderDialog(dialog, onSave) {
@@ -15,7 +16,6 @@ function HeaderDialog(dialog, onSave) {
 
 	var parameterVersion = [
             {name:'dterm_average_count'	    	, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'0.0.0', max:'2.6.9'},
-            {name:'rc_smoothing'			    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'0.0.0', max:'2.8.9'},
 			{name:'dynamic_pterm'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.6.0', max:'2.7.9'},
 			{name:'iterm_reset_offset'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.6.0', max:'2.7.9'},
 			{name:'superExpoFactor'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.6.0', max:'2.7.9'},
@@ -32,11 +32,7 @@ function HeaderDialog(dialog, onSave) {
             {name:'gyro_notch_cutoff'		    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'dterm_notch_hz'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'dterm_notch_cutoff'		    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'rc_interpolation'   			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'rc_interpolation_interval'   , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'gyro_sync_denom'			    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'pid_process_denom'    		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'unsynced_fast_pwm'    		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'fast_pwm_protocol'    		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'motor_pwm_rate'    			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
 			{name:'serialrx_provider'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
@@ -192,77 +188,35 @@ function HeaderDialog(dialog, onSave) {
             })
 	}
 
-	function isFeatureEnabled(name, list, value) {
-		for (var i = 0; i < list.length; i++) {
-			if (list[i].name == name && (value & 1<<list[i].bit)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	function builtFeaturesList(sysConfig) {
 
 		var value = sysConfig.features;
 
-        // generate features
         var features = [
-            {bit: 0, group: 'rxMode', mode: 'group', name: 'RX_PPM', description: 'PPM Receiver Selected'},
-            {bit: 1, group: 'battery', name: 'VBAT', description: 'Battery Monitoring'},
-            {bit: 2, group: 'other', name: 'INFLIGHT_ACC_CAL', description: 'In-flight level calibration'},
-            {bit: 3, group: 'rxMode', mode: 'group', name: 'RX_SERIAL', description: 'Serial Receiver Selected'},
-            {bit: 4, group: 'other', name: 'MOTOR_STOP', description: 'Motor Stop on low throttle'},
-            {bit: 5, group: 'other', name: 'SERVO_TILT', description: 'Servo gimbal'},
-            {bit: 6, group: 'other', name: 'SOFTSERIAL', description: 'Enable CPU based serial port'},
-            {bit: 7, group: 'other', name: 'GPS', description: 'GPS device connected'},
-            {bit: 8, group: 'other', name: 'FAILSAFE', description: 'Failsafe mode enabled'},
-            {bit: 9, group: 'other', name: 'SONAR', description: 'Sonar'},
-            {bit: 10, group: 'other', name: 'TELEMETRY', description: 'Telemetry Output'},
-            {bit: 11, group: 'battery', name: 'CURRENT_METER', description: 'Battery current monitoring'},
-            {bit: 12, group: 'other', name: '3D', description: '3D mode (for use with reversible ESCs)'},
-            {bit: 13, group: 'rxMode', mode: 'group', name: 'RX_PARALLEL_PWM', description: 'PWM receiver selected'},
-            {bit: 14, group: 'rxMode', mode: 'group', name: 'RX_MSP', description: 'Controller over MSP'},
-            {bit: 15, group: 'other', name: 'RSSI_ADC', description: 'ADC RSSI Monitoring'},
-            {bit: 16, group: 'other', name: 'LED_STRIP', description: 'Addressible RGB LED strip support'},
-            {bit: 17, group: 'other', name: 'DISPLAY', description: 'OLED Screen Display'},
-            {bit: 19, group: 'other', name: 'BLACKBOX', description: 'Blackbox flight data recorder'},
-            {bit: 20, group: 'other', name: 'CHANNEL_FORWARDING', description: 'Forward aux channels to servo outputs'},
-            {bit: 21, group: 'other', name: 'TRANSPONDER', description: 'Transponder enabled'}
+            {bit: 1, name: 'VBAT'},
+            {bit: 4, name: 'MOTOR_STOP'},
+            {bit: 5, name: 'SERVO_TILT'},
+            {bit: 6, name: 'SOFTSERIAL'},
+            {bit: 7, name: 'GPS'},
+            {bit: 10, name: 'TELEMETRY'},
+            {bit: 11, name: 'CURRENT_METER'},
+            {bit: 12, name: '3D'},
+            {bit: 15, name: 'RSSI_ADC'},
+            {bit: 16, name: 'LED_STRIP'},
+            {bit: 17, name: 'DISPLAY'},
+            {bit: 19, name: 'BLACKBOX'},
+            {bit: 20, name: 'CHANNEL_FORWARDING'},
+            {bit: 2, name: 'INFLIGHT_ACC_CAL'},
+            {bit: 9, name: 'SONAR'},
+            {bit: 8, name: 'FAILSAFE'},
+            {bit: 18, name: 'ONESHOT125'},
+            {bit: 28, name: 'PWM_OUTPUT_ENABLE'},
+            {bit: 21, name: 'TRANSPONDER'},
+            {bit: 26, name: 'SOFTSPI'},
+            {bit: 27, name: 'PWM_SERVO_DRIVER'},
+            {bit: 29, name: 'OSD'},
+            {bit: 22, name: 'AIRMODE'}
         ];
-
-
-        // Add specific features for betaflight v2.8 onwards....
-		if (semver.gte(sysConfig.firmwareVersion, "2.8.0")) {
-			features.push(
-				{bit: 22, group: 'other', name: 'AIRMODE', description: 'Airmode always enabled, set off to use modes'}
-			);
-		}
-
-		if (semver.gte(sysConfig.firmwareVersion, "2.8.0") && !semver.gte(sysConfig.firmwareVersion, "3.0.0")) {
-			features.push(
-				{bit: 23, group: 'other', name: 'SUPEREXPO_RATES', description: 'Super Expo Mode'}
-			);
-		}
-
-        if (semver.gte(sysConfig.firmwareVersion, "2.8.0") && !semver.gte(sysConfig.firmwareVersion, "3.0.0")) {
-            features.push(
-                {bit: 18, group: 'other', name: 'ONESHOT125', description: 'Oneshot 125 Enabled'}
-            );
-        }
-
-		if (semver.gte(sysConfig.firmwareVersion, "3.0.0")) {
-			features.push(
-				{bit: 18, group: 'other', name: 'OSD', description: 'On Screen Display'}
-			);
-		}
-
-		if (semver.gte(sysConfig.firmwareVersion, "3.1.0")) {
-			features.push(
-				{bit: 27, group: 'other', name: 'ESC_SENSOR', description: 'Use KISS ESC 24A telemetry as sensor'}
-			)
-		}
-
-        var radioGroups = [];
 
         var features_e = $('.features');
         features_e.children().remove(); // clear list
@@ -270,67 +224,24 @@ function HeaderDialog(dialog, onSave) {
         for (var i = 0; i < features.length; i++) {
             var row_e;
 
-            var feature_tip_html = '';
+            row_e = $('<tr><td><label class="option"><input disabled class="feature '
+                    + i
+                    + ' ios-switch" name="'
+                    + features[i].name
+                    + '" title="feature ' + ((value & 1<<features[i].bit)?'':'-')
+                    + features[i].name
+                    + '" type="checkbox" bit="'+ i +'" /><div><div></div></div></label></td><td><label for="feature-'
+                    + i
+                    + '">'
+                    + features[i].name
+                    + '</label></td></tr>');
 
-            if (features[i].mode === 'group') {
-                row_e = $('<tr><td><input class="feature" id="feature-'
-                        + i
-                        + '" value="'
-                        + features[i].bit
-                        + '" title="feature ' + ((value & 1<<features[i].bit)?'':'-')
-                        + features[i].name
-                        + '" type="radio" name="'
-                        + features[i].group
-                        + '" bit="' + i + '" /></td><td><label for="feature-'
-                        + i
-                        + '">'
-                        + features[i].name
-                        + '</label></td><td><span>' + features[i].description + '</span>'
-                        + feature_tip_html + '</td></tr>');
-                radioGroups.push(features[i].group);
-            } else {
-                row_e = $('<tr><td><label class="option"><input class="feature '
-                        + i
-                        + ' ios-switch" name="'
-                        + features[i].name
-                        + '" title="feature ' + ((value & 1<<features[i].bit)?'':'-')
-                        + features[i].name
-                        + '" type="checkbox" bit="'+ i +'" /><div><div></div></div></label></td><td><label for="feature-'
-                        + i
-                        + '">'
-                        + features[i].name
-                        + '</label></td><td><span>' + features[i].description + '</span>'
-                        + feature_tip_html + '</td></tr>');
+            var feature_e = row_e.find('input.feature');
+            feature_e.prop('checked', (value & 1<<features[i].bit));
+            feature_e.data('bit', features[i].bit);
 
-                var feature_e = row_e.find('input.feature');
-
-                feature_e.prop('checked', (value & 1<<features[i].bit));
-                feature_e.data('bit', features[i].bit);
-            }
-
-			features_e.each(function () {
-				if ($(this).hasClass(features[i].group)) {
-					$(this).append(row_e);
-				}
-			});
+			$('#features-list').append(row_e);
 		}
-
-		for (var i = 0; i < radioGroups.length; i++) {
-			var group = radioGroups[i];
-			var controls_e = $('input[name="' + group + '"].feature');
-
-			controls_e.each(function() {
-				var bit = parseInt($(this).attr('value'));
-				var state = (value & 1<<bit);
-
-				$(this).prop('checked', state);
-			});
-		}
-
-		// Finally, if the features value is not part of the log, then invalidate all the check/radio boxes
-		(value!=null)?$(".feature").closest('tr').removeClass('missing'):
-					  $(".feature").closest('tr').addClass('missing');
-
 	}
 
 	function renderUnknownHeaders(unknownHeaders) {
@@ -456,7 +367,6 @@ function HeaderDialog(dialog, onSave) {
 
         setParameter('loopTime'					,sysConfig.looptime,0);
         setParameter('gyro_sync_denom'			,sysConfig.gyro_sync_denom,0);
-        setParameter('pid_process_denom'		,sysConfig.pid_process_denom,0);
         setParameter('yaw_p_limit'				,sysConfig.yaw_p_limit,0);
         setParameter('dterm_average_count'		,sysConfig.dterm_average_count,0);
     	renderSelect('dynamic_pterm'			,sysConfig.dynamic_pterm, OFF_ON);
@@ -465,13 +375,11 @@ function HeaderDialog(dialog, onSave) {
         setParameter('rollPitchItermIgnoreRate'	,sysConfig.rollPitchItermIgnoreRate,0);
         setParameter('yawItermIgnoreRate'		,sysConfig.yawItermIgnoreRate,0);
         setParameter('itermWindupPointPercent'  ,sysConfig.itermWindupPointPercent,0);
-        setParameter('dterm_cut_hz'				,sysConfig.dterm_cut_hz,2);
         setParameter('iterm_reset_offset'		,sysConfig.iterm_reset_offset,0);
         setParameter('deadband'					,sysConfig.deadband,0);
         setParameter('yaw_deadband'				,sysConfig.yaw_deadband,0);
     	renderSelect('gyro_lpf'			    	,sysConfig.gyro_lpf, GYRO_LPF);
-        setParameter('acc_lpf_hz'				,sysConfig.acc_lpf_hz,2);
-        setParameter('acc_cut_hz'				,sysConfig.acc_cut_hz,2);
+        setParameter('acc_lpf_hz'				,sysConfig.acc_lpf_hz,0);
 	    setParameter('airmode_activate_throttle',sysConfig.airmode_activate_throttle, 0);
 	    renderSelect('serialrx_provider'		,sysConfig.serialrx_provider, SERIALRX_PROVIDER);
 	    renderSelect('superExpoYawMode'		    ,sysConfig.superExpoYawMode, SUPER_EXPO_YAW);
@@ -494,9 +402,6 @@ function HeaderDialog(dialog, onSave) {
 		setParameter('yaw_lpf_hz'				,sysConfig.yaw_lpf_hz,0);
 		setParameter('gyro_lowpass_hz'			,sysConfig.gyro_lowpass_hz,0);
 
-    	renderSelect('rc_interpolation'		    ,sysConfig.rc_interpolation, RC_INTERPOLATION);
-        setParameter('rc_interpolation_interval',sysConfig.rc_interpolation_interval,0);
-    	renderSelect('unsynced_fast_pwm'		,sysConfig.unsynced_fast_pwm, MOTOR_SYNC);
     	renderSelect('fast_pwm_protocol'		,sysConfig.fast_pwm_protocol, FAST_PROTOCOL);
         setParameter('motor_pwm_rate'		    ,sysConfig.motor_pwm_rate,0);
         renderSelect('dterm_filter_type'		,sysConfig.dterm_filter_type, FILTER_TYPE);
@@ -531,7 +436,6 @@ function HeaderDialog(dialog, onSave) {
 		/* Booleans */
         setCheckbox('gyro_cal_on_first_arm'		,sysConfig.gyro_cal_on_first_arm);
         setCheckbox('vbat_pid_compensation'		,sysConfig.vbat_pid_compensation);
-        setCheckbox('rc_smoothing'				,sysConfig.rc_smoothing);
         setCheckbox('pidAtMinThrottle'			,sysConfig.pidAtMinThrottle);
 
         /* Show Unknown Fields */

@@ -367,7 +367,7 @@ function BlackboxLogViewer() {
         var sysConfig = flightLog.getSysConfig();
         $('.version', statusBar).text( ((sysConfig['Craft name']!=null)?(sysConfig['Craft name'] + ' : '):'') +
                                         ((sysConfig['Firmware revision']!=null)?(sysConfig['Firmware revision']):''));
-        $('.looptime', statusBar).text( stringLoopTime(sysConfig.looptime, sysConfig.pid_process_denom, sysConfig.unsynced_fast_pwm, sysConfig.motor_pwm_rate));
+        $('.looptime', statusBar).text( stringLoopTime(sysConfig.looptime));
         $('.lograte', statusBar).text( ((sysConfig['frameIntervalPDenom']!=null && sysConfig['frameIntervalPNum']!=null)?( 'Sample Rate : ' + sysConfig['frameIntervalPNum'] +'/' + sysConfig['frameIntervalPDenom']):''));
 
         seekBar.setTimeRange(flightLog.getMinTime(), flightLog.getMaxTime(), currentBlackboxTime);

@@ -146,13 +146,6 @@ var
 			"JETIEXBUS"
     ]),
 
-    RC_INTERPOLATION = makeReadOnly([
-            "OFF",
-            "DEFAULT",
-            "AUTO",
-            "MANUAL"
-    ]),
-
     FILTER_TYPE = makeReadOnly([
             "PT1",
             "BIQUAD",
