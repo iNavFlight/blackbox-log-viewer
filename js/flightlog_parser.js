@@ -262,6 +262,7 @@ var FlightLogParser = function(logData) {
             Craft_name:null,                // Craft Name
             motorOutput:[null,null],        // Minimum and maximum outputs to motor's
             digitalIdleOffset:null,         // min throttle for d-shot (as a percentage)
+            waypoints:[null,null],          // Number of nav. waypoints / is waypoint list valid
             unknownHeaders : []             // Unknown Extra Headers
         },
 
@@ -476,21 +477,43 @@ var FlightLogParser = function(logData) {
                 that.sysConfig[fieldName] = parseInt(fieldValue, 10);
             break;
 
+            /*
+             * Overrides for INAV specific names of values
+             */
+            case "vbat_scale":
+                that.sysConfig["vbatscale"] = parseInt(fieldValue, 10);
+                break;
+
+            case "rc_yaw_expo":
+                that.sysConfig["rcYawExpo"] = parseInt(fieldValue, 10);
+                break;
+
+            case "gyro_lpf_hz":
+                that.sysConfig["gyro_lowpass_hz"] = parseInt(fieldValue, 10);
+                break;
+
+            case "waypoints":
+                that.sysConfig["waypoints"] = parseInt(fieldValue, 10);
+                break;
+            /*
+             * End of INAV specific overrides
+             */
+
             case "rc_rate":
                 that.sysConfig.rcRate = parseInt(fieldValue, 10);
-                break
+                break;
             case "rc_rate_yaw":
                 that.sysConfig.rcYawRate = parseInt(fieldValue, 10);
-                break
+                break;
             case "rc_expo":
                 that.sysConfig.rcExpo = parseInt(fieldValue, 10);
-                break
+                break;
             case "rc_expo_yaw":
                 that.sysConfig.rcYawExpo = parseInt(fieldValue, 10);
-                break
+                break;
             case "thr_mid":
                 that.sysConfig.thrMid = parseInt(fieldValue, 10);
-                break
+                break;
             case "thr_expo":
                 that.sysConfig.thrExpo = parseInt(fieldValue, 10);
                 break
@@ -505,10 +528,10 @@ var FlightLogParser = function(logData) {
                 break
             case "vbat_pid_gain":
                 that.sysConfig.vbat_pid_compensation = parseInt(fieldValue, 10);
-                break
+                break;
             case "dshot_idle_value":
                 that.sysConfig.digitalIdleOffset = parseInt(fieldValue, 10);
-                break
+                break;
             case "acc_limit":
                 that.sysConfig.rateAccelLimit = parseInt(fieldValue, 10);
                 break
@@ -620,9 +643,6 @@ var FlightLogParser = function(logData) {
                 //TODO find all places radians are converted to dps and remove it instead on doing this
                 //This negates radians to dps conversion
                 that.sysConfig.gyroScale = hexToFloat(fieldValue) / (1000000 / (Math.PI / 180.0));
-            break;
-            case "acc_1G":
-                that.sysConfig.acc_1G = parseInt(fieldValue, 10);
             break;
             case "Firmware revision":
 
