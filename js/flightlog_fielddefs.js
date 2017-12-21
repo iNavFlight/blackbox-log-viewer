@@ -37,21 +37,38 @@ var
 
 
     FLIGHT_LOG_FLIGHT_MODE_NAME = makeReadOnly([
-        'ANGLE',
-        'HORIZON',
-        'MAG HOLD',
-        'NAV ALTHOLD',
-        'NAV RTH',
-        'NAV POSHOLD',
-        'HEADFREE',
-        'UNUSED_MODE', // old autotune
-        'PASSTHRU',
-        'FAILSAFE',
-        'UNUSED_MODE2', // old G-Tune
-        'NAV WP',
-        'HEADING LOCK',
-        'FLAPERON',
-        'TURN ASSISTANT'
+        "ARM",
+        "ANGLE",
+        "HORIZON",
+        "NAV ALTHOLD",
+        "HEADING HOLD",
+        "HEADFREE",
+        "HEAD ADJ",
+        "CAMSTAB",
+        "NAV RTH",
+        "NAV POSHOLD",
+        "PASSTHRU",
+        "BEEPER",
+        "LEDLOW",
+        "LLIGHTS",
+        "NAV LAUNCH",
+        "OSD SW",
+        "TELEMETRY",
+        "BLACKBOX",
+        "FAILSAFE",
+        "NAV WP",
+        "AIRMODE",
+        "HOME RESET",
+        "GCS NAV",
+        "KILLSWITCH",
+        "SURFACE",
+        "FLAPERON",
+        "TURN ASSIST",
+        "SERVO AUTOTRIM",
+        "AUTO TUNE",
+        "CAMERA 1",
+        "CAMERA 2",
+        "CAMERA 3"
     ]),
 
     FLIGHT_LOG_FEATURES = makeReadOnly([
