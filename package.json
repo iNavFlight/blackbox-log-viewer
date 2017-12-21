@@ -1,6 +1,6 @@
 {
-  "name": "betaflight-blackbox-explorer",
-  "description": "Crossplatform blackbox analitics tool for Betaflight flight control system.",
+  "name": "inav-blackbox-explorer",
+  "description": "Crossplatform blackbox analitics tool for INAV flight control system.",
   "version": "3.0.0",
   "main": "main_nwjs.html",
   "bg-script": "background.js",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "github.com/betaflight/blackbox-log-viewer"
+    "url": "github.com/iNavFlight/blackbox-log-viewer"
   },
   "author": "INAV",
   "license": "GPL-3.0",

@@ -219,9 +219,10 @@ gulp.task('apps', ['dist', 'clean-apps'], function (done) {
         buildDir: appsDir,
         platforms: platforms,
         flavor: 'normal',
+        zip: false,
         macIcns: './images/bf_icon.icns',
-        macPlist: { 'CFBundleDisplayName': 'Betaflight Blackbox Explorer'},
-        winIco: './images/bf_icon.ico',
+        macPlist: { 'CFBundleDisplayName': 'INAV Blackbox Explorer'},
+        winIco: './images/bf_icon.ico'
     });
     builder.on('log', console.log);
     builder.build(function (err) {
@@ -322,7 +323,7 @@ function release_win32() {
     archive.on('warning', function (err) { throw err; });
     archive.on('error', function (err) { throw err; });
     archive.pipe(output);
-    archive.directory(src, 'Betaflight Blackbox Explorer');
+    archive.directory(src, 'INAV Blackbox Explorer');
     return archive.finalize();
 }
 
@@ -336,7 +337,7 @@ function release_linux64() {
     archive.on('warning', function (err) { throw err; });
     archive.on('error', function (err) { throw err; });
     archive.pipe(output);
-    archive.directory(src, 'Betaflight Blackbox Explorer');
+    archive.directory(src, 'INAV Blackbox Explorer');
     return archive.finalize();
 }
 
@@ -360,14 +361,14 @@ function release_osx64() {
     var src = path.join(appsDir, pkg.name, 'osx64', pkg.name + '.app');
     // Check if we want to sign the .app bundle
 
-    var output = fs.createWriteStream(path.join(appsDir, get_release_filename('macOS', 'zip')));
+    var output = fs.createWriteStream(path.join(releaseDir, get_release_filename('macOS', 'zip')));
     var archive = archiver('zip', {
         zlib: { level: 9 }
     });
     archive.on('warning', function(err) { throw err; });
     archive.on('error', function(err) { throw err; });
     archive.pipe(output);
-    archive.directory(src, 'INAV Configurator.app');
+    archive.directory(src, 'INAV Blackbox Explorer.app');
     return archive.finalize();
 }
 
