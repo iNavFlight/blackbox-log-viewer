@@ -356,29 +356,19 @@ function release_chromeos() {
 
 // Create distribution package for macOS platform
 function release_osx64() {
-    var appdmg = require('gulp-appdmg');
+    var pkg = require('./package.json');
+    var src = path.join(appsDir, pkg.name, 'osx64', pkg.name + '.app');
+    // Check if we want to sign the .app bundle
 
-    return gulp.src([])
-        .pipe(appdmg({
-            target: path.join(releaseDir, get_release_filename('macOS', 'dmg')),
-            basepath: path.join(appsDir, pkg.name, 'osx64'),
-            specification: {
-                title: 'BF Blackbox Explorer', // <= volume name; should be smaller than 27 chars.
-                contents: [
-                    { 'x': 448, 'y': 342, 'type': 'link', 'path': '/Applications' },
-                    { 'x': 192, 'y': 344, 'type': 'file', 'path': pkg.name + '.app', 'name': 'Betaflight Blackbox Explorer.app' }
-                ],
-                background: path.join(__dirname, 'images/dmg-background.png'),
-                format: 'UDZO',
-                window: {
-                    size: {
-                        width: 638,
-                        height: 479
-                    }
-                }
-            },
-        })
-    );
+    var output = fs.createWriteStream(path.join(appsDir, get_release_filename('macOS', 'zip')));
+    var archive = archiver('zip', {
+        zlib: { level: 9 }
+    });
+    archive.on('warning', function(err) { throw err; });
+    archive.on('error', function(err) { throw err; });
+    archive.pipe(output);
+    archive.directory(src, 'INAV Configurator.app');
+    return archive.finalize();
 }
 
 // Create distributable .zip files in ./release
