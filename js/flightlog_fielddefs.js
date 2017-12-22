@@ -149,34 +149,19 @@ var
     FILTER_TYPE = makeReadOnly([
             "PT1",
             "BIQUAD",
-            "FIR",
+            "FIR"
     ]),
 
     DEBUG_MODE = makeReadOnly([
-			"NONE",
-			"CYCLETIME",
-			"BATTERY",
-			"GYRO",
-			"ACCELEROMETER",
-			"MIXER",
-			"AIRMODE",
-			"PIDLOOP",
-			"NOTCH",
-			"RC_INTERPOLATION",
-			"VELOCITY",
-			"DTERM_FILTER",
-            "ANGLERATE",
-            "ESC_SENSOR",
-            "SCHEDULER",
-            "STACK",
-            "DEBUG_ESC_SENSOR_RPM",
-            "DEBUG_ESC_SENSOR_TMP",
-            "DEBUG_ALTITUDE",
-            "DEBUG_FFT",
-            "DEBUG_FFT_TIME",
-            "DEBUG_FFT_FREQ",
-            "DEBUG_FRSKY_D_RX",
-            "DEBUG_GYRO_RAW"
+        "NONE",
+        "GYRO",
+        "NOTCH",
+        "NAV_LANDING_DETECTOR",
+        "FW_CLIMB_RATE_TO_ALTITUDE",
+        "RANGEFINDER",
+        "RANGEFINDER_QUALITY",
+        "PITOT",
+        "AGL"
     ]),
 
     SUPER_EXPO_YAW = makeReadOnly([

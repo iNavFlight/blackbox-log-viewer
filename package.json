@@ -7,7 +7,6 @@
   "default_locale": "en",
   "scripts": {
     "start": "node node_modules/nw/bin/nw .",
-    "debug": "node node_modules/gulp/bin/gulp.js debug",
     "_postinstall": "node ./node_modules/platform-dependent-modules/cli.js",
     "postinstall": "npm run _postinstall",
     "gulp": "gulp"
