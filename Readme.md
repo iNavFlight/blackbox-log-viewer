@@ -2,34 +2,29 @@
 
 ![Main explorer interface](screenshots/main-interface.jpg)
 
-This tool allows you to open logs recorded by Cleanflight's Blackbox feature in your web browser. You can seek through
+This tool allows you to open logs recorded by INAV's Blackbox feature in your web browser. You can seek through
 the log to examine graphed values at each timestep. If you have a flight video, you can load that in as well and it'll
 be played behind the log. You can export the graphs as a WebM video to share with others.
 
 ## Installation
 
-There are three methods of installation available:
+_INAV Blackbox Explorer_ is distributed as _standalone_ application.
 
-### Chrome Web Store method
+### Windows
 
-The easiest way to get the explorer (if you have Google Chrome) is to install it from the Chrome Web Store:
+1. Visit [release page](https://github.com/iNavFlight/blackbox-log-viewer/releases)
+1. Download Configurator for Windows platform (win32 or win64 if present)
+1. Extract ZIP archive
+1. Run app from unpacked folder
+1. Configurator is not signed, so you have to allow Windows to run untrusted application. There might be a monit for it during first run 
 
-https://chrome.google.com/webstore/detail/cleanflight-blackbox-expl/cahpidddaimdojnddnahjpnefajpheep
+### Mac
 
-This will add it to your computer as a Chrome App.
-
-### Manual Chrome App install
-Download the contents of this repository by clicking the "download ZIP" button on the right of this page. Unpack
-the zip somewhere on your computer. In Google Chrome, open up the Extensions page, tick the "developer mode" tickbox, 
-click the "load unpacked extension" button, and point it at the unpacked folder. This will add it as a Chrome App.
-
-### Run as a webpage
-Download the contents of this repository by clicking the "download ZIP" button on the right of this page. Unpack
-the zip somewhere on your computer, and double click "index.html" file to open it with your web browser. 
-
-Note that the "video export" feature is only available when opened with Google Chrome. Also, running it this way will 
-limit the exported flight video to 500MB in size. Use one of the previous Chrome App install methods to unlock 
-&gt;500MB video export.
+1. Visit [release page](https://github.com/iNavFlight/blackbox-log-viewer/releases)
+1. Download Configurator for Mac platform
+1. Extract ZIP archive
+1. Run INAV Configurator
+1. Configurator is not signed, so you have to allow Mac to run untrusted application. There might be a monit for it during first run 
 
 ## Usage
 Click the "Open log file/video" button at the top right and select your logged ".TXT" file and your flight video (if 
@@ -52,22 +47,6 @@ negative values move it towards the beginning.
 Click the "Graph Setup" button on the right side of the display in order to choose which fields should be plotted on
 the graph. You may, for example, want to remove the default gyro plot and add separate gyro plots for each rotation axis.
 Or you may want to plot vbat against throttle to examine your battery's performance.
-
-## Notes
-
-This tool has not been tested on Internet Explorer, but definitely won't work on versions earlier than version 9.
-
-Your web browser must support the video codec that your flight video uses in order to play it. Firefox doesn't support
-H.264 videos on Mac, so if your video won't play, try Google Chrome instead. If it still won't play, follow the 
-instructions in the next section to convert your video using Handbrake.
-
-The best performing web browser tends to be Google Chrome, especially when trying to play your flight video at the same
-time.
-
-This tool is currently in the Beta stage, so a number of key features have yet to be implemented:
-
-- There is no control over the amount of smoothing applied to the graph lines
-- There is no way to single-step between loop iterations with the arrow keys
 
 ## Native app build via NW.js
 
