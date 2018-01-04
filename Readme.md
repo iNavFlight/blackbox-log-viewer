@@ -13,18 +13,18 @@ _INAV Blackbox Explorer_ is distributed as _standalone_ application.
 ### Windows
 
 1. Visit [release page](https://github.com/iNavFlight/blackbox-log-viewer/releases)
-1. Download Configurator for Windows platform (win32 or win64 if present)
+1. Download app for Windows platform (win32 or win64 if present)
 1. Extract ZIP archive
 1. Run app from unpacked folder
-1. Configurator is not signed, so you have to allow Windows to run untrusted application. There might be a monit for it during first run 
+1. App is not signed, so you have to allow Windows to run untrusted application. There might be a monit for it during first run 
 
 ### Mac
 
 1. Visit [release page](https://github.com/iNavFlight/blackbox-log-viewer/releases)
-1. Download Configurator for Mac platform
+1. Download app for Mac platform
 1. Extract ZIP archive
-1. Run INAV Configurator
-1. Configurator is not signed, so you have to allow Mac to run untrusted application. There might be a monit for it during first run 
+1. Run application
+1. App is not signed, so you have to allow Mac to run untrusted application. There might be a monit for it during first run 
 
 ## Usage
 Click the "Open log file/video" button at the top right and select your logged ".TXT" file and your flight video (if 
