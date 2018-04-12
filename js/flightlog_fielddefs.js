@@ -47,7 +47,7 @@ var
         "CAMSTAB",
         "NAV RTH",
         "NAV POSHOLD",
-        "PASSTHRU",
+        "MANUAL",
         "BEEPER",
         "LEDLOW",
         "LLIGHTS",
