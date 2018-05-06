@@ -220,9 +220,9 @@ gulp.task('apps', ['dist', 'clean-apps'], function (done) {
         platforms: platforms,
         flavor: 'normal',
         zip: false,
-        macIcns: './images/bf_icon.icns',
+        macIcns: './images/inav_icon.icns',
         macPlist: { 'CFBundleDisplayName': 'INAV Blackbox Explorer'},
-        winIco: './images/bf_icon.ico'
+        winIco: './images/inav_icon.ico'
     });
     builder.on('log', console.log);
     builder.build(function (err) {
@@ -251,9 +251,9 @@ gulp.task('debug', ['dist', 'clean-debug'], function (done) {
         buildDir: debugDir,
         platforms: platforms,
         flavor: 'sdk',
-        macIcns: './images/bf_icon.icns',
+        macIcns: './images/inav_icon.icns',
         macPlist: { 'CFBundleDisplayName': 'INAV Blackbox Explorer'},
-        winIco: './images/bf_icon.ico'
+        winIco: './images/inav_icon.ico'
     });
     builder.on('log', console.log);
     builder.build(function (err) {
