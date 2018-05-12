@@ -1,7 +1,7 @@
 {
   "name": "inav-blackbox-explorer",
   "description": "Crossplatform blackbox analitics tool for INAV flight control system.",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "main_nwjs.html",
   "bg-script": "background.js",
   "default_locale": "en",
@@ -21,7 +21,7 @@
   "author": "INAV",
   "license": "GPL-3.0",
   "devDependencies": {
-    "archiver": "^2.0.3",
+    "archiver": "^2.1.1",
     "del": "^3.0.0",
     "gulp": "~3.9.1",
     "gulp-concat": "~2.6.1",
@@ -32,7 +32,7 @@
     "nw-builder": "^3.5.1",
     "os": "^0.1.1",
     "platform-dependent-modules": "0.0.14",
-    "run-sequence": "^2.2.0",
+    "run-sequence": "^2.2.1",
     "temp": "^0.8.3"
   },
   "config": {
