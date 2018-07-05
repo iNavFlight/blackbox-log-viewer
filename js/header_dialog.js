@@ -154,7 +154,7 @@ function HeaderDialog(dialog, onSave) {
 				$(this).closest('tr').removeClass('missing');
 				switch (i) {
 					case 0:
-						if(data[i]!=null) {
+						if(data[i]!=null && isNumber(data[i])) {
 								$(this).val((data[i]).toFixed(0));
 								$(this).attr('decPl', 1);
 								$(this).removeClass('missing');
@@ -164,7 +164,7 @@ function HeaderDialog(dialog, onSave) {
 						i++;
 						break;
 					case 1:
-						if(data[i]!=null) {
+						if(data[i]!=null && isNumber(data[i])) {
 								$(this).val((data[i]).toFixed(0));
 								$(this).attr('decPl', 3);
 								$(this).removeClass('missing');
@@ -174,7 +174,7 @@ function HeaderDialog(dialog, onSave) {
 						i++;
 						break;
 					case 2:
-						if(data[i]!=null) {
+						if(data[i] && isNumber(data[i])) {
 								$(this).val(data[i].toFixed(0));
 								$(this).attr('decPl', 0);
 								$(this).removeClass('missing');
@@ -319,8 +319,6 @@ function HeaderDialog(dialog, onSave) {
 				]) 
 		}
 
-    	renderSelect("pidController", sysConfig.pidController, PID_CONTROLLER_TYPE);
-
         // Populate the ROLL Pid Faceplate
         populatePID('rollPID'					, sysConfig.rollPID);
         populatePID('pitchPID'					, sysConfig.pitchPID);
@@ -385,24 +383,20 @@ function HeaderDialog(dialog, onSave) {
 	    renderSelect('superExpoYawMode'		    ,sysConfig.superExpoYawMode, SUPER_EXPO_YAW);
     	renderSelect('dynamic_pid'				,sysConfig.dynamic_pid, OFF_ON);
 
-		if(isParameterValid('gyro_notch_hz_2')) {
+		if (sysConfig.gyro_notch_hz && sysConfig.gyro_notch_cutoff) {
 			setParameter('gyro_notch_hz'			,sysConfig.gyro_notch_hz[0],0);
 			setParameter('gyro_notch_cutoff'		,sysConfig.gyro_notch_cutoff[0],0);
 			setParameter('gyro_notch_hz_2'			,sysConfig.gyro_notch_hz[1],0);
 			setParameter('gyro_notch_cutoff_2'		,sysConfig.gyro_notch_cutoff[1],0);
-		} else {
-			setParameter('gyro_notch_hz'			,sysConfig.gyro_notch_hz, 0);
-			setParameter('gyro_notch_cutoff'		,sysConfig.gyro_notch_cutoff, 0);
-			setParameter('gyro_notch_hz_2'			,0,0); // this parameter does not exist in earlier versions
-			setParameter('gyro_notch_cutoff_2'		,0,0); // this parameter does not exist in earlier versions
 		}
+
 		setParameter('dterm_notch_hz'			,sysConfig.dterm_notch_hz,0);
 		setParameter('dterm_notch_cutoff'		,sysConfig.dterm_notch_cutoff,0);
 		setParameter('dterm_lpf_hz'				,sysConfig.dterm_lpf_hz,0);
 		setParameter('yaw_lpf_hz'				,sysConfig.yaw_lpf_hz,0);
 		setParameter('gyro_lowpass_hz'			,sysConfig.gyro_lowpass_hz,0);
-
-    	renderSelect('fast_pwm_protocol'		,sysConfig.fast_pwm_protocol, FAST_PROTOCOL);
+		
+		renderSelect('fast_pwm_protocol'		,sysConfig.fast_pwm_protocol, FAST_PROTOCOL);
         setParameter('motor_pwm_rate'		    ,sysConfig.motor_pwm_rate,0);
         renderSelect('dterm_filter_type'		,sysConfig.dterm_filter_type, FILTER_TYPE);
         setParameter('ptermSRateWeight'			,sysConfig.ptermSRateWeight,2);

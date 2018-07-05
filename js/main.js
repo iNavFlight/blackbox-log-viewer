@@ -1906,6 +1906,10 @@ function scaleRangef(x, srcMin, srcMax, destMin, destMax) {
     return ((a / b) + destMin);
 }
 
+function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
 // Boostrap's data API is extremely slow when there are a lot of DOM elements churning, don't use it
 $(document).off('.data-api');
 
