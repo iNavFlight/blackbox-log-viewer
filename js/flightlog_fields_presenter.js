@@ -186,6 +186,11 @@ function FlightLogFieldPresenter() {
             case 'axisError[2]':
                 return Math.round(value) + " deg/s";
 
+            case 'axisRate[0]':
+            case 'axisRate[1]':
+            case 'axisRate[2]':
+                return Math.round(value) + " deg/s";
+
             case 'rcCommand[0]':
                 return Math.round(flightLog.rcCommandRawToDegreesPerSecond(value,0), currentFlightMode) + " deg/s";
             case 'rcCommand[1]':
@@ -253,6 +258,10 @@ function FlightLogFieldPresenter() {
             case 'BaroAlt':
                 return (value / 100).toFixed(1) + "m";
             
+            case "navPos[2]":
+            case "navTgtPos[2]":
+                return (value / 100).toFixed(2) + "m";
+
             case 'flightModeFlags':
                 return presentFlags(value, FLIGHT_LOG_FLIGHT_MODE_NAME);
                 

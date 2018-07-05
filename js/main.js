@@ -1900,6 +1900,12 @@ function getManifestVersion(manifest) {
     return version;
 }
 
+function scaleRangef(x, srcMin, srcMax, destMin, destMax) {
+    let a = (destMax - destMin) * (x - srcMin);
+    let b = srcMax - srcMin;
+    return ((a / b) + destMin);
+}
+
 // Boostrap's data API is extremely slow when there are a lot of DOM elements churning, don't use it
 $(document).off('.data-api');
 
