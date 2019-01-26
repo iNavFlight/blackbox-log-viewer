@@ -44,6 +44,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 		stickTrails			: false,			// Show stick trails?
 		stickInvertYaw		: false,			// Invert yaw in stick display?
         legendUnits			: true,	            // Show units on legend?
+		velocityUnits		: "D",				// Units for composite velocity "D" / "M" / "I"
 		gapless				: false,
 		drawCraft			: "3D", 
 		drawPidTable		: true, 
@@ -295,6 +296,10 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
         currentSettings.legendUnits = $(this).is(":checked");
     });
 
+    $(".velocity-units").click(function() {
+        currentSettings.velocityUnits = $(this).val();
+    });
+
     // Load Custom Logo
     function readURL(input) {
         if (input.files && input.files[0]) {
@@ -366,6 +371,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 				$(".legend-units").prop('checked', currentSettings.legendUnits);
 			}
 
+			$(".velocity-units").val(currentSettings.velocityUnits || "D");
 
         mixerListSelection(currentSettings.mixerConfiguration); // select current mixer configuration
     		stickModeSelection(currentSettings.stickMode);
