@@ -13,7 +13,6 @@ var NwBuilder = require('nw-builder');
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var install = require("gulp-install");
-var runSequence = require('run-sequence');
 var os = require('os');
 
 var distDir = './dist/';
@@ -105,10 +104,6 @@ function get_release_filename(platform, ext) {
 // Tasks
 // -----------------
 
-gulp.task('clean', function () { 
-    return runSequence('clean-dist', 'clean-apps', 'clean-debug', 'clean-release');
-});
-
 gulp.task('clean-dist', function () { 
     return del([distDir + '**'], { force: true }); 
 });
@@ -129,9 +124,11 @@ gulp.task('clean-cache', function () {
     return del(['./cache/**'], { force: true }); 
 });
 
+gulp.task('clean', gulp.series(['clean-dist', 'clean-apps', 'clean-debug', 'clean-release']));
+
 // Real work for dist task. Done in another task to call it via
 // run-sequence.
-gulp.task('dist', ['clean-dist'], function () {
+gulp.task('dist', gulp.series(['clean-dist'], function () {
     var distSources = [
         // CSS files
         './css/bootstrap-theme.css',
@@ -205,17 +202,16 @@ gulp.task('dist', ['clean-dist'], function () {
         .pipe(install({
             npm: '--production --ignore-scripts'
         }));;
-});
+}));
 
 // Create runable app directories in ./apps
-gulp.task('apps', ['dist', 'clean-apps'], function (done) {
+gulp.task('apps', gulp.series(['dist', 'clean-apps'], function (done) {
     platforms = getPlatforms();
     console.log('Release build.');
 
     destDir = appsDir;
 
     var builder = new NwBuilder({
-        version: '0.25.4',
         files: './dist/**/*',
         buildDir: appsDir,
         platforms: platforms,
@@ -229,19 +225,22 @@ gulp.task('apps', ['dist', 'clean-apps'], function (done) {
     builder.build(function (err) {
         if (err) {
             console.log('Error building NW apps: ' + err);
-            runSequence('clean-apps', function() {
+            gulp.series(['clean-apps'], function() {
                 process.exit(1);
             });
         }
         // Execute post build task
-        runSequence('post-build', function() {
+        gulp.series(['post-build'], function() {
             done();
         });
+        done();
     });
-});
+    done();
+}));
 
 // Create debug app directories in ./debug
-gulp.task('debug', ['dist', 'clean-debug'], function (done) {
+gulp.task('debug', gulp.series(['dist', 'clean-debug'], function (done) {
+    
     platforms = getPlatforms();
     console.log('Debug build.');
 
@@ -249,7 +248,6 @@ gulp.task('debug', ['dist', 'clean-debug'], function (done) {
 
     var builder = new NwBuilder({
         files: './dist/**/*',
-        version: '0.25.4',
         buildDir: debugDir,
         platforms: platforms,
         flavor: 'sdk',
@@ -257,26 +255,25 @@ gulp.task('debug', ['dist', 'clean-debug'], function (done) {
         macPlist: { 'CFBundleDisplayName': 'INAV Blackbox Explorer'},
         winIco: './images/inav_icon.ico'
     });
+
     builder.on('log', console.log);
     builder.build(function (err) {
         if (err) {
             console.log('Error building NW apps: ' + err);
-            runSequence('clean-debug', function() {
+            gulp.series(['clean-debug'], function() {
                 process.exit(1);
             });
         }
 
-        // Execute post build task
-        runSequence('post-build', function() {
-            // Start debug app
-            var exec = require('child_process').exec;
-            var run = getRunDebugAppCommand();
-            console.log('Starting debug app (' + run + ')...');
-            exec(run);
-            done();
-        });
+        var exec = require('child_process').exec;
+        var run = getRunDebugAppCommand();
+        console.log('Starting debug app (' + run + ')...');
+        exec(run);
+        done();
     });
-});
+            
+    done();
+}));
 
 gulp.task('post-build', function(done) {
     if (platforms.indexOf('osx64') != -1) {
@@ -315,93 +312,59 @@ gulp.task('post-build', function(done) {
     done();
 });
 
-// Create distribution package for windows platform
-function release_win32() {
-    var src = path.join(appsDir, pkg.name, 'win32');
-    var output = fs.createWriteStream(path.join(releaseDir, get_release_filename('win32', 'zip')));
-    var archive = archiver('zip', {
-        zlib: { level: 9 }
-    });
-    archive.on('warning', function (err) { throw err; });
-    archive.on('error', function (err) { throw err; });
-    archive.pipe(output);
-    archive.directory(src, 'INAV Blackbox Explorer');
-    return archive.finalize();
-}
-
-// Create distribution package for linux platform
-function release_linux64() {
-    var src = path.join(appsDir, pkg.name, 'linux64');
-    var output = fs.createWriteStream(path.join(releaseDir, get_release_filename('linux64', 'zip')));
-    var archive = archiver('zip', {
-        zlib: { level: 9 }
-    });
-    archive.on('warning', function (err) { throw err; });
-    archive.on('error', function (err) { throw err; });
-    archive.pipe(output);
-    archive.directory(src, 'INAV Blackbox Explorer');
-    return archive.finalize();
-}
-
-// Create distribution package for chromeos platform
-function release_chromeos() {
-    var src = distDir;
-    var output = fs.createWriteStream(path.join(releaseDir, get_release_filename('chromeos', 'zip')));
-    var archive = archiver('zip', {
-        zlib: { level: 9 }
-    });
-    archive.on('warning', function (err) { throw err; });
-    archive.on('error', function (err) { throw err; });
-    archive.pipe(output);
-    archive.directory(src, false);
-    return archive.finalize();
-}
-
-// Create distribution package for macOS platform
-function release_osx64() {
+gulp.task('release-win32', function() {
     var pkg = require('./package.json');
-    var src = path.join(appsDir, pkg.name, 'osx64', pkg.name + '.app');
-    // Check if we want to sign the .app bundle
-
-    var output = fs.createWriteStream(path.join(releaseDir, get_release_filename('macOS', 'zip')));
+    var src = path.join(appsDir, pkg.name, 'win32');
+    var output = fs.createWriteStream(path.join(appsDir, get_release_filename('win32', 'zip')));
     var archive = archiver('zip', {
         zlib: { level: 9 }
     });
     archive.on('warning', function(err) { throw err; });
     archive.on('error', function(err) { throw err; });
     archive.pipe(output);
-    archive.directory(src, 'INAV Blackbox Explorer.app');
+    archive.directory(src, 'INAV Blacbox Explorer');
     return archive.finalize();
-}
-
-// Create distributable .zip files in ./release
-gulp.task('release', ['apps', 'clean-release'], function () {
-    fs.mkdir(releaseDir, '0775', function(err) {
-        if (err) {
-            if (err.code !== 'EEXIST') {
-                throw err;
-            }
-        }
-    });
-
-    platforms = getPlatforms(true);
-    console.log('Packing release.');
-
-    if (platforms.indexOf('chromeos') !== -1) {
-        release_chromeos();
-    }
-
-    if (platforms.indexOf('linux64') !== -1) {
-        release_linux64();
-    }
-
-    if (platforms.indexOf('osx64') !== -1) {
-        release_osx64();
-    }
-
-    if (platforms.indexOf('win32') !== -1) {
-        release_win32();
-    }
 });
 
-gulp.task('default', ['debug']);
+gulp.task('release-osx64', function() {
+    var pkg = require('./package.json');
+    var src = path.join(appsDir, pkg.name, 'osx64', pkg.name + '.app');
+    // Check if we want to sign the .app bundle
+    if (process.env.CODESIGN_IDENTITY) {
+        var sign_cmd = 'codesign --verbose --force --sign "' + process.env.CODESIGN_IDENTITY + '" ' + src;
+        child_process.execSync(sign_cmd);
+    }
+    var output = fs.createWriteStream(path.join(appsDir, get_release_filename('macOS', 'zip')));
+    var archive = archiver('zip', {
+        zlib: { level: 9 }
+    });
+    archive.on('warning', function(err) { throw err; });
+    archive.on('error', function(err) { throw err; });
+    archive.pipe(output);
+    archive.directory(src, 'INAV Blacbox Explorer.app');
+    return archive.finalize();
+});
+
+function releaseLinux(bits) {
+    return function() {
+        var dirname = 'linux' + bits;
+        var pkg = require('./package.json');
+        var src = path.join(appsDir, pkg.name, dirname);
+        var output = fs.createWriteStream(path.join(appsDir, get_release_filename(dirname, 'zip')));
+        var archive = archiver('zip', {
+            zlib: { level: 9 }
+        });
+        archive.on('warning', function(err) { throw err; });
+        archive.on('error', function(err) { throw err; });
+        archive.pipe(output);
+        archive.directory(src, 'INAV Blacbox Explorer');
+        return archive.finalize();
+    }
+}
+
+gulp.task('release-linux32', releaseLinux(32));
+gulp.task('release-linux64', releaseLinux(64));
+
+gulp.task('release', gulp.series(['apps', 'clean-release', 'release-win32', 'release-linux64', 'release-osx64']));
+
+gulp.task('default', gulp.series(['debug']));
