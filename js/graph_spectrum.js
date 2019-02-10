@@ -229,7 +229,13 @@ function FlightLogAnalyser(flightLog, canvas, analyserCanvas) {
             var offset = 0;
             if (mouseFrequency != null) drawMarkerLine(mouseFrequency, PLOTTED_BLACKBOX_RATE, '', WIDTH, HEIGHT, (15 * offset++) + MARGIN, "rgba(0,255,0,0.50)", 3);
             offset++; // make some space!
+            
             if (flightLog.getSysConfig().gyro_lowpass_hz != null) drawMarkerLine(flightLog.getSysConfig().gyro_lowpass_hz, PLOTTED_BLACKBOX_RATE, 'GYRO LPF cutoff', WIDTH, HEIGHT, (15 * offset++) + MARGIN, "rgba(128,255,128,0.50)");
+            
+            if (flightLog.getSysConfig().gyro_stage2_lowpass_hz != null && flightLog.getSysConfig().gyro_stage2_lowpass_hz > 0) {
+                drawMarkerLine(flightLog.getSysConfig().gyro_stage2_lowpass_hz, PLOTTED_BLACKBOX_RATE, 'GYRO Stage2 LPF', WIDTH, HEIGHT, (15 * offset++) + MARGIN, "rgba(128,255,128,0.50)");
+            }
+
             if (flightLog.getSysConfig().gyro_notch_hz != null && flightLog.getSysConfig().gyro_notch_cutoff != null) {
                 if (flightLog.getSysConfig().gyro_notch_hz.length > 0) { //there are multiple gyro notch filters
                     var gradient = canvasCtx.createLinearGradient(0, 0, 0, (HEIGHT));

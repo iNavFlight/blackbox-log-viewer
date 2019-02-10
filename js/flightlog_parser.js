@@ -234,6 +234,7 @@ var FlightLogParser = function(logData) {
             yaw_deadband:null,              // Yaw Deadband
             gyro_lpf:null,                  // Gyro lpf setting.
             gyro_lowpass_hz:null,           // Gyro Soft Lowpass Filter Hz
+            gyro_stage2_lowpass_hz:null,    // Stage 2 gyro LPF cutoff Hz
             gyro_notch_hz:null,             // Gyro Notch Frequency
             gyro_notch_cutoff:null,         // Gyro Notch Cutoff
             dterm_notch_hz:null,            // Dterm Notch Frequency
@@ -464,6 +465,7 @@ var FlightLogParser = function(logData) {
             case "acc_cut_hz":
             case "yaw_lpf_hz":
             case "gyro_lowpass_hz":
+            case "gyro_stage2_lowpass_hz":
             case "dterm_notch_hz":
             case "dterm_notch_cutoff":
             case "dterm_lpf_hz":
