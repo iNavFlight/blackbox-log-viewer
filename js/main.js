@@ -1,5 +1,11 @@
 "use strict";
 
+//Allow opening standard link in system default browser
+$('a[target=_blank]').on('click', function(){
+    require('nw.gui').Shell.openExternal( this.href );
+    return false;
+});
+
 // Global Level Variables
 var userSettings = {};
 
