@@ -11,7 +11,7 @@
  */
 function FlightLog(logData) {
     var
-        ADDITIONAL_COMPUTED_FIELD_COUNT = 15, /** attitude + PID_SUM + PID_ERROR + RCCOMMAND_SCALED + GYROADC_SCALED **/
+        ADDITIONAL_COMPUTED_FIELD_COUNT = 16, /** attitude + PID_SUM + PID_ERROR + RCCOMMAND_SCALED + GYROADC_SCALED + VELOCITY **/
 
         that = this,
         logIndex = false,
@@ -228,6 +228,7 @@ function FlightLog(logData) {
         fieldNames.push("axisError[0]", "axisError[1]", "axisError[2]"); // Custom calculated error field
         fieldNames.push("rcCommands[0]", "rcCommands[1]", "rcCommands[2]"); // Custom calculated error field
         fieldNames.push("gyroADCs[0]", "gyroADCs[1]", "gyroADCs[2]"); // Custom calculated error field
+		fieldNames.push("velocity");
 
         fieldNameToIndex = {};
         for (i = 0; i < fieldNames.length; i++) {
@@ -513,6 +514,7 @@ function FlightLog(logData) {
 
             sysConfig,
             attitude,
+			navVel = [fieldNameToIndex["navVel[0]"], fieldNameToIndex["navVel[1]"]],
 
             axisPID = [[fieldNameToIndex["axisP[0]"], fieldNameToIndex["axisI[0]"], fieldNameToIndex["axisD[0]"]],
                        [fieldNameToIndex["axisP[1]"], fieldNameToIndex["axisI[1]"], fieldNameToIndex["axisD[1]"]],
@@ -595,6 +597,12 @@ function FlightLog(logData) {
                             (gyroADC[axis] !== undefined ? that.gyroRawToDegreesPerSecond(srcFrame[gyroADC[axis]]) : 0);
                         }
 
+					// Composite velocity from cardinal velocities
+					var
+						velx = srcFrame[navVel[0]],
+						vely = srcFrame[navVel[1]];
+					if (velx !== undefined && vely !== undefined)
+						destFrame[fieldIndex++] = Math.round(Math.hypot(velx, vely));
                 }
             }
         }

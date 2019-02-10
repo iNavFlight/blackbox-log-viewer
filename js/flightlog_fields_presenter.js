@@ -280,6 +280,18 @@ function FlightLogFieldPresenter() {
             case 'debug[3]':
             	return FlightLogFieldPresenter.decodeDebugFieldToFriendly(flightLog, fieldName, value, currentFlightMode);
 
+			case 'navVel[0]':
+			case 'navVel[1]':
+			case 'velocity':
+				if (userSettings.velocityUnits == 'I') // Imperial
+					return (value * 0.0223694).toFixed(1) + "mph";
+				if (userSettings.velocityUnits == 'M') // Metric
+					return (value * 0.036).toFixed(1) + "kph";
+				return (value / 100).toFixed(2) + "m/s"; // Default
+
+			case 'navVel[2]': // Vertical speed always in m/s
+				return (value / 100).toFixed(2) + "m/s"; 
+				
             default:
                 return "";
         }
