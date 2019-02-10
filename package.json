@@ -23,8 +23,8 @@
   "devDependencies": {
     "archiver": "^2.1.1",
     "del": "^3.0.0",
-    "gulp": "~3.9.1",
-    "gulp-concat": "~2.6.1",
+    "gulp": "^4.0.0",
+    "gulp-concat": "^2.6.1",
     "gulp-install": "^1.1.0",
     "inflection": "1.12.0",
     "jquery-ui-npm": "1.12.0",
@@ -32,7 +32,6 @@
     "nw-builder": "^3.5.7",
     "os": "^0.1.1",
     "platform-dependent-modules": "0.0.14",
-    "run-sequence": "^2.2.1",
     "temp": "^0.8.3"
   },
   "config": {
