@@ -994,7 +994,7 @@ function BlackboxLogViewer() {
             toggleOverrideStatus('graphGridOverride', 'has-grid-override');
         });
 
-        /** changelog trigger **/
+        /** changelog trigger 
         $("#changelog_toggle").on('click', function() {
             var state = $(this).data('state2');
             if (state) { // log closed
@@ -1010,7 +1010,8 @@ function BlackboxLogViewer() {
             $(this).text(state ? 'Close' : 'Changelog');
             $(this).data('state2', state);
         });
-
+        **/
+       
         var logJumpBack = function(fast, slow) {
             var scrollTime  = SMALL_JUMP_TIME;
             if(fast!=null) scrollTime = (fast!=0)?(graph.getWindowWidthTime() * fast):scrollTime;
