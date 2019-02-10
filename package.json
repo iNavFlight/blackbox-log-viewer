@@ -12,7 +12,7 @@
     "gulp": "gulp"
   },
   "window": {
-    "show": false
+    "toolbar": true
   },
   "repository": {
     "type": "git",

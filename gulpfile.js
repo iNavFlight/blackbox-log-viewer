@@ -215,7 +215,6 @@ gulp.task('apps', ['dist', 'clean-apps'], function (done) {
     destDir = appsDir;
 
     var builder = new NwBuilder({
-        version: '0.25.4',
         files: './dist/**/*',
         buildDir: appsDir,
         platforms: platforms,
@@ -249,7 +248,6 @@ gulp.task('debug', ['dist', 'clean-debug'], function (done) {
 
     var builder = new NwBuilder({
         files: './dist/**/*',
-        version: '0.25.4',
         buildDir: debugDir,
         platforms: platforms,
         flavor: 'sdk',
