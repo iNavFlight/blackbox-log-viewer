@@ -395,6 +395,7 @@ function HeaderDialog(dialog, onSave) {
 		setParameter('dterm_lpf_hz'				,sysConfig.dterm_lpf_hz,0);
 		setParameter('yaw_lpf_hz'				,sysConfig.yaw_lpf_hz,0);
 		setParameter('gyro_lowpass_hz'			,sysConfig.gyro_lowpass_hz,0);
+		setParameter('gyro_stage2_lowpass_hz'	,sysConfig.gyro_stage2_lowpass_hz,0);
 		
 		renderSelect('fast_pwm_protocol'		,sysConfig.fast_pwm_protocol, FAST_PROTOCOL);
         setParameter('motor_pwm_rate'		    ,sysConfig.motor_pwm_rate,0);
