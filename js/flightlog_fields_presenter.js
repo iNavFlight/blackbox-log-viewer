@@ -292,6 +292,16 @@ function FlightLogFieldPresenter() {
 			case 'navVel[2]': // Vertical speed always in m/s
 				return (value / 100).toFixed(2) + "m/s"; 
 				
+			case 'rssi':
+				return Math.round(value / 10.24) + "%";
+
+			case 'amperage':
+				return (value / 100.0).toFixed(2) + "A";
+
+			case 'vbat':
+			case 'sagCompensatedVBat':
+				return (value / 100.0).toFixed(2) + "V";
+
             default:
                 return "";
         }
