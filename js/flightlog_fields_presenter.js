@@ -229,6 +229,23 @@ function FlightLogFieldPresenter() {
             case 'axisD[2]':
                 return flightLog.getPIDPercentage(value).toFixed(1) + "%";
 
+            case 'mcPosAxisP[0]':
+            case 'mcPosAxisP[1]':
+            case 'mcPosAxisP[2]':
+            case 'mcVelAxisP[0]':
+            case 'mcVelAxisP[1]':
+            case 'mcVelAxisP[2]':
+            case 'mcVelAxisI[0]':
+            case 'mcVelAxisI[1]':
+            case 'mcVelAxisI[2]':
+            case 'mcVelAxisD[0]':
+            case 'mcVelAxisD[1]':
+            case 'mcVelAxisD[2]':
+            case 'mcVelAxisFF[0]':
+            case 'mcVelAxisFF[1]':
+            case 'mcVelAxisFF[2]':
+                return value.toFixed(0);
+            
             case 'accSmooth[0]':
             case 'accSmooth[1]':
             case 'accSmooth[2]':
@@ -282,6 +299,8 @@ function FlightLogFieldPresenter() {
 
 			case 'navVel[0]':
 			case 'navVel[1]':
+			case 'navTgtVel[0]':
+			case 'navTgtVel[1]':
 			case 'velocity':
 				if (userSettings.velocityUnits == 'I') // Imperial
 					return (value * 0.0223694).toFixed(1) + "mph";
@@ -290,6 +309,7 @@ function FlightLogFieldPresenter() {
 				return (value / 100).toFixed(2) + "m/s"; // Default
 
 			case 'navVel[2]': // Vertical speed always in m/s
+			case 'navTgtVel[2]': // Vertical speed always in m/s
 				return (value / 100).toFixed(2) + "m/s"; 
 				
 			case 'rssi':
