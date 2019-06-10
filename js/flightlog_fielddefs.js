@@ -220,15 +220,27 @@ var
         "GPS_FIX",
         "CALIBRATE_MAG",
         "SMALL_ANGLE",
-        "FIXED_WING",
+        "FIXED_WING",     // set when in flying_wing or airplane mode. currently used by althold selection code
         "ANTI_WINDUP",
-        "PID_ATTENUATE",
-        "FLAPERON_AVAILABLE"
+        "FLAPERON_AVAILABLE",
+        "NAV_MOTOR_STOP_OR_IDLE",     // navigation requests MOTOR_STOP or motor idle regardless of throttle stick, will only activate if MOTOR_STOP feature is available
+        "COMPASS_CALIBRATED",
+        "ACCELEROMETER_CALIBRATED",
+        "PWM_DRIVER_AVAILABLE",
+        "NAV_CRUISE_BRAKING",
+        "NAV_CRUISE_BRAKING_BOOST",
+        "NAV_CRUISE_BRAKING_LOCKED",
+        "NAV_EXTRA_ARMING_SAFETY_BYPASSED",    // nav_extra_arming_safey was bypassed. Keep it until power cycle.
+        "AIRMODE_ACTIVE"
     ]),
 
     FLIGHT_LOG_FAILSAFE_PHASE_NAME = makeReadOnly([
-        "IDLE",
-        "RX_LOSS_DETECTED",
-        "LANDING",
-        "LANDED"
+        "FAILSAFE_IDLE",
+        "FAILSAFE_RX_LOSS_DETECTED",
+        "FAILSAFE_RX_LOSS_IDLE",
+        "FAILSAFE_RETURN_TO_HOME",
+        "FAILSAFE_LANDING",
+        "FAILSAFE_LANDED",
+        "FAILSAFE_RX_LOSS_MONITORING",
+        "FAILSAFE_RX_LOSS_RECOVERED"
     ]);
