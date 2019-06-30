@@ -116,7 +116,7 @@ function FlightLogFieldPresenter() {
         while (flags > 0) {
             if ((flags & 1) != 0) {
                 if (printedFlag) {
-                    result += "|";
+                    result += " | ";
                 } else {
                     printedFlag = true;
                 }
@@ -287,6 +287,12 @@ function FlightLogFieldPresenter() {
                 
             case 'failsafePhase':
                 return presentEnum(value, FLIGHT_LOG_FAILSAFE_PHASE_NAME);
+
+            case 'navState':
+                return presentEnum(value, FLIGHT_LOG_NAV_STATE);
+
+            case 'navFlags':
+                return presentFlags(value, FLIGHT_LOG_NAV_FLAGS);
                 
             case 'features':
                 return presentEnum(value, FLIGHT_LOG_FEATURES); 
