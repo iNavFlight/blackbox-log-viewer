@@ -356,7 +356,7 @@ var FlightLogParser = function(logData) {
 
         lineStart = stream.pos;
 
-        for (; stream.pos < lineStart + 1024 && stream.pos < stream.end; stream.pos++) {
+        for (; stream.pos < lineStart + 2048 && stream.pos < stream.end; stream.pos++) {
             if (separatorPos === false && stream.data[stream.pos] == COLON)
                 separatorPos = stream.pos;
 
