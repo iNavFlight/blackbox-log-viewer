@@ -87,14 +87,22 @@ function FlightLogFieldPresenter() {
             'debug[0]': 'debug[0]',
             'debug[1]': 'debug[1]',
             'debug[2]': 'debug[2]',
-            'debug[3]': 'debug[3]'
+            'debug[3]': 'debug[3]',
+            'debug[4]': 'debug[4]',
+            'debug[5]': 'debug[5]',
+            'debug[6]': 'debug[6]',
+            'debug[7]': 'debug[7]'
         },
         1: {       //Debug gyro
             'debug[all]': 'Debug Gyro',
             'debug[0]': 'gyro_raw[X]',
             'debug[1]': 'gyro_raw[Y]',
             'debug[2]': 'gyro_raw[Z]',
-            'debug[3]': 'Not Used'
+            'debug[3]': 'Not Used',
+            'debug[4]': 'debug[4]',
+            'debug[5]': 'debug[5]',
+            'debug[6]': 'debug[6]',
+            'debug[7]': 'debug[7]'
         },
         16: {	    //RPM_FILTER
             'debug[all]': 'Debug RPM Filter',
@@ -248,6 +256,9 @@ function FlightLogFieldPresenter() {
             case 'mcVelAxisFF[0]':
             case 'mcVelAxisFF[1]':
             case 'mcVelAxisFF[2]':
+            case 'mcVelAxisOut[0]':
+            case 'mcVelAxisOut[1]':
+            case 'mcVelAxisOut[2]':
                 return value.toFixed(0);
 
             case 'accSmooth[0]':
