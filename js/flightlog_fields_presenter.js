@@ -361,7 +361,7 @@ function FlightLogFieldPresenter() {
                 case 'RPM_FILTER':
                     return Math.round(flightLog.gyroRawToDegreesPerSecond(value)) + "deg/s";
                 default:
-                    return "";
+                    return value;
             }
         }
         return "";
