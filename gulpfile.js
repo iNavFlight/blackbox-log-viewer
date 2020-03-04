@@ -14,6 +14,7 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var install = require("gulp-install");
 var os = require('os');
+var semver = require('semver');
 
 var distDir = './dist/';
 var appsDir = './apps/';
@@ -98,6 +99,10 @@ function getRunDebugAppCommand() {
 
 function get_release_filename(platform, ext) {
     return 'INAV-BlackboxExplorer_' + platform + '_' + pkg.version + '.' + ext;
+}
+
+function get_nw_version() {
+    return semver.valid(semver.coerce(require('./package.json').devDependencies.nw));
 }
 
 // -----------------
@@ -219,7 +224,8 @@ gulp.task('apps', gulp.series(['dist', 'clean-apps'], function (done) {
         zip: false,
         macIcns: './images/inav_icon.icns',
         macPlist: { 'CFBundleDisplayName': 'INAV Blackbox Explorer'},
-        winIco: './images/inav_icon.ico'
+        winIco: './images/inav_icon.ico',
+        version: get_nw_version()
     });
     builder.on('log', console.log);
     builder.build(function (err) {
@@ -253,7 +259,8 @@ gulp.task('debug', gulp.series(['dist', 'clean-debug'], function (done) {
         flavor: 'sdk',
         macIcns: './images/inav_icon.icns',
         macPlist: { 'CFBundleDisplayName': 'INAV Blackbox Explorer'},
-        winIco: './images/inav_icon.ico'
+        winIco: './images/inav_icon.ico',
+        version: get_nw_version()
     });
 
     builder.on('log', console.log);
