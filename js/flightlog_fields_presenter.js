@@ -296,6 +296,10 @@ function FlightLogFieldPresenter() {
             case 'BaroAlt':
                 return (value / 100).toFixed(1) + "m";
 
+
+            case "navEPH":
+                return (value/100).toFixed(2);
+
             case "navPos[2]":
             case "navTgtPos[2]":
                 return (value / 100).toFixed(2) + "m";
