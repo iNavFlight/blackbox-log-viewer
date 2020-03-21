@@ -227,6 +227,12 @@ function FlightLogFieldPresenter() {
             case 'rcCommands[2]':
                 return value.toFixed(0) + " deg/s";
 
+            case 'rcData[0]':
+            case 'rcData[1]':
+            case 'rcData[2]':
+            case 'rcData[3]':
+                return value.toFixed(0) + " us";
+
             case 'axisSum[0]':
             case 'axisSum[1]':
             case 'axisSum[2]':
