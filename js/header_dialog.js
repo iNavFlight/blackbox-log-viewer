@@ -15,34 +15,18 @@ function HeaderDialog(dialog, onSave) {
 	**/
 
 	var parameterVersion = [
-            {name:'dterm_average_count'	    	, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'0.0.0', max:'2.6.9'},
-			{name:'dynamic_pterm'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.6.0', max:'2.7.9'},
-			{name:'iterm_reset_offset'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.6.0', max:'2.7.9'},
 			{name:'superExpoFactor'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.6.0', max:'2.7.9'},
 			{name:'superExpoFactorYaw'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.7.0', max:'2.7.9'},
-			{name:'superExpoYawMode'		    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.7.0', max:'2.7.9'},
-            {name:'rollPitchItermResetRate'		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.7.0', max:'2.7.9'},
-            {name:'yawItermResetRate'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.7.0', max:'2.7.9'},
-			{name:'dynamic_pid'					, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'2.9.9'},
 			{name:'rcYawRate'					, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'999.9.9'},
 			{name:'airmode_activate_throttle'	, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'999.9.9'},
-            {name:'rollPitchItermIgnoreRate'	, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'3.0.1'},
-            {name:'yawItermIgnoreRate'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'3.0.1'},
             {name:'gyro_notch_hz'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'gyro_notch_cutoff'		    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'dterm_notch_hz'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'dterm_notch_cutoff'		    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'gyro_sync_denom'			    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'fast_pwm_protocol'    		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'motor_pwm_rate'    			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-			{name:'serialrx_provider'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'dterm_filter_type'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'pidAtMinThrottle'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'itermThrottleGain'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'3.0.1'},
-            {name:'ptermSRateWeight'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'3.0.0'},
-            {name:'dtermSetpointWeight'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'yawRateAccelLimit'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'rateAccelLimit'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
+			{name:'dterm_setpoint_weight'		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'gyro_soft_type'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
             {name:'debug_mode'					, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
 			{name:'gyro_notch_hz_2'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.1', max:'999.9.9'},
@@ -51,7 +35,6 @@ function HeaderDialog(dialog, onSave) {
 			{name:'motorOutputLow'		        , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
 			{name:'motorOutputHigh'		        , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
 			{name:'digitalIdleOffset'	        , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
-	        {name:'setpointRelaxRatio'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
             {name:'antiGravityGain'             , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
 	        {name:'antiGravityThreshold'        , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
             {name:'itermWindupPointPercent'     , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'}
@@ -271,6 +254,8 @@ function HeaderDialog(dialog, onSave) {
 
 		activeSysConfig = sysConfig; // Store the current system configuration
 
+		console.log(sysConfig);
+
     	// Update the log header
 
     	$('h5.modal-title-revision').text( ((sysConfig['Firmware revision']!=null)?(' Rev : '  + sysConfig['Firmware revision']):''));
@@ -364,24 +349,13 @@ function HeaderDialog(dialog, onSave) {
 		}
 
         setParameter('loopTime'					,sysConfig.looptime,0);
-        setParameter('gyro_sync_denom'			,sysConfig.gyro_sync_denom,0);
-        setParameter('yaw_p_limit'				,sysConfig.yaw_p_limit,0);
-        setParameter('dterm_average_count'		,sysConfig.dterm_average_count,0);
-    	renderSelect('dynamic_pterm'			,sysConfig.dynamic_pterm, OFF_ON);
-        setParameter('rollPitchItermResetRate'	,sysConfig.rollPitchItermResetRate,0);
-        setParameter('yawItermResetRate'		,sysConfig.yawItermResetRate,0);
-        setParameter('rollPitchItermIgnoreRate'	,sysConfig.rollPitchItermIgnoreRate,0);
-        setParameter('yawItermIgnoreRate'		,sysConfig.yawItermIgnoreRate,0);
         setParameter('itermWindupPointPercent'  ,sysConfig.itermWindupPointPercent,0);
-        setParameter('iterm_reset_offset'		,sysConfig.iterm_reset_offset,0);
         setParameter('deadband'					,sysConfig.deadband,0);
         setParameter('yaw_deadband'				,sysConfig.yaw_deadband,0);
     	renderSelect('gyro_lpf'			    	,sysConfig.gyro_lpf, GYRO_LPF);
         setParameter('acc_lpf_hz'				,sysConfig.acc_lpf_hz,0);
 	    setParameter('airmode_activate_throttle',sysConfig.airmode_activate_throttle, 0);
 	    renderSelect('serialrx_provider'		,sysConfig.serialrx_provider, SERIALRX_PROVIDER);
-	    renderSelect('superExpoYawMode'		    ,sysConfig.superExpoYawMode, SUPER_EXPO_YAW);
-    	renderSelect('dynamic_pid'				,sysConfig.dynamic_pid, OFF_ON);
 
 		if (sysConfig.gyro_notch_hz && sysConfig.gyro_notch_cutoff) {
 			setParameter('gyro_notch_hz'			,sysConfig.gyro_notch_hz[0],0);
@@ -393,30 +367,26 @@ function HeaderDialog(dialog, onSave) {
 		setParameter('dterm_notch_hz'			,sysConfig.dterm_notch_hz,0);
 		setParameter('dterm_notch_cutoff'		,sysConfig.dterm_notch_cutoff,0);
 		setParameter('dterm_lpf_hz'				,sysConfig.dterm_lpf_hz,0);
+		setParameter('dterm_lpf2_hz'			,sysConfig.dterm_lpf2_hz,0);
 		setParameter('yaw_lpf_hz'				,sysConfig.yaw_lpf_hz,0);
-		setParameter('gyro_lowpass_hz'			,sysConfig.gyro_lowpass_hz,0);
-		setParameter('gyro_stage2_lowpass_hz'	,sysConfig.gyro_stage2_lowpass_hz,0);
+		setParameter('gyro_lpf_hz'				,sysConfig.gyro_lpf_hz,0);
+		setParameter('gyro_lpf2_hz'				,sysConfig.gyro_lpf2_hz,0);
 		
-		renderSelect('fast_pwm_protocol'		,sysConfig.fast_pwm_protocol, FAST_PROTOCOL);
+		renderSelect('motor_pwm_protocol'		,sysConfig.motor_pwm_protocol, FAST_PROTOCOL);
         setParameter('motor_pwm_rate'		    ,sysConfig.motor_pwm_rate,0);
         renderSelect('dterm_filter_type'		,sysConfig.dterm_filter_type, FILTER_TYPE);
-        setParameter('ptermSRateWeight'			,sysConfig.ptermSRateWeight,2);
-        setParameter('dtermSetpointWeight'		,sysConfig.dtermSetpointWeight,2);
-        if(activeSysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT && semver.gte(activeSysConfig.firmwareVersion, '3.1.0')) {
-            setParameterFloat('yawRateAccelLimit', sysConfig.yawRateAccelLimit, 2);
-            setParameterFloat('rateAccelLimit'   , sysConfig.rateAccelLimit, 2);
-        } else {
-            setParameter('yawRateAccelLimit'    , sysConfig.yawRateAccelLimit, 1);
-            setParameter('rateAccelLimit'       , sysConfig.rateAccelLimit, 1);
-        }
-        renderSelect('gyro_soft_type'			,sysConfig.gyro_soft_type, FILTER_TYPE);
+        setParameterFloat('dterm_setpoint_weight'	,sysConfig.dterm_setpoint_weight,2);
+		
+		setParameter('axisAccelerationLimitYaw'    , sysConfig.axisAccelerationLimitYaw, 0);
+		setParameter('axisAccelerationLimitRollPitch'       , sysConfig.axisAccelerationLimitRollPitch, 0);
+		
+		renderSelect('gyro_soft_type'			,sysConfig.gyro_soft_type, FILTER_TYPE);
         renderSelect('debug_mode'				,sysConfig.debug_mode, DEBUG_MODE);
 		setParameter('motorOutputLow'			,sysConfig.motorOutput[0],0);
 		setParameter('motorOutputHigh'			,sysConfig.motorOutput[1],0);
 		setParameter('digitalIdleOffset'		,sysConfig.digitalIdleOffset,2);
         setParameter('antiGravityGain'          ,sysConfig.anti_gravity_gain,0);
         setParameter('antiGravityThreshold'     ,sysConfig.anti_gravity_threshold,0);
-        setParameter('setpointRelaxRatio'		,sysConfig.setpointRelaxRatio,2);
 
 		/* Packed Flags */
 
@@ -429,9 +399,7 @@ function HeaderDialog(dialog, onSave) {
     	renderSelect('mag_hardware'		    	,sysConfig.mag_hardware, MAG_HARDWARE);
 
 		/* Booleans */
-        setCheckbox('gyro_cal_on_first_arm'		,sysConfig.gyro_cal_on_first_arm);
         setCheckbox('vbat_pid_compensation'		,sysConfig.vbat_pid_compensation);
-        setCheckbox('pidAtMinThrottle'			,sysConfig.pidAtMinThrottle);
 
         /* Show Unknown Fields */
         renderUnknownHeaders(sysConfig.unknownHeaders);

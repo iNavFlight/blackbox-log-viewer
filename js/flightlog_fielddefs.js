@@ -135,15 +135,7 @@ var
         ]),
 
         SERIALRX_PROVIDER = makeReadOnly([
-                "SPEK1024",
-                "SPEK2048",
-                "SBUS",
-                "SUMD",
-                "SUMH",
-                "XB-B",
-                "XB-B-RJ01",
-                "IBUS",
-                "JETIEXBUS"
+                "SPEK1024", "SPEK2048", "SBUS", "SUMD", "SUMH", "XB-B", "XB-B-RJ01", "IBUS", "JETIEXBUS", "CRSF", "FPORT", "SBUS_FAST"
         ]),
 
         FILTER_TYPE = makeReadOnly([

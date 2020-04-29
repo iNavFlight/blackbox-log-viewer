@@ -208,7 +208,6 @@ var FlightLogParser = function(logData) {
             superExpoFactor:null,           // Super Expo Factor
             rates:[null, null, null],	    // Rates [ROLL, PITCH, YAW]
             looptime:null,                  // Looptime
-            gyro_sync_denom:null,           // Gyro Sync Denom
             pid_process_denom:null,         // PID Process Denom
             pidController:null,             // Active PID Controller
             rollPID:[null, null, null],	    // Roll [P, I, D]
@@ -221,20 +220,14 @@ var FlightLogParser = function(logData) {
             levelPID:[null, null, null],	// Level Mode    [P, I, D]
             magPID:null,              	    // Magnetometer   P
             velPID:[null, null, null],	    // Velocity      [P, I, D]
-            yaw_p_limit:null,               // Yaw P Limit
             yaw_lpf_hz:null,                // Yaw LowPass Filter Hz
-            dterm_average_count:null,       // DTerm Average Count
-            rollPitchItermResetRate:null,   // ITerm Reset rate for Roll and Pitch
-            yawItermResetRate:null,         // ITerm Reset Rate for Yaw
             dterm_lpf_hz:null,              // DTerm Lowpass Filter Hz
             dterm_differentiator:null,      // DTerm Differentiator
             H_sensitivity:null,             // Horizon Sensitivity
-            iterm_reset_offset:null,        // I-Term reset offset
             deadband:null,                  // Roll, Pitch Deadband
             yaw_deadband:null,              // Yaw Deadband
             gyro_lpf:null,                  // Gyro lpf setting.
-            gyro_lowpass_hz:null,           // Gyro Soft Lowpass Filter Hz
-            gyro_stage2_lowpass_hz:null,    // Stage 2 gyro LPF cutoff Hz
+            gyro_lpf_hz:null,           // Gyro Soft Lowpass Filter Hz
             gyro_notch_hz:null,             // Gyro Notch Frequency
             gyro_notch_cutoff:null,         // Gyro Notch Cutoff
             dterm_notch_hz:null,            // Dterm Notch Frequency
@@ -243,18 +236,16 @@ var FlightLogParser = function(logData) {
             acc_hardware:null,              // Accelerometer Hardware type
             baro_hardware:null,             // Barometer Hardware type
             mag_hardware:null,              // Magnetometer Hardware type
-            gyro_cal_on_first_arm:null,     // Gyro Calibrate on first arm
             vbat_pid_compensation:null,     // VBAT PID compensation
             rc_smoothing:null,              // RC Control Smoothing
             rc_interpolation:null, 			// RC Control Interpolation type
             rc_interpolation_interval:null, // RC Control Interpolation Interval
             dterm_filter_type:null,         // D term filtering type (PT1, BIQUAD)
-            pidAtMinThrottle:null,          // Stabilisation at zero throttle
             itermThrottleGain:null,         // Betaflight PID
             ptermSetpointWeight:null,       // Betaflight PID
-            dtermSetpointWeight:null,       // Betaflight PID
-            yawRateAccelLimit:null,         // Betaflight PID
-            rateAccelLimit:null,            // Betaflight PID
+            dterm_setpoint_weight:null,     // Betaflight PID
+            axisAccelerationLimitYaw:null,         // Betaflight PID
+            axisAccelerationLimitRollPitch:null,            // Betaflight PID
             gyro_soft_type:null,            // Gyro soft filter type (PT1, BIQUAD)
             debug_mode:null,                // Selected Debug Mode
             features:null,                  // Activated features (e.g. MOTORSTOP etc)
@@ -262,6 +253,24 @@ var FlightLogParser = function(logData) {
             motorOutput:[null,null],        // Minimum and maximum outputs to motor's
             digitalIdleOffset:null,         // min throttle for d-shot (as a percentage)
             waypoints:[null,null],          // Number of nav. waypoints / is waypoint list valid
+            dterm_lpf_type: null,
+            dterm_lpf2_hz: null,
+            dterm_lpf2_type: null,
+            gyro_lpf_type: null,
+            gyro_lpf2_hz: null,
+            dynamicGyroNotchRange: null,
+            dynamicGyroNotchQ: null,
+            dynamicGyroNotchMinHz: null,
+            acc_notch_hz: null,
+            acc_notch_cutoff: null,
+            pidSumLimit: null,
+            pidSumLimitYaw: null,
+            axisAccelerationLimitYaw: null,
+            axisAccelerationLimitRollPitch: null,
+            rpm_gyro_filter_enabled: null,
+            rpm_gyro_harmonics: null,
+            rpm_gyro_min_hz: null,
+            rpm_gyro_q: null,
             unknownHeaders : []             // Unknown Extra Headers
         },
 
@@ -417,20 +426,11 @@ var FlightLogParser = function(logData) {
             case "airmode_activate_throttle":
             case "serialrx_provider":
             case "looptime":
-            case "gyro_sync_denom":
             case "pid_process_denom":
             case "pidController":
-            case "yaw_p_limit":
-            case "dterm_average_count":
-            case "rollPitchItermResetRate":
-            case "yawItermResetRate":
-            case "rollPitchItermIgnoreRate":
-            case "yawItermIgnoreRate":
             case "dterm_differentiator":
             case "deltaMethod":
             case "dynamic_dterm_threshold":
-            case "dynamic_pterm":
-            case "iterm_reset_offset":
             case "deadband":
             case "yaw_deadband":
             case "gyro_lpf":
@@ -438,37 +438,47 @@ var FlightLogParser = function(logData) {
             case "acc_hardware":
             case "baro_hardware":
             case "mag_hardware":
-            case "gyro_cal_on_first_arm":
             case "vbat_pid_compensation":
             case "rc_smoothing":
-            case "superExpoYawMode":
             case "features":
-            case "dynamic_pid":
             case "rc_interpolation":
             case "rc_interpolation_interval":
             case "unsynced_fast_pwm":
-            case "fast_pwm_protocol":
+            case "motor_pwm_protocol":
             case "motor_pwm_rate":
             case "vbatscale":
             case "vbatref":
             case "acc_1G":
             case "dterm_filter_type":
-            case "pidAtMinThrottle":
             case "anti_gravity_threshold":
             case "itermWindupPointPercent":
-            case "ptermSRateWeight":
-            case "setpointRelaxRatio":
-            case "dtermSetpointWeight":
             case "gyro_soft_type":
             case "debug_mode":
             case "dterm_cut_hz":
             case "acc_cut_hz":
             case "yaw_lpf_hz":
-            case "gyro_lowpass_hz":
-            case "gyro_stage2_lowpass_hz":
+            case "gyro_lpf_hz":
             case "dterm_notch_hz":
             case "dterm_notch_cutoff":
             case "dterm_lpf_hz":
+            case "dterm_lpf_type":
+            case "dterm_lpf2_hz":
+            case "dterm_lpf2_type":
+            case "gyro_lpf_type":
+            case "gyro_lpf2_hz":
+            case "dynamicGyroNotchRange":
+            case "dynamicGyroNotchQ":
+            case "dynamicGyroNotchMinHz":
+            case "acc_notch_hz":
+            case "acc_notch_cutoff":
+            case "pidSumLimit":
+            case "pidSumLimitYaw":
+            case "axisAccelerationLimitYaw":
+            case "axisAccelerationLimitRollPitch":
+            case "rpm_gyro_filter_enabled":
+            case "rpm_gyro_harmonics":
+            case "rpm_gyro_min_hz":
+            case "rpm_gyro_q":
                 that.sysConfig[fieldName] = parseInt(fieldValue, 10);
             break;
 
@@ -484,7 +494,7 @@ var FlightLogParser = function(logData) {
                 break;
 
             case "gyro_lpf_hz":
-                that.sysConfig["gyro_lowpass_hz"] = parseInt(fieldValue, 10);
+                that.sysConfig["gyro_lpf_hz"] = parseInt(fieldValue, 10);
                 break;
 
             case "waypoints":
@@ -513,10 +523,6 @@ var FlightLogParser = function(logData) {
                 that.sysConfig.thrExpo = parseInt(fieldValue, 10);
                 break;
             case "setpoint_relaxation_ratio":
-                that.sysConfig.setpointRelaxRatio = parseInt(fieldValue, 10);
-                break;
-            case "dterm_setpoint_weight":
-                that.sysConfig.dtermSetpointWeight = parseInt(fieldValue, 10);
                 break;
             case "gyro_lowpass_type":
                 that.sysConfig.gyro_soft_type = parseInt(fieldValue, 10);
@@ -527,24 +533,16 @@ var FlightLogParser = function(logData) {
             case "dshot_idle_value":
                 that.sysConfig.digitalIdleOffset = parseInt(fieldValue, 10);
                 break;
-            case "acc_limit":
-                that.sysConfig.rateAccelLimit = parseInt(fieldValue, 10);
-                break;
-            case "acc_limit_yaw":
-                that.sysConfig.yawRateAccelLimit = parseInt(fieldValue, 10);
+            case "axisAccelerationLimitYaw":
+                that.sysConfig.axisAccelerationLimitYaw = parseInt(fieldValue, 10);
                 break;
             case "iterm_windup":
                 that.sysConfig.itermWindupPointPercent = parseInt(fieldValue, 10);
-                break;
-            case "motor_pwm_protocol":
-                that.sysConfig.fast_pwm_protocol = parseInt(fieldValue, 10);
                 break;
             case "tpa_rate":
                 that.sysConfig.dynThrPID = parseInt(fieldValue, 10);
                 break;
 
-            case "yawRateAccelLimit":
-            case "rateAccelLimit":
             case "anti_gravity_gain":
                 that.sysConfig[fieldName] = uint32ToFloat(fieldValue, 10);
                 break;
@@ -640,6 +638,11 @@ var FlightLogParser = function(logData) {
             case "Device UID":
                 that.sysConfig.deviceUID = fieldValue;
             break;
+
+            case "dterm_setpoint_weight":
+                that.sysConfig[fieldName] = parseFloat(fieldValue, 10);
+                break;
+            
             default:
                 if ((matches = fieldName.match(/^Field (.) (.+)$/))) {
                     var

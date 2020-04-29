@@ -713,61 +713,15 @@
 									<table class="parameter cf">
 										<tbody>
 											<tr>
-												<td name="ptermSRateWeight" class="bf-only"><label>P-Term<br>&nbsp;</label><input type="number" step="0.01" min="0" max="999" /></td>
-                                                <td name="setpointRelaxRatio" class="bf-only"><label>Setpoint Relax<br>Ratio</label><input type="number" step="0.01" min="0" max="999" /></td>
-												<td name="dtermSetpointWeight" class="bf-only"><label>D-Term Setpoint<br>Weight</label><input type="number" step="0.01" min="0" max="999" /></td>
-												<td name="rateAccelLimit" class="bf-only"><label>Roll/Pitch Rate<br>Acceleration Limit</label><input type="number" step="1" min="0" max="999" /></td>
-												<td name="yawRateAccelLimit" class="bf-only"><label>Yaw Rate<br>Acceleration Limit</label><input type="number" step="1" min="0" max="999" /></td>
+												<td name="dterm_setpoint_weight"><label>D-Term Setpoint<br>Weight</label><input type="number" step="0.01" min="0" max="999" /></td>
+												<td name="axisAccelerationLimitRollPitch" ><label>Roll/Pitch Rate<br>Acceleration Limit</label><input type="number" step="1" min="0" max="999" /></td>
+												<td name="axisAccelerationLimitYaw"><label>Yaw Rate<br>Acceleration Limit</label><input type="number" step="1" min="0" max="999" /></td>
 											</tr>
                                             <tr>
                                                 <td name="antiGravityGain" class="bf-only"><label>AG Gain</label><input type="number" step="0.01" min="0" max="999" /></td>
                                                 <td name="antiGravityThreshold" class="bf-only"><label>AG Threshold</label><input type="number" step="0.01" min="0" max="999" /></td>
                                                 <td name="itermWindupPointPercent" class="bf-only"><label>Windup Threshold</label><input type="number" step="1" min="0" max="999" /></td>
                                             </tr>
-										</tbody>
-									</table>
-								</div>
-								<div class="spacer_box">
-									<table class="no-inav parameter cf">
-										<tbody>
-											<tr>
-											    <td name='dynamic_pid' class="bf-only"><label>Dynamic PID</label><select><!-- list generated here --></select></td>
-											</tr>
-										</tbody>
-									</table>
-									<table class="parameter cf">
-										<thead class="BFPIDController">
-											<tr>
-												<th colspan="2">P-Term</th>
-												<th class="bf-only" colspan="2">I-Term</th>
-											</tr>
-										</thead>
-										<tbody class="BFPIDController">
-											<tr>
-											    <td name='dynamic_pterm' class="bf-only"><label>Dynamic P</label><select><!-- list generated here --></select></td>
-												<td name="yaw_p_limit"><label>Yaw Limit</label><input type="number" step="1" min="0" max="999" /></td>
-												<td name="rollPitchItermResetRate" class="bf-only"><label>Roll/Pitch Reset</label><input type="number" step="1" min="0" max="999" /></td>
-												<td name="rollPitchItermIgnoreRate" class="bf-only"><label>Roll/Pitch Ignore Rate</label><input type="number" step="1" min="0" max="999" /></td>
-												<td name="yawItermResetRate" class="bf-only"><label>Yaw Reset</label><input type="number" step="1" min="0" max="999" /></td>
-												<td name="yawItermIgnoreRate" class="bf-only"><label>Yaw Ignore Rate</label><input type="number" step="1" min="0" max="999" /></td>
-											</tr>
-										</tbody>
-										<tbody class="BFPIDController">
-											<tr>
-												<td></td>
-												<td name="iterm_reset_offset" class="bf-only"><label>Reset Offset</label><input type="number" step="1" min="0" max="999" /></td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-								<div class="spacer_box">
-									<table class="bf-only" cellpadding="0" cellspacing="0">
-										<tbody class="static-features noline">
-											<tr>
-												<td name="pidAtMinThrottle"><label class="option"><input class="ios-switch" type="checkbox"/><div><div></div></div></label></td>
-												<td><label>pidAtMinThrottle</label></td>
-												<td><span>Stabilisation at zero throttle ?</span></td>
-											</tr>
 										</tbody>
 									</table>
 								</div>
@@ -786,8 +740,8 @@
 										<tbody>
 											<tr>
 												<td name='gyro_lpf'><label>Hardware</label><select><!-- list generated here --></select></td>
-                                                <td name="gyro_lowpass_hz"><label>Soft (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-                                                <td name="gyro_stage2_lowpass_hz"><label>Stage2 (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+                                                <td name="gyro_lpf_hz"><label>Soft (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+                                                <td name="gyro_lpf2_hz"><label>Stage2 (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
 												<td></td>
 											</tr>
 											<tr>
@@ -806,8 +760,8 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td name="dterm_lpf_hz" ><label>Cut-off<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-												<td name="dterm_average_count" class="bf-only"><label>Average Count</label><input type="number" step="1" min="0" max="12" /></td>
+												<td name="dterm_lpf_hz" ><label>LPF1 Cutoff<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
+												<td name="dterm_lpf2_hz" ><label>LPF2 Cutoff<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
 												<td name='dterm_notch_hz'><label>Notch<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
 												<td name="dterm_notch_cutoff"><label>Notch Cutoff<br>(Hz)</label><input type="number" step="0.1" min="0" max="999.00" /></td>
 											</tr>
@@ -864,7 +818,6 @@
 										<tbody>
 											<tr>
 												<td name="loopTime"><label>Looptime</label><input type="number" step="25" min="0" max="3000"/></td>
-												<td name="gyro_sync_denom"><label>Gyro Sync</label><input type="number" step="1" min="0" max="8"/></td>
 											</tr>
 										</tbody>
 										<tbody>
@@ -872,15 +825,6 @@
 												<td name='acc_hardware'><label>Accelerometer</label><select><!-- list generated here --></select></td>
 												<td name='mag_hardware'><label>Magnetometer</label><select><!-- list generated here --></select></td>
 												<td name='baro_hardware'><label>Barometer</label><select><!-- list generated here --></select></td>
-											</tr>
-										</tbody>
-									</table>
-									<table class="bf-only" cellpadding="0" cellspacing="0">
-										<tbody class="static-features noline">
-											<tr>
-												<td name="gyro_cal_on_first_arm"><label class="option"><input class="ios-switch" type="checkbox"/><div><div></div></div></label></td>
-												<td><label>GYRO_CAL_ON_FIRST_ARM</label></td>
-												<td><span>Calibrate Gyro on first arm</span></td>
 											</tr>
 										</tbody>
 									</table>
@@ -947,11 +891,7 @@
 													<td name="superExpoFactorYaw" class="bf-only"><label>YAW SuperExpo</label><input type="number" step="0.01" min="0" max="1.00"/></td>
 													<td></td>
 												</tr>
-												<tr>
-													<td></td>
-													<td name='superExpoYawMode' class="bf-only"><select><!-- list generated here --></select></td>
-													<td></td>
-												</tr>
+												
 											</tbody>
 										</table>
 										<table class="parameter cf">
@@ -962,7 +902,7 @@
 											</thead>
 											<tbody>
 												<tr>
-													<td name='fast_pwm_protocol'><label>Protocol</label><select><!-- list generated here --></select></td>
+													<td name='motor_pwm_protocol'><label>Protocol</label><select><!-- list generated here --></select></td>
 													<td name="motor_pwm_rate"><label>Motor Rate</label><input type="number" step="1" min="0" max="32000"/></td>
 												</tr>
 											</tbody>
