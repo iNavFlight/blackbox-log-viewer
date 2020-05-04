@@ -329,7 +329,7 @@ gulp.task('release-win32', function() {
     archive.on('warning', function(err) { throw err; });
     archive.on('error', function(err) { throw err; });
     archive.pipe(output);
-    archive.directory(src, 'INAV Blacbox Explorer');
+    archive.directory(src, 'INAV Blackbox Explorer');
     return archive.finalize();
 });
 
@@ -348,7 +348,7 @@ gulp.task('release-osx64', function() {
     archive.on('warning', function(err) { throw err; });
     archive.on('error', function(err) { throw err; });
     archive.pipe(output);
-    archive.directory(src, 'INAV Blacbox Explorer.app');
+    archive.directory(src, 'INAV Blackbox Explorer.app');
     return archive.finalize();
 });
 
@@ -364,7 +364,7 @@ function releaseLinux(bits) {
         archive.on('warning', function(err) { throw err; });
         archive.on('error', function(err) { throw err; });
         archive.pipe(output);
-        archive.directory(src, 'INAV Blacbox Explorer');
+        archive.directory(src, 'INAV Blackbox Explorer');
         return archive.finalize();
     }
 }
