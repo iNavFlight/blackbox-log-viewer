@@ -231,7 +231,17 @@ var
                 "NAV_CRUISE_BRAKING_BOOST",
                 "NAV_CRUISE_BRAKING_LOCKED",
                 "NAV_EXTRA_ARMING_SAFETY_BYPASSED",    // nav_extra_arming_safey was bypassed. Keep it until power cycle.
-                "AIRMODE_ACTIVE"
+                "AIRMODE_ACTIVE",
+                "ESC_SENSOR_ENABLED",
+                "AIRPLANE",
+                "MULTIROTOR",
+                "ROVER",
+                "BOAT",
+                "ALTITUDE_CONTROL",
+                "MOVE_FORWARD_ONLY",
+                "SET_REVERSIBLE_MOTORS_FORWARD",
+                "FW_HEADING_USE_YAW",
+                "ANTI_WINDUP_DEACTIVATED"
         ]),
 
         FLIGHT_LOG_FAILSAFE_PHASE_NAME = makeReadOnly([
