@@ -341,6 +341,9 @@ function FlightLogFieldPresenter() {
             case 'features':
                 return presentEnum(value, FLIGHT_LOG_FEATURES);
 
+            case 'hwHealthStatus':
+                return FlightLogFieldPresenter.decodeHwHealth(value);
+
             case 'debug[0]':
             case 'debug[1]':
             case 'debug[2]':
@@ -426,5 +429,17 @@ function FlightLogFieldPresenter() {
         }
 
         return fieldName;
+    };
+
+    FlightLogFieldPresenter.decodeHwHealth = function (healthStatus) {
+        const SENSOR_STATUS = [ "", " OK", " UNAVAIL", " UNHEALTHY" ];
+        const SENSOR_TYPES = [ "GYRO", "ACCEL", "COMP", "BARO", "GPS", "RANGE", "PITOT" ];
+        let retVal = "";
+        SENSOR_TYPES.forEach((sensor, index) => {
+            let status = (healthStatus >> (index * 2)) & 0x03;
+            if (status !== 0)
+              retVal += ((retVal) ? " | " : "") +  sensor + SENSOR_STATUS[status];
+        });
+        return retVal;
     };
 })();
