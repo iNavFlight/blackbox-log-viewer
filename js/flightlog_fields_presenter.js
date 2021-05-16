@@ -390,7 +390,7 @@ function FlightLogFieldPresenter() {
                 return (value == -1250) ? "" : (value / 10.0).toFixed(1) + '&deg;';
 
             default:
-                return "";
+                return value.toString();
         }
     };
 
