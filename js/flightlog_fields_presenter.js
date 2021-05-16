@@ -43,7 +43,6 @@ function FlightLogFieldPresenter() {
         'BaroAlt': 'baro',
 
         'servo[all]': 'servos',
-        'servo[5]': 'tail servo',
 
         'heading[all]': 'heading',
         'heading[0]': 'heading[roll]',
