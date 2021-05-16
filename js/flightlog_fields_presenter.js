@@ -230,7 +230,23 @@ function FlightLogFieldPresenter() {
             case 'rcData[1]':
             case 'rcData[2]':
             case 'rcData[3]':
-                return value.toFixed(0) + " us";
+            case 'servo[0]':
+            case 'servo[1]':
+            case 'servo[2]':
+            case 'servo[3]':
+            case 'servo[4]':
+            case 'servo[5]':
+            case 'servo[6]':
+            case 'servo[7]':
+            case 'servo[8]':
+            case 'servo[9]':
+            case 'servo[10]':
+            case 'servo[11]':
+            case 'servo[12]':
+            case 'servo[13]':
+            case 'servo[14]':
+            case 'servo[15]':
+                return value.toFixed(0) + "us";
 
             case 'axisSum[0]':
             case 'axisSum[1]':
