@@ -443,7 +443,7 @@ function FlightLogFieldPresenter() {
         SENSOR_TYPES.forEach((sensor, index) => {
             let status = (healthStatus >> (index * 2)) & 0x03;
             if (status !== 0)
-              retVal += ((retVal) ? " | " : "") +  sensor + SENSOR_STATUS[status];
+                retVal += (retVal ? " | " : "") + sensor + SENSOR_STATUS[status];
         });
         return retVal;
     };
