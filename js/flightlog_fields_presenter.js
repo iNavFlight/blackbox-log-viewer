@@ -372,6 +372,18 @@ function FlightLogFieldPresenter() {
             case 'sagCompensatedVBat':
                 return (value / 100.0).toFixed(2) + "V";
 
+            case 'IMUTemperature':
+            case 'baroTemperature':
+            case 'sens0Temp':
+            case 'sens1Temp':
+            case 'sens2Temp':
+            case 'sens3Temp':
+            case 'sens4Temp':
+            case 'sens5Temp':
+            case 'sens6Temp':
+            case 'sens7Temp':
+                return (value == -1250) ? "" : (value / 10.0).toFixed(1) + '&deg;';
+
             default:
                 return "";
         }
