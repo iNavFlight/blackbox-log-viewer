@@ -360,6 +360,8 @@ function FlightLogFieldPresenter() {
             case 'navTgtVel[0]':
             case 'navTgtVel[1]':
             case 'velocity':
+            case 'wind[0]':
+            case 'wind[1]':
             case 'windVelocity':
                 if (userSettings.velocityUnits == 'I') // Imperial
                     return (value * 0.0223694).toFixed(1) + "mph";
