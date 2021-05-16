@@ -68,7 +68,21 @@ var
                 "AUTO TUNE",
                 "CAMERA 1",
                 "CAMERA 2",
-                "CAMERA 3"
+                "CAMERA 3",
+                "OSD ALT1",
+                "OSD ALT2",
+                "OSD ALT3",
+                "COURSE HOLD",
+                "BRAKING",
+                "USER 1",
+                "USER 2",
+                "CAM MIX", // FPV Angle Mix
+                "LOITER DIRCH", // Loiter direction change
+                "MSP RC OVER", // MSP RC Override
+                "PREARM",
+                "TURTLE",
+                "NAV CRUISE",
+                "AUTOLEVEL"
         ]),
 
         FLIGHT_LOG_FEATURES = makeReadOnly([
@@ -231,7 +245,17 @@ var
                 "NAV_CRUISE_BRAKING_BOOST",
                 "NAV_CRUISE_BRAKING_LOCKED",
                 "NAV_EXTRA_ARMING_SAFETY_BYPASSED",    // nav_extra_arming_safey was bypassed. Keep it until power cycle.
-                "AIRMODE_ACTIVE"
+                "AIRMODE_ACTIVE",
+                "ESC_SENSOR_ACT",
+                "AIRPLANE",
+                "MULTIROTOR",
+                "ROVER",
+                "BOAT",
+                "ALT_CONTROL", // Altitude control
+                "FORWARD_ONLY", // Move Forward Only
+                "REV_MOTOR_FOR", // Reverse Motors Forward
+                "HEADING_USE_YAW", // FW Heading use yaw
+                "ANTIWINDUP_OFF" // Antiwindup Deactivated
         ]),
 
         FLIGHT_LOG_FAILSAFE_PHASE_NAME = makeReadOnly([
@@ -258,7 +282,6 @@ var
                 "RTH_CLIMB_TO_SAFE_ALT",
                 "RTH_HEAD_HOME",
                 "RTH_HOVER_PRIOR_TO_LANDING",
-                "RTH_HOVER_ABOVE_HOME",
                 "RTH_LANDING",
                 "RTH_FINISHING",
                 "RTH_FINISHED",
@@ -281,7 +304,10 @@ var
                 "CRUISE_2D_ADJUSTING",
                 "CRUISE_3D_INITIALIZE",
                 "CRUISE_3D_IN_PROGRESS",
-                "CRUISE_3D_ADJUSTING"
+                "CRUISE_3D_ADJUSTING",
+                "WAYPOINT_HOLD",
+                "RTH_HOVER_ABOVE_HOME",
+                "UNUSED_4"
         ]),
         
         FLIGHT_LOG_NAV_FLAGS = makeReadOnly([
