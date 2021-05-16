@@ -310,7 +310,8 @@ function FlightLogFieldPresenter() {
             case 'heading[0]':
             case 'heading[1]':
             case 'heading[2]':
-                return (value / Math.PI * 180).toFixed(1) + "°";
+            case 'windHeading':
+                return (value / Math.PI * 180).toFixed(1) + "&deg;";
 
             case 'BaroAlt':
                 return (value / 100).toFixed(1) + "m";
@@ -359,6 +360,7 @@ function FlightLogFieldPresenter() {
             case 'navTgtVel[0]':
             case 'navTgtVel[1]':
             case 'velocity':
+            case 'windVelocity':
                 if (userSettings.velocityUnits == 'I') // Imperial
                     return (value * 0.0223694).toFixed(1) + "mph";
                 if (userSettings.velocityUnits == 'M') // Metric
@@ -366,7 +368,8 @@ function FlightLogFieldPresenter() {
                 return (value / 100).toFixed(2) + "m/s"; // Default
 
             case 'navVel[2]': // Vertical speed always in m/s
-            case 'navTgtVel[2]': // Vertical speed always in m/s
+            case 'navTgtVel[2]':
+            case 'wind[2]':
                 return (value / 100).toFixed(2) + "m/s";
 
             case 'rssi':
