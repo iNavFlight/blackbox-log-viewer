@@ -382,6 +382,7 @@ function FlightLogFieldPresenter() {
             case 'sens5Temp':
             case 'sens6Temp':
             case 'sens7Temp':
+            case 'escTemperature':
                 return (value == -1250) ? "" : (value / 10.0).toFixed(1) + '&deg;';
 
             default:
