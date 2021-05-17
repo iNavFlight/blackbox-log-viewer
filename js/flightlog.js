@@ -11,7 +11,8 @@
  */
 function FlightLog(logData) {
     var
-        ADDITIONAL_COMPUTED_FIELD_COUNT = 16, /** attitude + PID_SUM + PID_ERROR + RCCOMMAND_SCALED + GYROADC_SCALED + VELOCITY **/
+        ADDITIONAL_COMPUTED_FIELD_COUNT = 18, /** attitude + PID_SUM + PID_ERROR + RCCOMMAND_SCALED + GYROADC_SCALED
+                                                  + VELOCITY + WIND_VELOCITY + WIND_HEADING **/
 
         that = this,
         logIndex = false,
@@ -228,7 +229,7 @@ function FlightLog(logData) {
         fieldNames.push("axisError[0]", "axisError[1]", "axisError[2]"); // Custom calculated error field
         fieldNames.push("rcCommands[0]", "rcCommands[1]", "rcCommands[2]"); // Custom calculated error field
         fieldNames.push("gyroADCs[0]", "gyroADCs[1]", "gyroADCs[2]"); // Custom calculated error field
-		fieldNames.push("velocity");
+        fieldNames.push("velocity", "windVelocity", "windHeading");
 
         fieldNameToIndex = {};
         for (i = 0; i < fieldNames.length; i++) {
@@ -514,7 +515,8 @@ function FlightLog(logData) {
 
             sysConfig,
             attitude,
-			navVel = [fieldNameToIndex["navVel[0]"], fieldNameToIndex["navVel[1]"]],
+            navVel = [fieldNameToIndex["navVel[0]"], fieldNameToIndex["navVel[1]"]],
+            wind = [fieldNameToIndex["wind[0]"], fieldNameToIndex["wind[1]"], fieldNameToIndex["wind[2]"]],
 
             axisPID = [[fieldNameToIndex["axisP[0]"], fieldNameToIndex["axisI[0]"], fieldNameToIndex["axisD[0]"]],
                        [fieldNameToIndex["axisP[1]"], fieldNameToIndex["axisI[1]"], fieldNameToIndex["axisD[1]"]],
@@ -597,12 +599,25 @@ function FlightLog(logData) {
                             (gyroADC[axis] !== undefined ? that.gyroRawToDegreesPerSecond(srcFrame[gyroADC[axis]]) : 0);
                         }
 
-					// Composite velocity from cardinal velocities
-					var
-						velx = srcFrame[navVel[0]],
-						vely = srcFrame[navVel[1]];
-					if (velx !== undefined && vely !== undefined)
-						destFrame[fieldIndex++] = Math.round(Math.hypot(velx, vely));
+                    // Composite velocity from cardinal velocities
+                    let
+                        velx = srcFrame[navVel[0]],
+                        vely = srcFrame[navVel[1]];
+                    if (velx !== undefined && vely !== undefined)
+                        destFrame[fieldIndex] = Math.round(Math.hypot(velx, vely));
+                    fieldIndex++;
+
+                    // Compute wind velocity / heading from vector
+                    let windVal = [srcFrame[wind[0]], srcFrame[wind[1]], srcFrame[wind[2]]];
+                    if (windVal[0] != undefined && windVal[1] != undefined && windVal[2] != undefined)
+                    {
+                        destFrame[fieldIndex] = Math.sqrt(windVal[0] * windVal[0] + windVal[1] * windVal[1]);
+                        let windRads = Math.atan2(windVal[1], windVal[0]);
+                        if (windRads < 0)
+                            windRads += 2 * Math.PI;
+                        destFrame[fieldIndex+1] = windRads;
+                    }
+                    fieldIndex += 2;
                 }
             }
         }

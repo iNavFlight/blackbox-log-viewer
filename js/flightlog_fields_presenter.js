@@ -43,7 +43,6 @@ function FlightLogFieldPresenter() {
         'BaroAlt': 'baro',
 
         'servo[all]': 'servos',
-        'servo[5]': 'tail servo',
 
         'heading[all]': 'heading',
         'heading[0]': 'heading[roll]',
@@ -231,7 +230,23 @@ function FlightLogFieldPresenter() {
             case 'rcData[1]':
             case 'rcData[2]':
             case 'rcData[3]':
-                return value.toFixed(0) + " us";
+            case 'servo[0]':
+            case 'servo[1]':
+            case 'servo[2]':
+            case 'servo[3]':
+            case 'servo[4]':
+            case 'servo[5]':
+            case 'servo[6]':
+            case 'servo[7]':
+            case 'servo[8]':
+            case 'servo[9]':
+            case 'servo[10]':
+            case 'servo[11]':
+            case 'servo[12]':
+            case 'servo[13]':
+            case 'servo[14]':
+            case 'servo[15]':
+                return value.toFixed(0) + "us";
 
             case 'axisSum[0]':
             case 'axisSum[1]':
@@ -245,6 +260,10 @@ function FlightLogFieldPresenter() {
             case 'axisD[0]':
             case 'axisD[1]':
             case 'axisD[2]':
+            case 'fwAltP':
+            case 'fwAltI':
+            case 'fwAltD':
+            case 'fwAltOut':
                 return flightLog.getPIDPercentage(value).toFixed(1) + "%";
 
             case 'mcPosAxisP[0]':
@@ -291,7 +310,8 @@ function FlightLogFieldPresenter() {
             case 'heading[0]':
             case 'heading[1]':
             case 'heading[2]':
-                return (value / Math.PI * 180).toFixed(1) + "°";
+            case 'windHeading':
+                return (value / Math.PI * 180).toFixed(1) + "&deg;";
 
             case 'BaroAlt':
                 return (value / 100).toFixed(1) + "m";
@@ -322,6 +342,9 @@ function FlightLogFieldPresenter() {
             case 'features':
                 return presentEnum(value, FLIGHT_LOG_FEATURES);
 
+            case 'hwHealthStatus':
+                return FlightLogFieldPresenter.decodeHwHealth(value);
+
             case 'debug[0]':
             case 'debug[1]':
             case 'debug[2]':
@@ -337,6 +360,9 @@ function FlightLogFieldPresenter() {
             case 'navTgtVel[0]':
             case 'navTgtVel[1]':
             case 'velocity':
+            case 'wind[0]':
+            case 'wind[1]':
+            case 'windVelocity':
                 if (userSettings.velocityUnits == 'I') // Imperial
                     return (value * 0.0223694).toFixed(1) + "mph";
                 if (userSettings.velocityUnits == 'M') // Metric
@@ -344,7 +370,8 @@ function FlightLogFieldPresenter() {
                 return (value / 100).toFixed(2) + "m/s"; // Default
 
             case 'navVel[2]': // Vertical speed always in m/s
-            case 'navTgtVel[2]': // Vertical speed always in m/s
+            case 'navTgtVel[2]':
+            case 'wind[2]':
                 return (value / 100).toFixed(2) + "m/s";
 
             case 'rssi':
@@ -357,8 +384,21 @@ function FlightLogFieldPresenter() {
             case 'sagCompensatedVBat':
                 return (value / 100.0).toFixed(2) + "V";
 
+            case 'IMUTemperature':
+            case 'baroTemperature':
+            case 'sens0Temp':
+            case 'sens1Temp':
+            case 'sens2Temp':
+            case 'sens3Temp':
+            case 'sens4Temp':
+            case 'sens5Temp':
+            case 'sens6Temp':
+            case 'sens7Temp':
+            case 'escTemperature':
+                return (value == -1250) ? "" : (value / 10.0).toFixed(1) + '&deg;';
+
             default:
-                return "";
+                return value.toString();
         }
     };
 
@@ -394,5 +434,17 @@ function FlightLogFieldPresenter() {
         }
 
         return fieldName;
+    };
+
+    FlightLogFieldPresenter.decodeHwHealth = function (healthStatus) {
+        const SENSOR_STATUS = [ "", " OK", " UNAVAIL", " UNHEALTHY" ];
+        const SENSOR_TYPES = [ "GYRO", "ACCEL", "COMP", "BARO", "GPS", "RANGE", "PITOT" ];
+        let retVal = "";
+        SENSOR_TYPES.forEach((sensor, index) => {
+            let status = (healthStatus >> (index * 2)) & 0x03;
+            if (status !== 0)
+                retVal += (retVal ? " | " : "") + sensor + SENSOR_STATUS[status];
+        });
+        return retVal;
     };
 })();
