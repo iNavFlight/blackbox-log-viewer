@@ -893,7 +893,9 @@ function BlackboxLogViewer() {
                     isWorkspaces = files[i].name.match(/\.(JSON)$/i);
                 
                 if (!isLog && !isVideo && !isWorkspaces) {
-                    if (files[i].size < 10 * 1024 * 1024)
+                    if (files[i].name.match(/blackbox_log/i))
+                        isLog = true;
+                    else if (files[i].size < 32 * 1024 * 1024)
                         isLog = true; //Assume small files are logs rather than videos
                     else
                         isVideo = true;
