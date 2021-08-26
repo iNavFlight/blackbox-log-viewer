@@ -5,6 +5,7 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
         PID_P = 0,
         PID_I = 1,
         PID_D = 2,
+        PID_FF = 3,
 
         STICK_MODE_1 = 1,
         STICK_MODE_2 = 2,
