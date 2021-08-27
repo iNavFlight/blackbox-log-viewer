@@ -203,14 +203,14 @@ function FlightLogFieldPresenter() {
                 return Math.round(value) + " deg/s";
 
             case 'rcCommand[0]':
-                return Math.round(flightLog.rcCommandRawToDegreesPerSecond(value, 0), currentFlightMode) + " deg/s";
             case 'rcCommand[1]':
-                return Math.round(flightLog.rcCommandRawToDegreesPerSecond(value, 1), currentFlightMode) + " deg/s";
             case 'rcCommand[2]':
-                return Math.round(flightLog.rcCommandRawToDegreesPerSecond(value, 2), currentFlightMode) + " deg/s";
+                return value.toFixed(0) + ' deg/s';
 
+            //Throttle is scaled to %
             case 'rcCommand[3]':
                 return Math.round(flightLog.rcCommandRawToThrottle(value)) + " %";
+
             case 'motor[0]':
             case 'motor[1]':
             case 'motor[2]':
