@@ -518,9 +518,9 @@ function FlightLog(logData) {
             navVel = [fieldNameToIndex["navVel[0]"], fieldNameToIndex["navVel[1]"]],
             wind = [fieldNameToIndex["wind[0]"], fieldNameToIndex["wind[1]"], fieldNameToIndex["wind[2]"]],
 
-            axisPID = [[fieldNameToIndex["axisP[0]"], fieldNameToIndex["axisI[0]"], fieldNameToIndex["axisD[0]"]],
-                       [fieldNameToIndex["axisP[1]"], fieldNameToIndex["axisI[1]"], fieldNameToIndex["axisD[1]"]],
-                       [fieldNameToIndex["axisP[2]"], fieldNameToIndex["axisI[2]"], fieldNameToIndex["axisD[2]"]]];
+            axisPID = [[fieldNameToIndex["axisP[0]"], fieldNameToIndex["axisI[0]"], fieldNameToIndex["axisD[0]"], fieldNameToIndex["axisFF[0]"]],
+                       [fieldNameToIndex["axisP[1]"], fieldNameToIndex["axisI[1]"], fieldNameToIndex["axisD[1]"], fieldNameToIndex["axisFF[1]"]],
+                       [fieldNameToIndex["axisP[2]"], fieldNameToIndex["axisI[2]"], fieldNameToIndex["axisD[2]"], fieldNameToIndex["axisFF[2]"]]];
 
         if (destChunks.length === 0) {
             return;
