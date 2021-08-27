@@ -993,11 +993,6 @@ FlightLog.prototype.rcMotorRawToPct = function(value) {
     return Math.min(Math.max(((value - this.getSysConfig().motorOutput[0]) / (this.getSysConfig().motorOutput[1] - this.getSysConfig().motorOutput[0])) * 100.0, 0.0),100.0);
 };
 
-FlightLog.prototype.getPIDPercentage = function(value) {
-    // PID components and outputs are displayed as percentage (raw value is 0-1000)
-    return (value / 10.0);
-};
-
 
 FlightLog.prototype.getReferenceVoltageMillivolts = function() {
     if((this.getSysConfig().firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(this.getSysConfig().firmwareVersion, '3.1.0')) ||
