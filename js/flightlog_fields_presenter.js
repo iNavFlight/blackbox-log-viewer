@@ -271,8 +271,6 @@ function FlightLogFieldPresenter() {
             case 'fwAltI':
             case 'fwAltD':
             case 'fwAltOut':
-                return value.toFixed(0);
-
             case 'mcPosAxisP[0]':
             case 'mcPosAxisP[1]':
             case 'mcPosAxisP[2]':
