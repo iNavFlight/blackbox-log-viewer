@@ -584,14 +584,15 @@ function FlightLog(logData) {
                     // Calculate the PID Error
                     for (var axis = 0; axis < 3; axis++) {
                         destFrame[fieldIndex++] =
-                            (rcCommand[axis] !== undefined ? that.rcCommandRawToDegreesPerSecond(srcFrame[rcCommand[axis]], axis, currentFlightMode) : 0) -
-                            (gyroADC[axis] !== undefined ? that.gyroRawToDegreesPerSecond(srcFrame[gyroADC[axis]]) : 0);
-                        }
+                            (rcCommand[axis] !== undefined ? srcFrame[rcCommand[axis]] : 0) -
+                            (gyroADC[axis] !== undefined ? srcFrame[gyroADC[axis]] : 0);
+                    }
+
                     // Calculate the Scaled rcCommand (in deg/s)
                     for (var axis = 0; axis < 3; axis++) {
                         destFrame[fieldIndex++] =
                             (rcCommand[axis] !== undefined ? that.rcCommandRawToDegreesPerSecond(srcFrame[rcCommand[axis]], axis, currentFlightMode) : 0);
-                        }
+                    }
 
                     // Calculate the scaled Gyro ADC
                     for (var axis = 0; axis < 3; axis++) {
