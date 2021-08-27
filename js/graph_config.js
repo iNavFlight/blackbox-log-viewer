@@ -259,13 +259,11 @@ GraphConfig.load = function(config) {
                     inputRange: sysConfig.acc_1G * 16.0, /* Reasonable typical maximum for acc */
                     outputRange: 1.0
                 };
-            } else if (fieldName.match(/^axisError\[/)  ||     // Custom Gyro, rcCommand and axisError Scaling
-                       fieldName.match(/^rcCommands\[/) ||     // These use the same scaling as they are in the
-                       fieldName.match(/^gyroADCs\[/)      ) { // same range.
+            } else if (fieldName.match(/^axisError\[/)) { // same range.
                 return {
                     offset: 0,
                     power: 0.25, /* Make this 1.0 to scale linearly */
-                    inputRange: flightLog.gyroRawToDegreesPerSecond((2.0e-3 * Math.PI/180) / sysConfig.gyroScale),
+                    inputRange: 2000,
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^axis.+\[/)) {
@@ -280,13 +278,6 @@ GraphConfig.load = function(config) {
                     offset: -1500,
                     power: 1.0,
                     inputRange: 500,
-                    outputRange: 1.0
-                };
-            } else if (fieldName == "rcCommand[2]") { // Yaw
-                return {
-                    offset: 0,
-                    power: 0.8,
-                    inputRange: 500 * (sysConfig.rcYawRate ? sysConfig.rcYawRate : 100) / 100,
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^rcCommand\[/)) {
