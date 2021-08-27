@@ -225,6 +225,9 @@ function FlightLogFieldPresenter() {
             case 'servo[15]':
                 return value.toFixed(0) + "us";
 
+            /*
+             * PID values are unitless
+             */
             case 'axisSum[0]':
             case 'axisSum[1]':
             case 'axisSum[2]':
@@ -241,7 +244,7 @@ function FlightLogFieldPresenter() {
             case 'fwAltI':
             case 'fwAltD':
             case 'fwAltOut':
-                return flightLog.getPIDPercentage(value).toFixed(1) + "%";
+                return value.toFixed(0);
 
             case 'mcPosAxisP[0]':
             case 'mcPosAxisP[1]':
