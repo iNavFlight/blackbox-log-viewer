@@ -169,44 +169,44 @@ GraphConfig.load = function(config) {
 
 (function() {
     var
-        EXAMPLE_GRAPHS = [
-            {
-                label: "Motors",
-                fields: ["motor[all]", "servo[5]"]
-            },
-            {
-                label: "Gyros",
-                fields: ["gyroADC[all]"]
-            },
-            {	/* Add custom graph configurations to the main menu ! */
-                label: "RC Command",
-                fields: ["rcCommand[all]"]
-            },
-            {
-                label: "PIDs",
-                fields: ["axisSum[all]"]
-            },
-            {
-                label: "PID Error",
-                fields: ["axisError[all]"]
-            },             
-            {
-                label: "Gyro + PID roll",
-                fields: ["axisP[0]", "axisI[0]", "axisD[0]", "gyroADC[0]"]
-            },
-            {
-                label: "Gyro + PID pitch",
-                fields: ["axisP[1]", "axisI[1]", "axisD[1]", "gyroADC[1]"]
-            },
-            {
-                label: "Gyro + PID yaw",
-                fields: ["axisP[2]", "axisI[2]", "axisD[2]", "gyroADC[2]"]
-            },
-            {
-                label: "Accelerometers",
-                fields: ["accSmooth[all]"]
-            }
-        ];
+    EXAMPLE_GRAPHS = [
+        {
+            label: "Gyros",
+            fields: ["gyroADC[all]"]
+        },
+        {
+            label: "Gyro + PID roll",
+            fields: ["axisP[0]", "axisI[0]", "axisD[0]", "axisF[0]", "gyroADC[0]"]
+        },
+        {
+            label: "Gyro + PID pitch",
+            fields: ["axisP[1]", "axisI[1]", "axisD[1]", "axisF[1]", "gyroADC[1]"]
+        },
+        {
+            label: "Gyro + PID yaw",
+            fields: ["axisP[2]", "axisI[2]", "axisD[2]", "axisF[2]", "gyroADC[2]"]
+        },
+        {
+            label: "Motors",
+            fields: ["motor[all]", "servo[5]"]
+        },
+        {	/* Add custom graph configurations to the main menu ! */
+            label: "RC Command",
+            fields: ["rcCommand[all]"]
+        },
+        {
+            label: "PIDs",
+            fields: ["axisSum[all]"]
+        },
+        {
+            label: "PID Error",
+            fields: ["axisError[all]"]
+        },             
+        {
+            label: "Accelerometers",
+            fields: ["accSmooth[all]"]
+        }
+    ];
 
     GraphConfig.getDefaultSmoothingForField = function(flightLog, fieldName) {
         try{
