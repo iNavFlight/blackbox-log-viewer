@@ -259,9 +259,7 @@ GraphConfig.load = function(config) {
                     inputRange: sysConfig.acc_1G * 16.0, /* Reasonable typical maximum for acc */
                     outputRange: 1.0
                 };
-            } else if (fieldName.match(/^axisError\[/)  ||     // Custom Gyro, rcCommand and axisError Scaling
-                       fieldName.match(/^rcCommands\[/) ||     // These use the same scaling as they are in the
-                       fieldName.match(/^gyroADCs\[/)      ) { // same range.
+            } else if (fieldName.match(/^axisError\[/)) { // same range.
                 return {
                     offset: 0,
                     power: 0.25, /* Make this 1.0 to scale linearly */

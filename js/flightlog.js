@@ -11,8 +11,7 @@
  */
 function FlightLog(logData) {
     var
-        ADDITIONAL_COMPUTED_FIELD_COUNT = 18, /** attitude + PID_SUM + PID_ERROR + RCCOMMAND_SCALED + GYROADC_SCALED
-                                                  + VELOCITY + WIND_VELOCITY + WIND_HEADING **/
+        ADDITIONAL_COMPUTED_FIELD_COUNT = 12, /** attitude + PID_SUM + PID_ERROR + VELOCITY + WIND_VELOCITY + WIND_HEADING **/
 
         that = this,
         logIndex = false,
@@ -227,8 +226,6 @@ function FlightLog(logData) {
         fieldNames.push("heading[0]", "heading[1]", "heading[2]");
         fieldNames.push("axisSum[0]", "axisSum[1]", "axisSum[2]");
         fieldNames.push("axisError[0]", "axisError[1]", "axisError[2]"); // Custom calculated error field
-        fieldNames.push("rcCommands[0]", "rcCommands[1]", "rcCommands[2]"); // Custom calculated error field
-        fieldNames.push("gyroADCs[0]", "gyroADCs[1]", "gyroADCs[2]"); // Custom calculated error field
         fieldNames.push("velocity", "windVelocity", "windHeading");
 
         fieldNameToIndex = {};
@@ -578,25 +575,11 @@ function FlightLog(logData) {
                             (axisPID[axis][2] !== undefined ? srcFrame[axisPID[axis][2]] : 0);
                     }
 
-                    // Check the current flightmode (we need to know this so that we can correctly calculate the rates)
-                    var currentFlightMode = srcFrame[flightModeFlagsIndex];
-
                     // Calculate the PID Error
                     for (var axis = 0; axis < 3; axis++) {
                         destFrame[fieldIndex++] =
                             (rcCommand[axis] !== undefined ? srcFrame[rcCommand[axis]] : 0) -
                             (gyroADC[axis] !== undefined ? srcFrame[gyroADC[axis]] : 0);
-                    }
-
-                    // Calculate the Scaled rcCommand (in deg/s)
-                    for (var axis = 0; axis < 3; axis++) {
-                        destFrame[fieldIndex++] =
-                            (rcCommand[axis] !== undefined ? that.rcCommandRawToDegreesPerSecond(srcFrame[rcCommand[axis]], axis, currentFlightMode) : 0);
-                    }
-
-                    // Calculate the scaled Gyro ADC
-                    for (var axis = 0; axis < 3; axis++) {
-                        destFrame[fieldIndex++] = (gyroADC[axis] !== undefined ? that.gyroRawToDegreesPerSecond(srcFrame[gyroADC[axis]]) : 0);
                     }
 
                     // Composite velocity from cardinal velocities

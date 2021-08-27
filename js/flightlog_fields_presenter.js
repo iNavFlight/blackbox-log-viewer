@@ -65,19 +65,6 @@ function FlightLogFieldPresenter() {
         'axisError[0]': 'PID_Error[roll]',
         'axisError[1]': 'PID_Error[pitch]',
         'axisError[2]': 'PID_Error[yaw]',
-
-        //Virtual fields - add the Scaled rcCommands
-        'rcCommands[all]': 'setpointRates',
-        'rcCommands[0]': 'setpointRate[roll]',
-        'rcCommands[1]': 'setpointRate[pitch]',
-        'rcCommands[2]': 'setpointRate[yaw]',
-
-        //Virtual fields - add the Scaled gyros
-        'gyroADCs[all]': 'gyros',
-        'gyroADCs[0]': 'gyros[roll]',
-        'gyroADCs[1]': 'gyros[pitch]',
-        'gyroADCs[2]': 'gyros[yaw]'
-
     };
 
     var DEBUG_FRIENDLY_FIELD_NAMES = {
@@ -187,11 +174,6 @@ function FlightLogFieldPresenter() {
             case 'gyroADC[2]':
                 return value.toFixed(0) + ' deg/s';
 
-            case 'gyroADCs[0]':
-            case 'gyroADCs[1]':
-            case 'gyroADCs[2]':
-                return value.toFixed(0) + " deg/s";
-
             case 'axisError[0]':
             case 'axisError[1]':
             case 'axisError[2]':
@@ -220,11 +202,6 @@ function FlightLogFieldPresenter() {
             case 'motor[6]':
             case 'motor[7]':
                 return Math.round(flightLog.rcMotorRawToPct(value)) + " %";
-
-            case 'rcCommands[0]':
-            case 'rcCommands[1]':
-            case 'rcCommands[2]':
-                return value.toFixed(0) + " deg/s";
 
             case 'rcData[0]':
             case 'rcData[1]':
