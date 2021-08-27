@@ -185,7 +185,7 @@ function FlightLogFieldPresenter() {
             case 'gyroADC[0]':
             case 'gyroADC[1]':
             case 'gyroADC[2]':
-                return Math.round(flightLog.gyroRawToDegreesPerSecond(value)) + " deg/s";
+                return value.toFixed(0) + ' deg/s';
 
             case 'gyroADCs[0]':
             case 'gyroADCs[1]':
