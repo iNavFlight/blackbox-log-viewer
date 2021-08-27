@@ -17,6 +17,10 @@ function FlightLogFieldPresenter() {
         'axisD[0]': 'PID_D[roll]',
         'axisD[1]': 'PID_D[pitch]',
         'axisD[2]': 'PID_D[yaw]',
+        'axisF[all]': 'PID_F',
+        'axisF[0]': 'PID_F[roll]',
+        'axisF[1]': 'PID_F[pitch]',
+        'axisF[2]': 'PID_F[yaw]',
 
         'rcCommand[all]': 'rcCommand',
         'rcCommand[0]': 'rcCommand[roll]',
@@ -240,6 +244,9 @@ function FlightLogFieldPresenter() {
             case 'axisD[0]':
             case 'axisD[1]':
             case 'axisD[2]':
+            case 'axisF[0]':
+            case 'axisF[1]':
+            case 'axisF[2]':
             case 'fwAltP':
             case 'fwAltI':
             case 'fwAltD':

@@ -506,18 +506,18 @@ function FlightLog(logData) {
             magADC = [fieldNameToIndex["magADC[0]"], fieldNameToIndex["magADC[1]"], fieldNameToIndex["magADC[2]"]],
             rcCommand = [fieldNameToIndex["rcCommand[0]"], fieldNameToIndex["rcCommand[1]"], fieldNameToIndex["rcCommand[2]"]],
 
-            flightModeFlagsIndex = fieldNameToIndex["flightModeFlags"], // This points to the flightmode data
-
             sourceChunkIndex, destChunkIndex,
 
             sysConfig,
             attitude,
             navVel = [fieldNameToIndex["navVel[0]"], fieldNameToIndex["navVel[1]"]],
-            wind = [fieldNameToIndex["wind[0]"], fieldNameToIndex["wind[1]"], fieldNameToIndex["wind[2]"]],
+            wind = [fieldNameToIndex["wind[0]"], fieldNameToIndex["wind[1]"], fieldNameToIndex["wind[2]"]];
 
-            axisPID = [[fieldNameToIndex["axisP[0]"], fieldNameToIndex["axisI[0]"], fieldNameToIndex["axisD[0]"]],
-                       [fieldNameToIndex["axisP[1]"], fieldNameToIndex["axisI[1]"], fieldNameToIndex["axisD[1]"]],
-                       [fieldNameToIndex["axisP[2]"], fieldNameToIndex["axisI[2]"], fieldNameToIndex["axisD[2]"]]];
+        let axisPID = [
+                [fieldNameToIndex["axisP[0]"], fieldNameToIndex["axisI[0]"], fieldNameToIndex["axisD[0]"], fieldNameToIndex["axisF[0]"]],
+                [fieldNameToIndex["axisP[1]"], fieldNameToIndex["axisI[1]"], fieldNameToIndex["axisD[1]"], fieldNameToIndex["axisF[1]"]],
+                [fieldNameToIndex["axisP[2]"], fieldNameToIndex["axisI[2]"], fieldNameToIndex["axisD[2]"], fieldNameToIndex["axisF[2]"]]
+            ];
 
         if (destChunks.length === 0) {
             return;
@@ -572,7 +572,8 @@ function FlightLog(logData) {
                         destFrame[fieldIndex++] =
                             (axisPID[axis][0] !== undefined ? srcFrame[axisPID[axis][0]] : 0) +
                             (axisPID[axis][1] !== undefined ? srcFrame[axisPID[axis][1]] : 0) +
-                            (axisPID[axis][2] !== undefined ? srcFrame[axisPID[axis][2]] : 0);
+                            (axisPID[axis][1] !== undefined ? srcFrame[axisPID[axis][2]] : 0) +
+                            (axisPID[axis][2] !== undefined ? srcFrame[axisPID[axis][3]] : 0);
                     }
 
                     // Calculate the PID Error
