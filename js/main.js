@@ -141,8 +141,8 @@ function BlackboxLogViewer() {
         if (isInteger(value))
             return value; //it's an integer already
     
-        if (value === null)
-            return "(absent)";
+        if (value === null || value === undefined)
+            return "-";
         
         return value.toFixed(2);
     }
@@ -509,6 +509,8 @@ function BlackboxLogViewer() {
         var
             success = false;
         
+        console.log("Log index: " + logIndex);
+
         try {
             if (logIndex === null) {
                 for (var i = 0; i < flightLog.getLogCount(); i++) {

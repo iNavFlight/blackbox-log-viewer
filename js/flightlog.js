@@ -595,9 +595,8 @@ function FlightLog(logData) {
 
                     // Calculate the scaled Gyro ADC
                     for (var axis = 0; axis < 3; axis++) {
-                        destFrame[fieldIndex++] =
-                            (gyroADC[axis] !== undefined ? that.gyroRawToDegreesPerSecond(srcFrame[gyroADC[axis]]) : 0);
-                        }
+                        destFrame[fieldIndex++] = (gyroADC[axis] !== undefined ? that.gyroRawToDegreesPerSecond(srcFrame[gyroADC[axis]]) : 0);
+                    }
 
                     // Composite velocity from cardinal velocities
                     let
@@ -935,7 +934,9 @@ function FlightLog(logData) {
      * Attempt to open the log with the given index, returning true on success.
      */
     this.openLog = function(index) {
-        if (this.getLogError(index)) {
+        let logError = this.getLogError(index);
+        if (logError) {
+            console.error(logError);
             return false;
         }
 
