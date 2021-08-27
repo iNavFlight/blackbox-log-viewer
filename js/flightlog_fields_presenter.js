@@ -271,7 +271,7 @@ function FlightLogFieldPresenter() {
             case 'fwAltI':
             case 'fwAltD':
             case 'fwAltOut':
-                return flightLog.getPIDPercentage(value).toFixed(1) + "%";
+                return value.toFixed(0);
 
             case 'mcPosAxisP[0]':
             case 'mcPosAxisP[1]':
