@@ -28,6 +28,7 @@ function FlightLogFieldPresenter() {
         'rcCommand[2]': 'rcCommand[yaw]',
         'rcCommand[3]': 'rcCommand[throttle]',
 
+        'axisRate[all]': 'setpointRate[all]',
         'axisRate[0]': 'setpointRate[roll]',
         'axisRate[1]': 'setpointRate[pitch]',
         'axisRate[2]': 'setpointRate[yaw]',
