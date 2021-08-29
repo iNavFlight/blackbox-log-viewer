@@ -196,7 +196,7 @@ function FlightLogFieldPresenter() {
             case 'rcCommand[0]':
             case 'rcCommand[1]':
             case 'rcCommand[2]':
-                return value.toFixed(0) + ' deg/s';
+                return value.toFixed(0);
 
             //Throttle is scaled to %
             case 'rcCommand[3]':
