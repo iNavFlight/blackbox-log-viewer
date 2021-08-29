@@ -249,7 +249,7 @@ GraphConfig.load = function(config) {
                 return {
                     offset: 0,
                     power: 0.25, /* Make this 1.0 to scale linearly */
-                    inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale,
+                    inputRange: 1000, //(2.0e-3 * Math.PI/180) / sysConfig.gyroScale,
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^accSmooth\[/)) {
@@ -269,7 +269,7 @@ GraphConfig.load = function(config) {
             } else if (fieldName.match(/^axis.+\[/)) {
                 return {
                     offset: 0,
-                    power: 0.3,
+                    power: 0.25,
                     inputRange: 1000, // Was 400 ?
                     outputRange: 1.0
                 };
