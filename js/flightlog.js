@@ -500,14 +500,12 @@ function FlightLog(logData) {
      * sourceChunks and destChunks can be the same array.
      */
     function injectComputedFields(sourceChunks, destChunks) {
-        var
-            gyroADC = [fieldNameToIndex["gyroADC[0]"], fieldNameToIndex["gyroADC[1]"], fieldNameToIndex["gyroADC[2]"]],
+        let gyroADC = [fieldNameToIndex["gyroADC[0]"], fieldNameToIndex["gyroADC[1]"], fieldNameToIndex["gyroADC[2]"]],
             accSmooth = [fieldNameToIndex["accSmooth[0]"], fieldNameToIndex["accSmooth[1]"], fieldNameToIndex["accSmooth[2]"]],
             magADC = [fieldNameToIndex["magADC[0]"], fieldNameToIndex["magADC[1]"], fieldNameToIndex["magADC[2]"]],
             rcCommand = [fieldNameToIndex["rcCommand[0]"], fieldNameToIndex["rcCommand[1]"], fieldNameToIndex["rcCommand[2]"]],
-
+            axisRate = [fieldNameToIndex["axisRate[0]"], fieldNameToIndex["axisRate[1]"], fieldNameToIndex["axisRate[2]"]],
             sourceChunkIndex, destChunkIndex,
-
             sysConfig,
             attitude,
             navVel = [fieldNameToIndex["navVel[0]"], fieldNameToIndex["navVel[1]"]],
@@ -579,7 +577,7 @@ function FlightLog(logData) {
                     // Calculate the PID Error
                     for (var axis = 0; axis < 3; axis++) {
                         destFrame[fieldIndex++] =
-                            (rcCommand[axis] !== undefined ? srcFrame[rcCommand[axis]] : 0) -
+                            (axisRate[axis] !== undefined ? srcFrame[axisRate[axis]] : 0) -
                             (gyroADC[axis] !== undefined ? srcFrame[gyroADC[axis]] : 0);
                     }
 
