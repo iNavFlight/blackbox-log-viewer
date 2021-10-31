@@ -76,95 +76,186 @@ var FlightLogParser = function(logData) {
 
         INFLIGHT_ADJUSTMENT_FUNCTIONS = [
             {
-                name: 'None'
+                name: 'None'                    // 0
             },
             {
-                name: 'RC Rate',
+                name: 'RC Rate',                // 1
+                scale: 10
+            },
+            {
+                name : 'RC Expo',               // 2
                 scale: 0.01
             },
             {
-                name : 'RC Expo',
+                name: 'Throttle Expo',          // 3
                 scale: 0.01
             },
             {
-                name: 'Throttle Expo',
+                name: 'Pitch & Roll Rate',      // 4
+                scale: 10
+            },
+            {
+                name: 'Yaw rate',               // 5
+                scale: 10
+            },
+            {
+                name: 'Pitch & Roll P',         // 6
+            },
+            {
+                name: 'Pitch & Roll I',         // 7
+            },
+            {
+                name: 'Pitch & Roll D',         // 8
+            },
+            {
+                name: 'Pitch & Roll FF',        // 9
+            },
+            {
+                name: 'Pitch P',                // 10
+            },
+            {
+                name: 'Pitch I',                // 11
+            },
+            {
+                name: 'Pitch D',                // 12
+            },
+            {
+                name: 'Pitch FF',               // 13          
+            },
+            {
+                name: 'Roll P',                 // 14
+            },
+            {
+                name: 'Roll I',                 // 15
+            },
+            {
+                name: 'Roll D',                 // 16
+            },
+            {
+                name: 'Roll FF',                // 17          
+            },
+            {
+                name: 'Yaw P',                  // 18
+            },
+            {
+                name: 'Yaw I',                  // 19
+            },
+            {
+                name: 'Yaw D',                  // 20
+            },
+            {
+                name: 'Yaw FF',                 // 21
+            },
+            {
+                name: "Rate Profile"            // 22 Unused
+            },
+            {
+                name: 'Pitch Rate',             // 23
+                scale: 10
+            },
+            {
+                name: 'Roll Rate',              // 24
+                scale: 10
+            },
+            {
+                name : 'RC Yaw Expo',           // 25
                 scale: 0.01
             },
             {
-                name: 'Pitch & Roll Rate',
+                name : 'Manual RC Expo',        // 26
                 scale: 0.01
             },
             {
-                name: 'Yaw rate',
+                name : 'Manual RC Yaw Expo',    // 27
                 scale: 0.01
             },
             {
-                name: 'Pitch & Roll P',
-                scale: 0.1,
-                scalef: 1
+                name: 'Manual Pitch Roll Rate', // 28
             },
             {
-                name: 'Pitch & Roll I',
-                scale: 0.001,
-                scalef: 0.1
+                name: 'Manual Roll Rate',       // 29
             },
             {
-                name: 'Pitch & Roll D',
-                scalef: 1000
+                name: 'Manual Pitch Rate',      // 30
             },
             {
-                name: 'Yaw P',
-                scale: 0.1,
-                scalef: 1
+                name: 'Manual Yaw Rate',        // 31
             },
             {
-                name: 'Yaw I',
-                scale: 0.001,
-                scalef: 0.1
+                name: 'NAV FW CRUISE THR',      // 32
             },
             {
-                name: 'Yaw D',
-                scalef: 1000
+                name: 'NAV FW PITCH2THR',       // 33
             },
             {
-                name: "Rate Profile"
+                name: 'Roll Board Alignment',   // 34
             },
             {
-                name: 'Pitch Rate',
-                scale: 0.01
+                name: 'Pitch Board Alignment',  // 35
             },
             {
-                name: 'Roll Rate',
-                scale: 0.01
+                name: 'Level P',                // 36
             },
             {
-                name: 'Pitch P',
-                scale: 0.1,
-                scalef: 1
+                name: 'Level I',                // 37
             },
             {
-                name: 'Pitch I',
-                scale: 0.001,
-                scalef: 0.1
+                name: 'Level D',                // 38
             },
             {
-                name: 'Pitch D',
-                scalef: 1000
+                name: 'NAV POS XY P',           // 39
             },
             {
-                name: 'Roll P',
-                scale: 0.1,
-                scalef: 1
+                name: 'NAV POS XY I',           // 40
             },
             {
-                name : 'Roll I',
-                scale: 0.001,
-                scalef: 0.1
+                name: 'NAV POS XY D',           // 41
             },
             {
-                name: 'Roll D',
-                scalef: 1000
-            }
+                name: 'NAV POS Z P',            // 42
+            },
+            {
+                name: 'NAV POS Z I',            // 43
+            },
+            {
+                name: 'NAV POS Z D',            // 44
+            },
+            {
+                name: 'HEADING P',              // 45
+            },
+            {
+                name: 'NAV VEL XY P',           // 46
+            },
+            {
+                name: 'NAV VEL XY I',           // 47
+            },
+            {
+                name: 'NAV VEL XY D',           // 48
+            },
+            {
+                name: 'NAV VEL Z P',            // 49
+            },
+            {
+                name: 'NAV VEL Z I',            // 50
+            },
+            {
+                name: 'NAV VEL Z D',            // 51
+            },
+            {
+                name: 'FW MIN THROTTLE DOWN PITCH ANGLE',  // 52
+            },
+            {
+                name: 'VTX POWER LEVEL',        // 53
+            },
+            {
+                name: 'TPA',                    // 54
+            },
+            {
+                name: 'TPA BREAKPOINT',         // 55
+            },
+            {
+                name: 'NAV FW CONTROL SMOOTHNESS', // 56
+            },
         ];
 
     //Private variables:
