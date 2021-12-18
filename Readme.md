@@ -1,4 +1,4 @@
-# Cleanflight Blackbox Explorer
+# INAV Blackbox Explorer
 
 ![Main explorer interface](screenshots/main-interface.jpg)
 
