@@ -1,17 +1,18 @@
 {
   "name": "inav-blackbox-explorer",
-  "description": "Crossplatform blackbox analitics tool for INAV flight control system.",
+  "description": "Crossplatform blackbox analytics tool for INAV flight control system.",
   "version": "4.0.0",
   "main": "main_nwjs.html",
   "bg-script": "background.js",
   "default_locale": "en",
   "scripts": {
     "start": "node node_modules/nw/bin/nw .",
-    "_postinstall": "node ./node_modules/platform-dependent-modules/cli.js",
-    "postinstall": "npm run _postinstall",
-    "gulp": "gulp"
+    "gulp": "gulp",
+    "nw": "nw"
   },
   "window": {
+    "title": "INAV Blackbox Explorer",
+    "icon": "images/inav_icon_128.png",
     "toolbar": true
   },
   "repository": {
@@ -20,26 +21,35 @@
   },
   "author": "INAV",
   "license": "GPL-3.0",
-  "devDependencies": {
+  "dependencies": {
     "archiver": "^2.1.1",
+    "command-exists": "^1.2.8",
     "del": "^3.0.0",
+    "fs": "0.0.1-security",
+    "graceful-fs": "^4.2.0",
     "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
-    "gulp-install": "^1.1.0",
     "inflection": "1.12.0",
+    "jquery": "2.1.4",
     "jquery-ui-npm": "1.12.0",
+    "marked": "^0.3.17",
+    "minimist": "^1.2.0",
     "nw": "^0.42.2-sdk",
-    "nw-builder": "^3.5.7",
+    "nw-dialog": "^1.0.7",
     "os": "^0.1.1",
-    "platform-dependent-modules": "0.0.14",
+    "plotly": "^1.0.6",
     "temp": "^0.8.3",
-    "semver": "6.3.0"
+    "three": "0.139.0",
+    "xml2js": "^0.4.19"
   },
-  "config": {
-    "platformDependentModules": {
-      "darwin": [
-        "gulp-appdmg@1.0.3"
-      ]
-    }
+  "devDependencies": {
+    "gulp-debian": "^0.1.9",
+    "nw-builder": "^3.5.7",
+    "rpm-builder": "^1.2.1",
+    "semver": "6.3.0",
+    "@quanle94/innosetup": "^6.0.2"
+  },
+  "optionalDependencies": {
+    "appdmg": "^0.6.2"
   }
 }
