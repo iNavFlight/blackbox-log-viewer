@@ -271,46 +271,6 @@ gulp.task('debug', gulp.series(['dist', 'clean-debug'], function (done) {
     done();
 }));
 
-gulp.task('post-build', function(done) {
-    if (platforms.indexOf('osx64') != -1) {
-        done();
-        return; // seems don't neede, at lease for now
-        // Determine the WebKit version distributed in nw.js
-        var pathToVersions = path.join(destDir, pkg.name, 'osx64', pkg.name + '.app', 'Contents', 'Frameworks', 'nwjs Framework.Framework', 'Versions');
-        var files = fs.readdirSync(pathToVersions);
-        if (files.length >= 1) {
-            var webKitVersion = files[0];
-            console.log('Found Webkit version: ' + webKitVersion)
-            // Copy ffmpeg codec library into macOS app
-            var libSrc = './library/osx64/libffmpeg.dylib'
-            var libDest = path.join(pathToVersions, webKitVersion) + '/';
-            console.log('Copy ffmpeg library to macOS app (' + libSrc + ' to ' + libDest + ')');
-            gulp.src(libSrc)
-                .pipe(gulp.dest(libDest));
-        } else {
-            console.log('Error: could not find the Version folder.');
-        }
-    }
-    if (platforms.indexOf('linux64') != -1) {
-        // Copy ffmpeg codec library into Linux app
-        var libSrc = './library/linux64/libffmpeg.so'
-        var libDest = path.join(destDir, pkg.name, 'linux64', 'lib') + '/';
-        console.log('Copy ffmpeg library to Linux app (' + libSrc + ' to ' + libDest + ')');
-        gulp.src(libSrc)
-            .pipe(gulp.dest(libDest));
-    }
-    if (platforms.indexOf('win32') != -1) {
-        // Copy ffmpeg codec library into Windows app
-        var libSrc = './library/win32/ffmpeg.dll'
-        var libDest = path.join(destDir, pkg.name, 'win32') + '/';
-        console.log('Copy ffmpeg library to Windows app (' + libSrc + ' to ' + libDest + ')');
-        gulp.src(libSrc)
-            .pipe(gulp.dest(libDest));
-    }
-    console.log('AAA');
-    done();
-});
-
 function build_win_zip(arch) {
     return function build_win_zip_proc(done) {
         var pkg = require('./package.json');
@@ -704,6 +664,6 @@ function releaseLinux(bits) {
 //gulp.task('release-linux32', gulp.series(releaseLinux(32), post_build('linux32', appsDir), release_deb('linux32')));
 gulp.task('release-linux64', gulp.series(releaseLinux(64), post_build('linux64', appsDir), release_deb('linux64'), release_rpm('linux64')));
 
-gulp.task('release', gulp.series('apps', 'post-build', 'clean-release',  getPlatforms().map(function(v) { return 'release-' + v; })));
+gulp.task('release', gulp.series('apps', 'clean-release',  getPlatforms().map(function(v) { return 'release-' + v; })));
 
 gulp.task('default', gulp.series(['debug']));
