@@ -73,15 +73,9 @@ List of possible values of `<task-name>`:
 [1] Running this task on macOS or Linux requires Wine, since it's needed to set the icon for the Windows app (build for specific platform to avoid errors).
 
 #### Build or release app for one specific platform
-To build or release only for one specific platform you can append the plaform after the `task-name`.
-If no platform is provided, only for the platform you are builing from will be build.
-
-* **MacOS** use `gulp <task-name> --osx64`
-* **Linux** use `gulp <task-name> --linux64`
-* **Windows** use `gulp <task-name> --win32`
-* **ChromeOS** use `gulp <task-name> --chromeos`
-
-You can also use multiple platforms e.g. `gulp <taskname> --osx64 --linux64`.
+To build a specific release, use the command `release --platform="win32"` for example.
+Possible OS'es are: `linux64`, `win32` and `osx64`
+<br>`--installer` argument can be added to build installers for particular OS. NOTE: MacOS Installer can be built with MacOS only.
 
 #### macOS DMG installation background image
 
