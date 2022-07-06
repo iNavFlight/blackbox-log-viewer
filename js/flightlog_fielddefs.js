@@ -190,15 +190,17 @@ var
         ]),
 
         ACC_HARDWARE = makeReadOnly([
-                "AUTO",
                 "NONE",
-                "ADXL345",
+                "AUTO",
                 "MPU6050",
-                "MMA8452",
-                "BMA280",
-                "LSM303DLHC",
                 "MPU6000",
                 "MPU6500",
+                "MPU9250",
+                "BMI160",
+                "ICM20689",
+                "BMI088",
+                "ICM42605",
+                "BMI270",
                 "FAKE"
         ]),
 
