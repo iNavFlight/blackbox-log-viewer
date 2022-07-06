@@ -177,7 +177,10 @@ function HeaderDialog(dialog, onSave) {
 
         var features = [
             // Order from configurator js/fc.js
+            {bit: 0, name: 'THR_VBAT_COMP'},
             {bit: 1, name: 'VBAT'},
+            {bit: 2, name: 'TX_PROF_SEL'},
+            {bit: 3, name: 'BAT_PROF_AUTOSWITCH'},
             {bit: 4, name: 'MOTOR_STOP'},
             {bit: 6, name: 'SOFTSERIAL'},
             {bit: 7, name: 'GPS'},
@@ -188,26 +191,11 @@ function HeaderDialog(dialog, onSave) {
             {bit: 16, name: 'LED_STRIP'},
             {bit: 17, name: 'DASHBOARD'},
             {bit: 19, name: 'BLACKBOX'},
-            {bit: 28, name: 'PWM_OUTPUT_ENABLE'},
-            {bit: 26, name: 'SOFTSPI'}, // in configurator but not cli features?
-            {bit: 29, name: 'OSD'},
             {bit: 22, name: 'AIRMODE'},
+            {bit: 28, name: 'PWM_OUTPUT_ENABLE'},
+            {bit: 29, name: 'OSD'},
             {bit: 30, name: 'FW_LAUNCH'},
-            {bit: 2, name: 'TX_PROF_SEL'},
-            {bit: 0, name: 'THR_VBAT_COMP'},
-            {bit: 3, name: 'BAT_PROF_AUTOSWITCH'},
             {bit: 31, name: 'FW_AUTOTRIM'},
-
-            // Dynamic features
-            {bit: 5, name: 'DYNAMIC_FILTERS'}, // iNav 2.4.0 < 2.5.0
-
-            // Target features
-            {bit: 21, name: 'TRANSPONDER'}
-
-            // Unused bits
-            //{bit: 8, name: 'RPM_FILTERS'},
-            //{bit: 23, name: 'SUPEREXPO'},
-            // {bit: 24, name: 'VTX'},
         ];
 
         var features_e = $('.features');
