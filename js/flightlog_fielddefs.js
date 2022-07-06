@@ -205,11 +205,19 @@ var
         ]),
 
         BARO_HARDWARE = makeReadOnly([
-                "AUTO",
                 "NONE",
+                "AUTO",
                 "BMP085",
                 "MS5611",
-                "BMP280"
+                "BMP280",
+                "MS5607",
+                "LPS25H",
+                "SPL06",
+                "BMP388",
+                "DPS310",
+                "B2SMPB",
+                "MSP",
+                "FAKE"
         ]),
 
         MAG_HARDWARE = makeReadOnly([
