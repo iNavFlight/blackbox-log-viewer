@@ -87,36 +87,6 @@ var
                 "SOARING"
         ]),
 
-        FLIGHT_LOG_FEATURES = makeReadOnly([
-                'RX_PPM',
-                'VBAT',
-                'INFLIGHT_ACC_CAL',
-                'RX_SERIAL',
-                'MOTOR_STOP',
-                'SERVO_TILT',
-                'SOFTSERIAL',
-                'GPS',
-                'FAILSAFE',
-                'SONAR',
-                'TELEMETRY',
-                'CURRENT_METER',
-                '3D',
-                'RX_PARALLEL_PWM',
-                'RX_MSP',
-                'RSSI_ADC',
-                'LED_STRIP',
-                'DISPLAY',
-                'ONESHOT125',
-                'BLACKBOX',
-                'CHANNEL_FORWARDING',
-                'TRANSPONDER',
-                'AIRMODE',
-                'SUPEREXPO_RATES',
-                'VTX',
-                'RX_NRF24',
-                'SOFTSPI'
-        ]),
-
         PID_CONTROLLER_TYPE = ([
                 'UNUSED',
                 'MWREWRITE',
