@@ -221,11 +221,23 @@ var
         ]),
 
         MAG_HARDWARE = makeReadOnly([
-                "AUTO",
                 "NONE",
+                "AUTO",
                 "HMC5883",
                 "AK8975",
-                "AK8963"
+                "GPSMAG",
+                "MAG3110",
+                "AK8963",
+                "IST8310",
+                "QMC5883",
+                "MPU9250",
+                "IST8308",
+                "LIS3MDL",
+                "MSP",
+                "RM3100",
+                "VCM5883",
+                "MLX90393",
+                "FAKE"
         ]),
 
         FLIGHT_LOG_FLIGHT_STATE_NAME = makeReadOnly([
