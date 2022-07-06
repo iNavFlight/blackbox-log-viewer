@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: INAV Configurator
-Source: https://github.com/iNavFlight/inav-configurator
+Upstream-Name: INAV Blackbox Explorer
+Source: https://github.com/iNavFlight/blackbox-log-viewer
 
 Files: *
 Copyright: Copyright 2022 The INAV open source project
