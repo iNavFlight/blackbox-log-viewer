@@ -608,26 +608,26 @@
 										<tr class="rollPID">
 											<!-- 0 -->
 											<td>ROLL</td>
-											<td><input type="number" name="p" step="1" min="0" max="255" /></td>
-											<td><input type="number" name="i" step="1" min="0" max="255" /></td>
-											<td><input type="number" name="d" step="1" min="0" max="255" /></td>
-											<td><input type="number" name="f" step="1" min="0" max="255" /></td>
+											<td><input type="number" name="p" step="1" min="0" max="255" readonly/></td>
+											<td><input type="number" name="i" step="1" min="0" max="255" readonly /></td>
+											<td><input type="number" name="d" step="1" min="0" max="255" readonly /></td>
+											<td><input type="number" name="f" step="1" min="0" max="255" readonly /></td>
 										</tr>
 										<tr class="pitchPID">
 											<!-- 1 -->
 											<td>PITCH</td>
-											<td><input type="number" name="p" step="1" min="0" max="255" /></td>
-											<td><input type="number" name="i" step="1" min="0" max="255" /></td>
-											<td><input type="number" name="d" step="1" min="0" max="255" /></td>
-											<td><input type="number" name="f" step="1" min="0" max="255" /></td>
+											<td><input type="number" name="p" step="1" min="0" max="255" readonly /></td>
+											<td><input type="number" name="i" step="1" min="0" max="255" readonly /></td>
+											<td><input type="number" name="d" step="1" min="0" max="255" readonly /></td>
+											<td><input type="number" name="f" step="1" min="0" max="255" readonly /></td>
 										</tr>
 										<tr class="yawPID">
 											<!-- 2 -->
 											<td>YAW</td>
-											<td><input type="number" name="p" step="1" min="0" max="255" /></td>
-											<td><input type="number" name="i" step="1" min="0" max="255" /></td>
-											<td><input type="number" name="d" step="1" min="0" max="255" /></td>
-											<td><input type="number" name="f" step="1" min="0" max="255" /></td>
+											<td><input type="number" name="p" step="1" min="0" max="255" readonly /></td>
+											<td><input type="number" name="i" step="1" min="0" max="255" readonly /></td>
+											<td><input type="number" name="d" step="1" min="0" max="255" readonly /></td>
+											<td><input type="number" name="f" step="1" min="0" max="255" readonly /></td>
 										</tr>
 									</table>
 									<table id="pid_baro" class="pid_tuning">
@@ -639,16 +639,16 @@
 										<tr class="altPID">
 											<!-- 3 -->
 											<td>ALT</td>
-											<td><input type="number" name="p" step="0.1" min="0" max="25.5" /></td>
-											<td><input type="number" name="i" step="0.001" min="0" max="0.255" /></td>
-											<td><input type="number" name="d" step="1" min="0" max="255" /></td>
+											<td><input type="number" name="p" step="0.1" min="0" max="25.5"  readonly/></td>
+											<td><input type="number" name="i" step="0.001" min="0" max="0.255"  readonly/></td>
+											<td><input type="number" name="d" step="1" min="0" max="255"  readonly /></td>
 										</tr>
 										<tr class="velPID">
 											<!-- 9 -->
 											<td>VEL</td>
-											<td><input type="number" name="p" step="0.1" min="0" max="25.5" /></td>
-											<td><input type="number" name="i" step="0.001" min="0" max="0.255" /></td>
-											<td><input type="number" name="d" step="1" min="0" max="255" /></td>
+											<td><input type="number" name="p" step="0.1" min="0" max="25.5"  readonly/></td>
+											<td><input type="number" name="i" step="0.001" min="0" max="0.255"  readonly/></td>
+											<td><input type="number" name="d" step="1" min="0" max="255" readonly /></td>
 										</tr>
 									</table>
 									<table id="pid_mag" class="pid_tuning">
@@ -660,7 +660,7 @@
 										<tr class="magPID">
 											<!-- 8 -->
 											<td>MAG</td>
-											<td><input type="number" name="p" step="0.1" min="0" max="25.5" /></td>
+											<td><input type="number" name="p" step="0.1" min="0" max="25.5"  readonly/></td>
 											<td></td>
 											<td></td>
 										</tr>
@@ -674,16 +674,16 @@
 										<tr class="posPID">
 											<!-- 4 -->
 											<td>POS</td>
-											<td><input type="number" name="p" step="0.01" min="0" max="2.55" /></td>
-											<td><input type="number" name="i" step="0.01" min="0" max="2.55" /></td>
+											<td><input type="number" name="p" step="0.01" min="0" max="2.55"  readonly/></td>
+											<td><input type="number" name="i" step="0.01" min="0" max="2.55"  readonly/></td>
 											<td></td>
 										</tr>
 										<tr class="posrPID">
 											<!-- 5 -->
 											<td>POSR</td>
-											<td><input type="number" name="p" step="0.1" min="0" max="25.5" /></td>
-											<td><input type="number" name="i" step="0.01" min="0" max="2.55" /></td>
-											<td><input type="number" name="d" step="0.001" min="0" max="0.255" /></td>
+											<td><input type="number" name="p" step="0.1" min="0" max="25.5"  readonly/></td>
+											<td><input type="number" name="i" step="0.01" min="0" max="2.55"  readonly/></td>
+											<td><input type="number" name="d" step="0.001" min="0" max="0.255"  readonly/></td>
 										</tr>
 									</table>
 									<table id="pid_accel" class="pid_tuning">
@@ -702,87 +702,10 @@
 										<tr class="levelPID">
 											<!-- 7 -->
 											<td>LEVEL</td>
-											<td><input type="number" name="p" step="0.1" min="0" max="25.5" /></td>
-											<td><input type="number" name="i" step="0.001" min="0" max="0.255" /></td>
-											<td><input type="number" name="d" step="1" min="0" max="255" /></td>
+											<td><input type="number" name="p" step="0.1" min="0" max="25.5"  readonly/></td>
+											<td><input type="number" name="i" step="0.001" min="0" max="0.255"  readonly/></td>
+											<td><input type="number" name="d" step="1" min="0" max="255"  readonly/></td>
 										</tr>
-									</table>
-								</div>
-							</div>
-							<div class="gui_box grey PID-extra">
-									<div class="gui_box_titlebar">
-										<div class="spacer_box_title">PID Other</div>
-									</div>
-									<div class="spacer_box">
-									<table class="parameter cf">
-										<tbody>
-											<tr>
-												<td name="dterm_setpoint_weight"><label>D-Term Setpoint<br>Weight</label><input type="number" step="0.01" min="0" max="999" /></td>
-												<td name="axisAccelerationLimitRollPitch" ><label>Roll/Pitch Rate<br>Acceleration Limit</label><input type="number" step="1" min="0" max="999" /></td>
-												<td name="axisAccelerationLimitYaw"><label>Yaw Rate<br>Acceleration Limit</label><input type="number" step="1" min="0" max="999" /></td>
-											</tr>
-                                            <tr>
-                                                <td name="antiGravityGain" class="bf-only"><label>AG Gain</label><input type="number" step="0.01" min="0" max="999" /></td>
-                                                <td name="antiGravityThreshold" class="bf-only"><label>AG Threshold</label><input type="number" step="0.01" min="0" max="999" /></td>
-                                                <td name="itermWindupPointPercent" class="bf-only"><label>Windup Threshold</label><input type="number" step="1" min="0" max="999" /></td>
-                                            </tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-							<div class="gui_box grey filters">
-									<div class="gui_box_titlebar">
-										<div class="spacer_box_title">Filters</div>
-									</div>
-									<div class="spacer_box">
-									<table class="parameter cf">
-										<thead>
-											<tr>
-												<th colspan="4">Gyro Filters</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td name='gyro_lpf'><label>Hardware</label><select><!-- list generated here --></select></td>
-                                                <td name="gyro_lpf_hz"><label>Soft (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-                                                <td name="gyro_lpf2_hz"><label>Stage2 (Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-												<td></td>
-											</tr>
-											<tr>
-												<td name='gyro_notch_hz'><label>Notch 1<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-												<td name="gyro_notch_cutoff"><label>Notch 1 Cutoff<br>(Hz)</label><input type="number" step="0.1" min="0" max="999.00" /></td>
-                                                <td name='gyro_notch_hz_2'><label>Notch 2<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-                                                <td name="gyro_notch_cutoff_2"><label>Notch 2 Cutoff<br>(Hz)</label><input type="number" step="0.1" min="0" max="999.00" /></td>
-                                            </tr>
-										</tbody>
-									</table>
-									<table class="parameter cf">
-										<thead>
-											<tr>
-												<th colspan="4">D-Term Filters</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td name="dterm_lpf_hz" ><label>LPF1 Cutoff<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-												<td name="dterm_lpf2_hz" ><label>LPF2 Cutoff<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-												<td name='dterm_notch_hz'><label>Notch<br>(Hz)</label><input type="number" step="0.01" min="0" max="999.00" /></td>
-												<td name="dterm_notch_cutoff"><label>Notch Cutoff<br>(Hz)</label><input type="number" step="0.1" min="0" max="999.00" /></td>
-											</tr>
-										</tbody>
-									</table>
-									<table class="parameter cf">
-										<thead>
-											<tr>
-												<th colspan="4">Other Filters</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td name="acc_lpf_hz"><label>Acc (Hz)</label><input type="number" step="0" min="0" max="999.00" /></td>
-												<td name="yaw_lpf_hz" class="bf-only"><label>Yaw (Hz)</label><input type="number" step="0" min="0" max="999.00" /></td>
-											</tr>
-										</tbody>
 									</table>
 								</div>
 							</div>
@@ -821,11 +744,6 @@
 									<table class="parameter cf">
 										<tbody>
 											<tr>
-												<td name="loopTime"><label>Looptime</label><input type="number" step="25" min="0" max="3000"/></td>
-											</tr>
-										</tbody>
-										<tbody>
-											<tr>
 												<td name='acc_hardware'><label>Accelerometer</label><select><!-- list generated here --></select></td>
 												<td name='mag_hardware'><label>Magnetometer</label><select><!-- list generated here --></select></td>
 												<td name='baro_hardware'><label>Barometer</label><select><!-- list generated here --></select></td>
@@ -845,6 +763,19 @@
                                             <td name='debug_mode'><label>Debug Mode</label><select><!-- list generated here --></select></td>
                                         </tr>
                                         </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="gui_box grey unknown">
+                                <div class="gui_box_titlebar">
+                                    <div class="spacer_box_title">Unknown Header Fields</div>
+                                </div>
+                                <div class="spacer_box">
+                                    <table class="parameter cf">
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Value</td>
+                                        </tr>
                                     </table>
                                 </div>
                             </div>
@@ -902,7 +833,6 @@
 											<tbody>
 												<tr>
 													<td name='motor_pwm_protocol'><label>Protocol</label><select><!-- list generated here --></select></td>
-													<td name="motor_pwm_rate"><label>Motor Rate</label><input type="number" step="1" min="0" max="32000"/></td>
 												</tr>
 											</tbody>
 										</table>
@@ -1004,19 +934,7 @@
 										</table>
 									</div>
 								</div>
-                                <div class="gui_box grey unknown">
-                                    <div class="gui_box_titlebar">
-                                        <div class="spacer_box_title">Unknown Header Fields</div>
-                                    </div>
-                                    <div class="spacer_box">
-                                        <table class="parameter cf">
-                                            <tr>
-                                                <td>Name</td>
-                                                <td>Value</td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
+                                
 							</div>
 						</div>
 					</form>

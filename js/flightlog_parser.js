@@ -313,7 +313,6 @@ var FlightLogParser = function(logData) {
             velPID:[null, null, null],	    // Velocity      [P, I, D]
             yaw_lpf_hz:null,                // Yaw LowPass Filter Hz
             dterm_lpf_hz:null,              // DTerm Lowpass Filter Hz
-            dterm_differentiator:null,      // DTerm Differentiator
             H_sensitivity:null,             // Horizon Sensitivity
             deadband:null,                  // Roll, Pitch Deadband
             yaw_deadband:null,              // Yaw Deadband
@@ -323,7 +322,6 @@ var FlightLogParser = function(logData) {
             gyro_notch_cutoff:null,         // Gyro Notch Cutoff
             dterm_notch_hz:null,            // Dterm Notch Frequency
             dterm_notch_cutoff:null,        // Dterm Notch Cutoff
-            acc_lpf_hz:null,                // Accelerometer Lowpass filter Hz
             acc_hardware:null,              // Accelerometer Hardware type
             baro_hardware:null,             // Barometer Hardware type
             mag_hardware:null,              // Magnetometer Hardware type
@@ -349,13 +347,8 @@ var FlightLogParser = function(logData) {
             dterm_lpf2_type: null,
             gyro_lpf_type: null,
             gyro_lpf2_hz: null,
-            dynamicGyroNotchRange: null,
-            dynamicGyroNotchQ: null,
-            dynamicGyroNotchMinHz: null,
             acc_notch_hz: null,
             acc_notch_cutoff: null,
-            pidSumLimit: null,
-            pidSumLimitYaw: null,
             axisAccelerationLimitYaw: null,
             axisAccelerationLimitRollPitch: null,
             rpm_gyro_filter_enabled: null,
@@ -514,18 +507,10 @@ var FlightLogParser = function(logData) {
             case "thrExpo":
             case "dynThrPID":
             case "tpa_breakpoint":
-            case "airmode_activate_throttle":
             case "serialrx_provider":
-            case "looptime":
-            case "pid_process_denom":
-            case "pidController":
-            case "dterm_differentiator":
-            case "deltaMethod":
-            case "dynamic_dterm_threshold":
             case "deadband":
             case "yaw_deadband":
             case "gyro_lpf":
-            case "acc_lpf_hz":
             case "acc_hardware":
             case "baro_hardware":
             case "mag_hardware":
@@ -534,42 +519,11 @@ var FlightLogParser = function(logData) {
             case "features":
             case "rc_interpolation":
             case "rc_interpolation_interval":
-            case "unsynced_fast_pwm":
             case "motor_pwm_protocol":
-            case "motor_pwm_rate":
             case "vbatscale":
             case "vbatref":
             case "acc_1G":
-            case "dterm_filter_type":
-            case "anti_gravity_threshold":
-            case "itermWindupPointPercent":
-            case "gyro_soft_type":
             case "debug_mode":
-            case "dterm_cut_hz":
-            case "acc_cut_hz":
-            case "yaw_lpf_hz":
-            case "gyro_lpf_hz":
-            case "dterm_notch_hz":
-            case "dterm_notch_cutoff":
-            case "dterm_lpf_hz":
-            case "dterm_lpf_type":
-            case "dterm_lpf2_hz":
-            case "dterm_lpf2_type":
-            case "gyro_lpf_type":
-            case "gyro_lpf2_hz":
-            case "dynamicGyroNotchRange":
-            case "dynamicGyroNotchQ":
-            case "dynamicGyroNotchMinHz":
-            case "acc_notch_hz":
-            case "acc_notch_cutoff":
-            case "pidSumLimit":
-            case "pidSumLimitYaw":
-            case "axisAccelerationLimitYaw":
-            case "axisAccelerationLimitRollPitch":
-            case "rpm_gyro_filter_enabled":
-            case "rpm_gyro_harmonics":
-            case "rpm_gyro_min_hz":
-            case "rpm_gyro_q":
                 that.sysConfig[fieldName] = parseInt(fieldValue, 10);
             break;
 
@@ -582,10 +536,6 @@ var FlightLogParser = function(logData) {
 
             case "rc_yaw_expo":
                 that.sysConfig["rcYawExpo"] = parseInt(fieldValue, 10);
-                break;
-
-            case "gyro_lpf_hz":
-                that.sysConfig["gyro_lpf_hz"] = parseInt(fieldValue, 10);
                 break;
 
             case "waypoints":
@@ -613,11 +563,6 @@ var FlightLogParser = function(logData) {
             case "thr_expo":
                 that.sysConfig.thrExpo = parseInt(fieldValue, 10);
                 break;
-            case "setpoint_relaxation_ratio":
-                break;
-            case "gyro_lowpass_type":
-                that.sysConfig.gyro_soft_type = parseInt(fieldValue, 10);
-                break;
             case "vbat_pid_gain":
                 that.sysConfig.vbat_pid_compensation = parseInt(fieldValue, 10);
                 break;
@@ -638,26 +583,7 @@ var FlightLogParser = function(logData) {
                 that.sysConfig[fieldName] = uint32ToFloat(fieldValue, 10);
                 break;
 
-            case "gyro_notch_hz":
-            case "gyro_notch_cutoff":
-                that.sysConfig[fieldName] = parseCommaSeparatedString(fieldValue);
-                break;
-
-            case "digitalIdleOffset":
-                that.sysConfig[fieldName] = parseInt(fieldValue, 10) / 100.0;
-                break;
-
-            case "superExpoFactor":
-                if(fieldValue.match(/.*,.*/)!=null) {
-                    var expoParams = parseCommaSeparatedString(fieldValue);
-                    that.sysConfig.superExpoFactor    = expoParams[0];
-                    that.sysConfig.superExpoFactorYaw = expoParams[1];
-
-                } else {
-                    that.sysConfig.superExpoFactor = parseInt(fieldValue, 10);
-                }
-            break;
-
+            
             /* CSV packed values */
             case "rates":
             case "rollPID":
@@ -729,10 +655,6 @@ var FlightLogParser = function(logData) {
             case "Device UID":
                 that.sysConfig.deviceUID = fieldValue;
             break;
-
-            case "dterm_setpoint_weight":
-                that.sysConfig[fieldName] = parseFloat(fieldValue, 10);
-                break;
             
             default:
                 if ((matches = fieldName.match(/^Field (.) (.+)$/))) {

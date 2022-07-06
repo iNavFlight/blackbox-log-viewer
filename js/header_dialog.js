@@ -23,10 +23,8 @@ function HeaderDialog(dialog, onSave) {
 		{ name: 'gyro_notch_cutoff', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.0', max: '999.9.9' },
 		{ name: 'dterm_notch_hz', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.0', max: '999.9.9' },
 		{ name: 'dterm_notch_cutoff', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.0', max: '999.9.9' },
-		{ name: 'motor_pwm_rate', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.0', max: '999.9.9' },
 		{ name: 'dterm_filter_type', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.0', max: '999.9.9' },
 		{ name: 'itermThrottleGain', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.0', max: '3.0.1' },
-		{ name: 'dterm_setpoint_weight', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.0', max: '999.9.9' },
 		{ name: 'gyro_soft_type', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.0', max: '999.9.9' },
 		{ name: 'debug_mode', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.0', max: '999.9.9' },
 		{ name: 'gyro_notch_hz_2', type: FIRMWARE_TYPE_BETAFLIGHT, min: '3.0.1', max: '999.9.9' },
@@ -130,7 +128,6 @@ function HeaderDialog(dialog, onSave) {
 
 	function populatePID(name, data) {
 		var i = 0;
-		console.log(data);
 		var nameElem = $('.pid_tuning .' + name + ' input');
 		nameElem.each(function () {
 			$(this).attr('name', name + '[' + i + ']');
@@ -362,40 +359,14 @@ function HeaderDialog(dialog, onSave) {
 		setParameter('deadband', sysConfig.deadband, 0);
 		setParameter('yaw_deadband', sysConfig.yaw_deadband, 0);
 		renderSelect('gyro_lpf', sysConfig.gyro_lpf, GYRO_LPF);
-		setParameter('acc_lpf_hz', sysConfig.acc_lpf_hz, 0);
-		setParameter('airmode_activate_throttle', sysConfig.airmode_activate_throttle, 0);
 		renderSelect('serialrx_provider', sysConfig.serialrx_provider, SERIALRX_PROVIDER);
 
-		if (sysConfig.gyro_notch_hz && sysConfig.gyro_notch_cutoff) {
-			setParameter('gyro_notch_hz', sysConfig.gyro_notch_hz[0], 0);
-			setParameter('gyro_notch_cutoff', sysConfig.gyro_notch_cutoff[0], 0);
-			setParameter('gyro_notch_hz_2', sysConfig.gyro_notch_hz[1], 0);
-			setParameter('gyro_notch_cutoff_2', sysConfig.gyro_notch_cutoff[1], 0);
-		}
-
-		setParameter('dterm_notch_hz', sysConfig.dterm_notch_hz, 0);
-		setParameter('dterm_notch_cutoff', sysConfig.dterm_notch_cutoff, 0);
-		setParameter('dterm_lpf_hz', sysConfig.dterm_lpf_hz, 0);
-		setParameter('dterm_lpf2_hz', sysConfig.dterm_lpf2_hz, 0);
-		setParameter('yaw_lpf_hz', sysConfig.yaw_lpf_hz, 0);
-		setParameter('gyro_lpf_hz', sysConfig.gyro_lpf_hz, 0);
-		setParameter('gyro_lpf2_hz', sysConfig.gyro_lpf2_hz, 0);
-
 		renderSelect('motor_pwm_protocol', sysConfig.motor_pwm_protocol, FAST_PROTOCOL);
-		setParameter('motor_pwm_rate', sysConfig.motor_pwm_rate, 0);
-		renderSelect('dterm_filter_type', sysConfig.dterm_filter_type, FILTER_TYPE);
-		setParameterFloat('dterm_setpoint_weight', sysConfig.dterm_setpoint_weight, 2);
 
 		setParameter('axisAccelerationLimitYaw', sysConfig.axisAccelerationLimitYaw, 0);
 		setParameter('axisAccelerationLimitRollPitch', sysConfig.axisAccelerationLimitRollPitch, 0);
 
-		renderSelect('gyro_soft_type', sysConfig.gyro_soft_type, FILTER_TYPE);
 		renderSelect('debug_mode', sysConfig.debug_mode, DEBUG_MODE);
-		setParameter('motorOutputLow', sysConfig.motorOutput[0], 0);
-		setParameter('motorOutputHigh', sysConfig.motorOutput[1], 0);
-		setParameter('digitalIdleOffset', sysConfig.digitalIdleOffset, 2);
-		setParameter('antiGravityGain', sysConfig.anti_gravity_gain, 0);
-		setParameter('antiGravityThreshold', sysConfig.anti_gravity_threshold, 0);
 
 		/* Packed Flags */
 

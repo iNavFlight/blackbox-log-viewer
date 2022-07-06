@@ -113,13 +113,23 @@ var
                 "DSHOT600"
         ]),
 
-        MOTOR_SYNC = makeReadOnly([
-                "SYNCED",
-                "UNSYNCED"
-        ]),
-
         SERIALRX_PROVIDER = makeReadOnly([
-                "SPEK1024", "SPEK2048", "SBUS", "SUMD", "SUMH", "XB-B", "XB-B-RJ01", "IBUS", "JETIEXBUS", "CRSF", "FPORT", "SBUS_FAST"
+                "SPEK1024",
+                "SPEK2048",
+                "SBUS",
+                "SUMD",
+                "SUMH",
+                "XB-B",
+                "XB-B-RJ01",
+                "IBUS",
+                "JETIEXBUS",
+                "CRSF",
+                "FPORT",
+                "SBUS_FAST",
+                "FPORT2",
+                "SRXL2",
+                "GHST",
+                "MAVLINK"
         ]),
 
         FILTER_TYPE = makeReadOnly([
@@ -173,20 +183,13 @@ var
                 "ALWAYS"
         ]),
 
-        DTERM_DIFFERENTIATOR = makeReadOnly([
-                "STANDARD",
-                "ENHANCED"
-        ]),
-
         GYRO_LPF = makeReadOnly([
-                "OFF",
+                "256HZ",
                 "188HZ",
                 "98HZ",
                 "42HZ",
                 "20HZ",
-                "10HZ",
-                "5HZ",
-                "EXPERIMENTAL"
+                "10HZ"
         ]),
 
         ACC_HARDWARE = makeReadOnly([
