@@ -150,7 +150,7 @@ begin
         end
         else begin
             Result := False;
-            MsgBox('Error uninstalling old Configurator ' + SysErrorMessage(ResultCode) + '.', mbError, MB_OK);
+            MsgBox('Error uninstalling old Blackbox Explorer ' + SysErrorMessage(ResultCode) + '.', mbError, MB_OK);
         end;        
     end
     else begin
@@ -162,7 +162,7 @@ begin
             if not Exec('>', UninstPath, '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
             begin
                 Result := False;
-                MsgBox('Error uninstalling Configurator ' + SysErrorMessage(ResultCode) + '.', mbError, MB_OK);
+                MsgBox('Error uninstalling Blackbox Explorer ' + SysErrorMessage(ResultCode) + '.', mbError, MB_OK);
             end;
         end;
     end;

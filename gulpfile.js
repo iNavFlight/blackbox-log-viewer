@@ -95,7 +95,6 @@ function get_nw_version() {
 // -----------------
 
 gulp.task('clean-dist', function () { 
-    console.log('clean-dist001');
     return del([distDir + '**'], { force: true }); 
 });
 
@@ -188,7 +187,6 @@ gulp.task('dist', gulp.series(['clean-dist'], function () {
         './_locales/**/*',
         './fonts/*',
     ];
-    console.log('copying-dist');
     return gulp.src(distSources, { base: '.' })
         .pipe(gulp.dest(distDir))
 //TODO: ENABLE IT!
@@ -216,7 +214,6 @@ gulp.task('apps', gulp.series(['dist', 'clean-apps'], function (done) {
         winIco: './images/inav_icon.ico',
         version: get_nw_version()
     });
-    console.log('A001');
     builder.on('log', console.log);
     builder.build(function (err) {
         if (err) {
@@ -227,10 +224,8 @@ gulp.task('apps', gulp.series(['dist', 'clean-apps'], function (done) {
                 process.exit(1);
             });
         }
-        console.log('A003');
         done();
     });
-    console.log('A002');
 }));
 
 // Create debug app directories in ./debug
