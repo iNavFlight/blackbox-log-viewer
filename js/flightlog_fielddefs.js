@@ -49,10 +49,10 @@ var
                 "NAV POSHOLD",
                 "MANUAL",
                 "BEEPER",
-                "LEDLOW",
+                "LEDS OFF",
                 "LLIGHTS",
                 "NAV LAUNCH",
-                "OSD SW",
+                "OSD OFF",
                 "TELEMETRY",
                 "BLACKBOX",
                 "FAILSAFE",
@@ -72,17 +72,19 @@ var
                 "OSD ALT1",
                 "OSD ALT2",
                 "OSD ALT3",
-                "COURSE HOLD",
-                "BRAKING",
+                "NAV COURSE HOLD",
+                "MC BRAKING",
                 "USER 1",
                 "USER 2",
-                "CAM MIX", // FPV Angle Mix
-                "LOITER DIRCH", // Loiter direction change
-                "MSP RC OVER", // MSP RC Override
+                "FPV ANGLE MIX", // FPV Angle Mix
+                "LOITER CHANGE", // Loiter direction change
+                "MSP RC OVERRIDE", // MSP RC Override
                 "PREARM",
                 "TURTLE",
                 "NAV CRUISE",
-                "AUTOLEVEL"
+                "AUTOLEVEL",
+                "WP PLANNER",
+                "SOARING"
         ]),
 
         FLIGHT_LOG_FEATURES = makeReadOnly([
