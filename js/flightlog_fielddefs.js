@@ -131,23 +131,42 @@ var
         ]),
 
         DEBUG_MODE = makeReadOnly([
-                "NONE", //0
-                "GYRO", //1
-                "AGL", //2
-                "FLOW_RAW", //3
-                "FLOW", //4
-                "SBUS", //5
-                "FPORT", //6
-                "ALWAYS", //7
-                "SAG_COMP_VOLTAGE", //8
-                "VIBE", //9
-                "CRUISE", //10
-                "REM_FLIGHT_TIME", //11
-                "SMARTAUDIO", //12
-                "ACC", //13
-                "ITERM_RELAX", //14
-                "ERPM", //15
-                "RPM_FILTER" //16
+                "NONE",
+                "GYRO",
+                "AGL",
+                "FLOW_RAW",
+                "FLOW",
+                "SBUS",
+                "FPORT",
+                "ALWAYS",
+                "SAG_COMP_VOLTAGE",
+                "VIBE",
+                "CRUISE",
+                "REM_FLIGHT_TIME",
+                "SMARTAUDIO",
+                "ACC",
+                "ERPM",
+                "RPM_FILTER",
+                "RPM_FREQ",
+                "NAV_YAW",
+                "DYNAMIC_FILTER",
+                "DYNAMIC_FILTER_FREQUENCY",
+                "IRLOCK",
+                "KALMAN_GAIN",
+                "PID_MEASUREMENT",
+                "SPM_CELLS",
+                "SPM_VS600",
+                "SPM_VARIO",
+                "PCF8574",
+                "DYN_GYRO_LPF",
+                "AUTOLEVEL",
+                "IMU2",
+                "ALTITUDE",
+                "SMITH_PREDICTOR",
+                "AUTOTRIM",
+                "AUTOTUNE",
+                "RATE_DYNAMICS",
+                "LANDING"
         ]),
 
         SUPER_EXPO_YAW = makeReadOnly([
