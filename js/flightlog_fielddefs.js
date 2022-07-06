@@ -104,15 +104,13 @@ var
         ]),
 
         FAST_PROTOCOL = makeReadOnly([
-                "PWM",
+                "STANDARD",
                 "ONESHOT125",
-                "ONESHOT42",
                 "MULTISHOT",
                 "BRUSHED",
                 "DSHOT150",
                 "DSHOT300",
-                "DSHOT600",
-                "DSHOT1200"
+                "DSHOT600"
         ]),
 
         MOTOR_SYNC = makeReadOnly([
