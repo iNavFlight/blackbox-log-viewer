@@ -245,19 +245,19 @@ var
                 "GPS_FIX",
                 "CALIBRATE_MAG",
                 "SMALL_ANGLE",
-                "FIXED_WING",     // set when in flying_wing or airplane mode. currently used by althold selection code
+                "FIXED_WING_LEGACY",     // set when in flying_wing or airplane mode. currently used by althold selection code
                 "ANTI_WINDUP",
                 "FLAPERON_AVAILABLE",
                 "NAV_MOTOR_STOP_OR_IDLE",     // navigation requests MOTOR_STOP or motor idle regardless of throttle stick, will only activate if MOTOR_STOP feature is available
                 "COMPASS_CALIBRATED",
                 "ACCELEROMETER_CALIBRATED",
-                "PWM_DRIVER_AVAILABLE",
+                "UNUSED",
                 "NAV_CRUISE_BRAKING",
                 "NAV_CRUISE_BRAKING_BOOST",
                 "NAV_CRUISE_BRAKING_LOCKED",
                 "NAV_EXTRA_ARMING_SAFETY_BYPASSED",    // nav_extra_arming_safey was bypassed. Keep it until power cycle.
                 "AIRMODE_ACTIVE",
-                "ESC_SENSOR_ACT",
+                "ESC_SENSOR",
                 "AIRPLANE",
                 "MULTIROTOR",
                 "ROVER",
@@ -266,7 +266,8 @@ var
                 "FORWARD_ONLY", // Move Forward Only
                 "REV_MOTOR_FOR", // Reverse Motors Forward
                 "HEADING_USE_YAW", // FW Heading use yaw
-                "ANTIWINDUP_OFF" // Antiwindup Deactivated
+                "ANTIWINDUP_OFF", // Antiwindup Deactivated
+                "LANDING_DETECTED"
         ]),
 
         FLIGHT_LOG_FAILSAFE_PHASE_NAME = makeReadOnly([
