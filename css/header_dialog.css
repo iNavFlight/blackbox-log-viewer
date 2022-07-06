@@ -245,7 +245,7 @@ input[type="number"]::-webkit-inner-spin-button {
     padding: 5px;
     text-align: left;
     border-right: 1px solid #ccc;
-    width: calc(100% - 1px);
+    width: 20%;
 }
 
 .header-dialog .pid_titlebar th:first-child {
@@ -267,7 +267,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .header-dialog table td {
     padding: 1px;
-    width: 25%;
+    width: 20%;
     border-right: 1px solid #ccc;
 }
 
