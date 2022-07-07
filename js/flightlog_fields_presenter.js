@@ -303,7 +303,7 @@ function FlightLogFieldPresenter() {
             case 'heading[1]':
             case 'heading[2]':
             case 'windHeading':
-                return (value / Math.PI * 180).toFixed(1) + "&deg;";
+                return (value / Math.PI * 180).toFixed(1) + "deg";
 
             case 'BaroAlt':
                 return (value / 100).toFixed(1) + "m";
