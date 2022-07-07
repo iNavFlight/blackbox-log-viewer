@@ -48,7 +48,6 @@ function FlightLogAnalyser(flightLog, canvas, analyserCanvas) {
 
     try {
         var sysConfig = flightLog.getSysConfig();
-        var pidRate = (1000000 / sysConfig['looptime']).toFixed(0); //default for old logs
         var isFullscreen = false;
         var analyserZoomXElem = $("#analyserZoomX");
         var analyserZoomYElem = $("#analyserZoomY");

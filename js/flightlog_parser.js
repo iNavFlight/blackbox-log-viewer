@@ -508,6 +508,7 @@ var FlightLogParser = function(logData) {
             case "dynThrPID":
             case "tpa_breakpoint":
             case "serialrx_provider":
+            case "looptime":
             case "deadband":
             case "yaw_deadband":
             case "gyro_lpf":
