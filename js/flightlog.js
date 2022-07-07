@@ -567,11 +567,13 @@ function FlightLog(logData) {
 
                     // Add the PID sum
                     for (var axis = 0; axis < 3; axis++) {
+
                         destFrame[fieldIndex++] =
                             (axisPID[axis][0] !== undefined ? srcFrame[axisPID[axis][0]] : 0) +
                             (axisPID[axis][1] !== undefined ? srcFrame[axisPID[axis][1]] : 0) +
-                            (axisPID[axis][1] !== undefined ? srcFrame[axisPID[axis][2]] : 0) +
-                            (axisPID[axis][2] !== undefined ? srcFrame[axisPID[axis][3]] : 0);
+                            (axisPID[axis][2] !== undefined ? srcFrame[axisPID[axis][2]] : 0) +
+                            (axisPID[axis][3] !== undefined ? srcFrame[axisPID[axis][3]] : 0);
+
                     }
 
                     // Calculate the PID Error
