@@ -154,7 +154,6 @@ gulp.task('dist', gulp.series(['clean-dist'], function () {
         './js/graph_spectrum.js',
         './js/grapher.js',
         './js/header_dialog.js',
-        './js/imu.js',
         './js/keys_dialog.js',
         './js/laptimer.js',
         './js/main.js',

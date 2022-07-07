@@ -24,7 +24,6 @@
         "FlightLogIndex"   : true,
         "GraphConfig"   : true,
         "GraphLegend"   : true,
-        "IMU"   : true,
         "SeekBar"   : true
     }
 }

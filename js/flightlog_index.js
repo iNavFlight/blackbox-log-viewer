@@ -43,7 +43,6 @@ function FlightLogIndex(logData) {
                     times: [],
                     offsets: [],
                     avgThrottle: [],
-                    initialIMU: [],
                     initialSlow: [],
                     initialGPSHome: [],
                     hasEvent: [],
@@ -51,7 +50,6 @@ function FlightLogIndex(logData) {
                     maxTime: false
                 },
                 
-                imu = new IMU(),
                 gyroADC, accSmooth, magADC,
                 
                 iframeCount = 0,
@@ -136,22 +134,12 @@ function FlightLogIndex(logData) {
                                      * that came before, we have to record the initial state of various items which aren't
                                      * logged anew every iteration.
                                      */ 
-                                    intraIndex.initialIMU.push(new IMU(imu));
                                     intraIndex.initialSlow.push(lastSlow);
                                     intraIndex.initialGPSHome.push(lastGPSHome);
                                 }
                                 
                                 iframeCount++;
                             }
-                            
-                            imu.updateEstimatedAttitude(
-                                [frame[gyroADC[0]], frame[gyroADC[1]], frame[gyroADC[2]]],
-                                [frame[accSmooth[0]], frame[accSmooth[1]], frame[accSmooth[2]]],
-                                frame[FlightLogParser.prototype.FLIGHT_LOG_FIELD_INDEX_TIME], 
-                                sysConfig.acc_1G, 
-                                sysConfig.gyroScale, 
-                                magADC ? [frame[magADC[0]], frame[magADC[1]], frame[magADC[2]]] : false
-                            );
                         break;
                         case 'H':
                             lastGPSHome = frame.slice(0);

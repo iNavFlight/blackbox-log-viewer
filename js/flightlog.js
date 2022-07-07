@@ -11,7 +11,7 @@
  */
 function FlightLog(logData) {
     var
-        ADDITIONAL_COMPUTED_FIELD_COUNT = 12, /** attitude + PID_SUM + PID_ERROR + VELOCITY + WIND_VELOCITY + WIND_HEADING **/
+        ADDITIONAL_COMPUTED_FIELD_COUNT = 9, /** attitude + PID_SUM + PID_ERROR + VELOCITY + WIND_VELOCITY + WIND_HEADING **/
 
         that = this,
         logIndex = false,
@@ -223,7 +223,6 @@ function FlightLog(logData) {
         }
 
         // Add names for our ADDITIONAL_COMPUTED_FIELDS
-        fieldNames.push("heading[0]", "heading[1]", "heading[2]");
         fieldNames.push("axisSum[0]", "axisSum[1]", "axisSum[2]");
         fieldNames.push("axisError[0]", "axisError[1]", "axisError[2]"); // Custom calculated error field
         fieldNames.push("velocity", "windVelocity", "windHeading");
@@ -355,9 +354,6 @@ function FlightLog(logData) {
                         events: []
                     };
                 }
-
-                // We need to store this in the chunk so we can refer to it later when we inject computed fields
-                chunk.initialIMU = iframeDirectory.initialIMU[chunkIndex];
 
                 var
                     mainFrameIndex = 0,
@@ -494,20 +490,17 @@ function FlightLog(logData) {
     };
 
     /**
-     * Use the data in sourceChunks to compute additional fields (like IMU attitude) and add those into the
+     * Use the data in sourceChunks to compute additional fields and add those into the
      * resultChunks.
      *
      * sourceChunks and destChunks can be the same array.
      */
     function injectComputedFields(sourceChunks, destChunks) {
         let gyroADC = [fieldNameToIndex["gyroADC[0]"], fieldNameToIndex["gyroADC[1]"], fieldNameToIndex["gyroADC[2]"]],
-            accSmooth = [fieldNameToIndex["accSmooth[0]"], fieldNameToIndex["accSmooth[1]"], fieldNameToIndex["accSmooth[2]"]],
             magADC = [fieldNameToIndex["magADC[0]"], fieldNameToIndex["magADC[1]"], fieldNameToIndex["magADC[2]"]],
-            rcCommand = [fieldNameToIndex["rcCommand[0]"], fieldNameToIndex["rcCommand[1]"], fieldNameToIndex["rcCommand[2]"]],
             axisRate = [fieldNameToIndex["axisRate[0]"], fieldNameToIndex["axisRate[1]"], fieldNameToIndex["axisRate[2]"]],
             sourceChunkIndex, destChunkIndex,
             sysConfig,
-            attitude,
             navVel = [fieldNameToIndex["navVel[0]"], fieldNameToIndex["navVel[1]"]],
             wind = [fieldNameToIndex["wind[0]"], fieldNameToIndex["wind[1]"], fieldNameToIndex["wind[2]"]];
 
@@ -544,26 +537,11 @@ function FlightLog(logData) {
             if (!destChunk.hasAdditionalFields) {
                 destChunk.hasAdditionalFields = true;
 
-                var
-                    chunkIMU = new IMU(sourceChunks[sourceChunkIndex].initialIMU);
-
                 for (var i = 0; i < sourceChunk.frames.length; i++) {
                     var
                         srcFrame = sourceChunk.frames[i],
                         destFrame = destChunk.frames[i],
                         fieldIndex = destFrame.length - ADDITIONAL_COMPUTED_FIELD_COUNT;
-
-                    attitude = chunkIMU.updateEstimatedAttitude(
-                        [srcFrame[gyroADC[0]], srcFrame[gyroADC[1]], srcFrame[gyroADC[2]]],
-                        [srcFrame[accSmooth[0]], srcFrame[accSmooth[1]], srcFrame[accSmooth[2]]],
-                        srcFrame[FlightLogParser.prototype.FLIGHT_LOG_FIELD_INDEX_TIME],
-                        sysConfig.acc_1G,
-                        sysConfig.gyroScale,
-                        magADC ? [srcFrame[magADC[0]], srcFrame[magADC[1]], srcFrame[magADC[2]]] : false);
-
-                    destFrame[fieldIndex++] = attitude.roll;
-                    destFrame[fieldIndex++] = attitude.pitch;
-                    destFrame[fieldIndex++] = attitude.heading;
 
                     // Add the PID sum
                     for (var axis = 0; axis < 3; axis++) {
