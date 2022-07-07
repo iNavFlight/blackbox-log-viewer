@@ -1,7 +1,7 @@
 {
   "name": "inav-blackbox-explorer",
   "description": "Crossplatform blackbox analytics tool for INAV flight control system.",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "main": "main_nwjs.html",
   "bg-script": "background.js",
   "default_locale": "en",
@@ -43,11 +43,11 @@
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
+    "@quanle94/innosetup": "^6.0.2",
     "gulp-debian": "^0.1.9",
     "nw-builder": "^3.5.7",
     "rpm-builder": "^1.2.1",
-    "semver": "6.3.0",
-    "@quanle94/innosetup": "^6.0.2"
+    "semver": "6.3.0"
   },
   "optionalDependencies": {
     "appdmg": "^0.6.2"

@@ -49,10 +49,10 @@ var
                 "NAV POSHOLD",
                 "MANUAL",
                 "BEEPER",
-                "LEDLOW",
+                "LEDS OFF",
                 "LLIGHTS",
                 "NAV LAUNCH",
-                "OSD SW",
+                "OSD OFF",
                 "TELEMETRY",
                 "BLACKBOX",
                 "FAILSAFE",
@@ -72,47 +72,19 @@ var
                 "OSD ALT1",
                 "OSD ALT2",
                 "OSD ALT3",
-                "COURSE HOLD",
-                "BRAKING",
+                "NAV COURSE HOLD",
+                "MC BRAKING",
                 "USER 1",
                 "USER 2",
-                "CAM MIX", // FPV Angle Mix
-                "LOITER DIRCH", // Loiter direction change
-                "MSP RC OVER", // MSP RC Override
+                "FPV ANGLE MIX", // FPV Angle Mix
+                "LOITER CHANGE", // Loiter direction change
+                "MSP RC OVERRIDE", // MSP RC Override
                 "PREARM",
                 "TURTLE",
                 "NAV CRUISE",
-                "AUTOLEVEL"
-        ]),
-
-        FLIGHT_LOG_FEATURES = makeReadOnly([
-                'RX_PPM',
-                'VBAT',
-                'INFLIGHT_ACC_CAL',
-                'RX_SERIAL',
-                'MOTOR_STOP',
-                'SERVO_TILT',
-                'SOFTSERIAL',
-                'GPS',
-                'FAILSAFE',
-                'SONAR',
-                'TELEMETRY',
-                'CURRENT_METER',
-                '3D',
-                'RX_PARALLEL_PWM',
-                'RX_MSP',
-                'RSSI_ADC',
-                'LED_STRIP',
-                'DISPLAY',
-                'ONESHOT125',
-                'BLACKBOX',
-                'CHANNEL_FORWARDING',
-                'TRANSPONDER',
-                'AIRMODE',
-                'SUPEREXPO_RATES',
-                'VTX',
-                'RX_NRF24',
-                'SOFTSPI'
+                "AUTOLEVEL",
+                "WP PLANNER",
+                "SOARING"
         ]),
 
         PID_CONTROLLER_TYPE = ([
@@ -132,24 +104,32 @@ var
         ]),
 
         FAST_PROTOCOL = makeReadOnly([
-                "PWM",
+                "STANDARD",
                 "ONESHOT125",
-                "ONESHOT42",
                 "MULTISHOT",
                 "BRUSHED",
                 "DSHOT150",
                 "DSHOT300",
-                "DSHOT600",
-                "DSHOT1200"
-        ]),
-
-        MOTOR_SYNC = makeReadOnly([
-                "SYNCED",
-                "UNSYNCED"
+                "DSHOT600"
         ]),
 
         SERIALRX_PROVIDER = makeReadOnly([
-                "SPEK1024", "SPEK2048", "SBUS", "SUMD", "SUMH", "XB-B", "XB-B-RJ01", "IBUS", "JETIEXBUS", "CRSF", "FPORT", "SBUS_FAST"
+                "SPEK1024",
+                "SPEK2048",
+                "SBUS",
+                "SUMD",
+                "SUMH",
+                "XB-B",
+                "XB-B-RJ01",
+                "IBUS",
+                "JETIEXBUS",
+                "CRSF",
+                "FPORT",
+                "SBUS_FAST",
+                "FPORT2",
+                "SRXL2",
+                "GHST",
+                "MAVLINK"
         ]),
 
         FILTER_TYPE = makeReadOnly([
@@ -159,23 +139,42 @@ var
         ]),
 
         DEBUG_MODE = makeReadOnly([
-                "NONE", //0
-                "GYRO", //1
-                "AGL", //2
-                "FLOW_RAW", //3
-                "FLOW", //4
-                "SBUS", //5
-                "FPORT", //6
-                "ALWAYS", //7
-                "SAG_COMP_VOLTAGE", //8
-                "VIBE", //9
-                "CRUISE", //10
-                "REM_FLIGHT_TIME", //11
-                "SMARTAUDIO", //12
-                "ACC", //13
-                "ITERM_RELAX", //14
-                "ERPM", //15
-                "RPM_FILTER" //16
+                "NONE",
+                "GYRO",
+                "AGL",
+                "FLOW_RAW",
+                "FLOW",
+                "SBUS",
+                "FPORT",
+                "ALWAYS",
+                "SAG_COMP_VOLTAGE",
+                "VIBE",
+                "CRUISE",
+                "REM_FLIGHT_TIME",
+                "SMARTAUDIO",
+                "ACC",
+                "ERPM",
+                "RPM_FILTER",
+                "RPM_FREQ",
+                "NAV_YAW",
+                "DYNAMIC_FILTER",
+                "DYNAMIC_FILTER_FREQUENCY",
+                "IRLOCK",
+                "KALMAN_GAIN",
+                "PID_MEASUREMENT",
+                "SPM_CELLS",
+                "SPM_VS600",
+                "SPM_VARIO",
+                "PCF8574",
+                "DYN_GYRO_LPF",
+                "AUTOLEVEL",
+                "IMU2",
+                "ALTITUDE",
+                "SMITH_PREDICTOR",
+                "AUTOTRIM",
+                "AUTOTUNE",
+                "RATE_DYNAMICS",
+                "LANDING"
         ]),
 
         SUPER_EXPO_YAW = makeReadOnly([
@@ -184,49 +183,64 @@ var
                 "ALWAYS"
         ]),
 
-        DTERM_DIFFERENTIATOR = makeReadOnly([
-                "STANDARD",
-                "ENHANCED"
-        ]),
-
         GYRO_LPF = makeReadOnly([
-                "OFF",
+                "256HZ",
                 "188HZ",
                 "98HZ",
                 "42HZ",
                 "20HZ",
-                "10HZ",
-                "5HZ",
-                "EXPERIMENTAL"
+                "10HZ"
         ]),
 
         ACC_HARDWARE = makeReadOnly([
-                "AUTO",
                 "NONE",
-                "ADXL345",
+                "AUTO",
                 "MPU6050",
-                "MMA8452",
-                "BMA280",
-                "LSM303DLHC",
                 "MPU6000",
                 "MPU6500",
+                "MPU9250",
+                "BMI160",
+                "ICM20689",
+                "BMI088",
+                "ICM42605",
+                "BMI270",
                 "FAKE"
         ]),
 
         BARO_HARDWARE = makeReadOnly([
-                "AUTO",
                 "NONE",
+                "AUTO",
                 "BMP085",
                 "MS5611",
-                "BMP280"
+                "BMP280",
+                "MS5607",
+                "LPS25H",
+                "SPL06",
+                "BMP388",
+                "DPS310",
+                "B2SMPB",
+                "MSP",
+                "FAKE"
         ]),
 
         MAG_HARDWARE = makeReadOnly([
-                "AUTO",
                 "NONE",
+                "AUTO",
                 "HMC5883",
                 "AK8975",
-                "AK8963"
+                "GPSMAG",
+                "MAG3110",
+                "AK8963",
+                "IST8310",
+                "QMC5883",
+                "MPU9250",
+                "IST8308",
+                "LIS3MDL",
+                "MSP",
+                "RM3100",
+                "VCM5883",
+                "MLX90393",
+                "FAKE"
         ]),
 
         FLIGHT_LOG_FLIGHT_STATE_NAME = makeReadOnly([
@@ -234,19 +248,19 @@ var
                 "GPS_FIX",
                 "CALIBRATE_MAG",
                 "SMALL_ANGLE",
-                "FIXED_WING",     // set when in flying_wing or airplane mode. currently used by althold selection code
+                "FIXED_WING_LEGACY",     // set when in flying_wing or airplane mode. currently used by althold selection code
                 "ANTI_WINDUP",
                 "FLAPERON_AVAILABLE",
                 "NAV_MOTOR_STOP_OR_IDLE",     // navigation requests MOTOR_STOP or motor idle regardless of throttle stick, will only activate if MOTOR_STOP feature is available
                 "COMPASS_CALIBRATED",
                 "ACCELEROMETER_CALIBRATED",
-                "PWM_DRIVER_AVAILABLE",
+                "UNUSED",
                 "NAV_CRUISE_BRAKING",
                 "NAV_CRUISE_BRAKING_BOOST",
                 "NAV_CRUISE_BRAKING_LOCKED",
                 "NAV_EXTRA_ARMING_SAFETY_BYPASSED",    // nav_extra_arming_safey was bypassed. Keep it until power cycle.
                 "AIRMODE_ACTIVE",
-                "ESC_SENSOR_ACT",
+                "ESC_SENSOR",
                 "AIRPLANE",
                 "MULTIROTOR",
                 "ROVER",
@@ -255,7 +269,8 @@ var
                 "FORWARD_ONLY", // Move Forward Only
                 "REV_MOTOR_FOR", // Reverse Motors Forward
                 "HEADING_USE_YAW", // FW Heading use yaw
-                "ANTIWINDUP_OFF" // Antiwindup Deactivated
+                "ANTIWINDUP_OFF", // Antiwindup Deactivated
+                "LANDING_DETECTED"
         ]),
 
         FLIGHT_LOG_FAILSAFE_PHASE_NAME = makeReadOnly([

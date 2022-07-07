@@ -331,9 +331,6 @@ function FlightLogFieldPresenter() {
             case 'navFlags':
                 return presentFlags(value, FLIGHT_LOG_NAV_FLAGS);
 
-            case 'features':
-                return presentEnum(value, FLIGHT_LOG_FEATURES);
-
             case 'hwHealthStatus':
                 return FlightLogFieldPresenter.decodeHwHealth(value);
 
