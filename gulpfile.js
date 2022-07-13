@@ -82,12 +82,12 @@ function getRunDebugAppCommand() {
     }
 }
 
-function get_release_filename_linux(platform) {
+function get_release_filename_base(platform) {
     return 'INAV-BlackboxExplorer_' + platform;
 }
 
 function get_release_filename(platform, ext, addition = '') {
-    return 'INAV-BlackboxExplorer_' + platform + addition + '_' + pkg.version + '.' + ext;
+    return get_release_filename_base(platform) + addition + '_' + pkg.version + '.' + ext;
 }
 
 function get_nw_version() {
@@ -567,7 +567,7 @@ function post_release_deb(arch) {
             var rename = require("gulp-rename");
             const metadata = require('./package.json');
             const renameFrom = path.join(appsDir, metadata.name + '_' + metadata.version + '_' + getLinuxPackageArch('.deb', arch) + '.deb');
-            const renameTo = path.join(appsDir, get_release_filename_linux(arch) + '_' + metadata.version + '.deb');
+            const renameTo = path.join(appsDir, get_release_filename_base(arch) + '_' + metadata.version + '.deb');
             // Rename .deb build to common naming
             console.log(`Renaming .deb installer ${renameFrom} to ${renameTo}`);
             return gulp.src(renameFrom)
@@ -604,7 +604,7 @@ function release_rpm(arch) {
         createDirIfNotExists(appsDir);
 
         const options = {
-            name: get_release_filename_linux(arch), //metadata.name,
+            name: get_release_filename_base(arch), //metadata.name,
             version: metadata.version.replace(NAME_REGEX, '_'), // RPM does not like release candidate versions
             buildArch: getLinuxPackageArch('rpm', arch),
             vendor: metadata.author,
