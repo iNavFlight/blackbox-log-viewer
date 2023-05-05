@@ -957,7 +957,7 @@ html:not(.has-config) #status-bar .configuration-file-name {
     float: left;
     padding-right: 5px;
     margin-right: 5px;
-    border-right: 1px solid #7d7d79;
+    border-right: 1px solid #a94442;
 }
 
 #status-bar div:first-child {
