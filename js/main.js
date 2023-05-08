@@ -192,10 +192,14 @@ function BlackboxLogViewer() {
                 
             }
 
-            // Update flight mode flags on status bar
+            // Update flight mode and nav state flags on status bar
             $(".flight-mode", statusBar).text(
-            		fieldPresenter.decodeFieldToFriendly(null, 'flightModeFlags', currentFlightMode, null)	
-            	);
+                    fieldPresenter.decodeFieldToFriendly(null, 'flightModeFlags', currentFlightMode, null)
+                );
+            var currentNavState = frame[flightLog.getMainFieldIndexByName("navState")];
+            $(".nav-state", statusBar).text(
+                    fieldPresenter.decodeFieldToFriendly(null, 'navState', currentNavState, null)
+                );
 
             // update time field on status bar
             $(".graph-time").val(formatTime((currentBlackboxTime-flightLog.getMinTime())/1000, true));
