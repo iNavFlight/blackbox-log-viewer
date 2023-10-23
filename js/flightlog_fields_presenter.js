@@ -38,6 +38,11 @@ function FlightLogFieldPresenter() {
         'gyroADC[1]': 'gyro[pitch]',
         'gyroADC[2]': 'gyro[yaw]',
 
+        'gyroRaw[all]': 'gyroRAW',
+        'gyroRaw[0]': 'gyroRAW[roll]',
+        'gyroRaw[1]': 'gyroRAW[pitch]',
+        'gyroRaw[2]': 'gyroRAW[yaw]',
+
         'accSmooth[all]': 'acc',
         'accSmooth[0]': 'acc[X]',
         'accSmooth[1]': 'acc[Y]',
@@ -181,6 +186,11 @@ function FlightLogFieldPresenter() {
             case 'gyroADC[0]':
             case 'gyroADC[1]':
             case 'gyroADC[2]':
+                return value.toFixed(0) + ' deg/s';
+
+            case 'gyroRaw[0]':
+            case 'gyroRaw[1]':
+            case 'gyroRaw[2]':
                 return value.toFixed(0) + ' deg/s';
 
             case 'axisError[0]':

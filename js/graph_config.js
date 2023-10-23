@@ -253,7 +253,14 @@ GraphConfig.load = function(config) {
                 return {
                     offset: 0,
                     power: 0.25, /* Make this 1.0 to scale linearly */
-                    inputRange: 1000, //(2.0e-3 * Math.PI/180) / sysConfig.gyroScale,
+                    inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale, //scales based on max deg/s logged
+                    outputRange: 1.0
+                };
+            } else if (fieldName.match(/^gyroRaw\[/)) {
+                return {
+                    offset: 0,
+                    power: 0.25, /* Make this 1.0 to scale linearly */
+                    inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale, //scales based on max deg/s logged
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^accSmooth\[/)) {
@@ -274,7 +281,7 @@ GraphConfig.load = function(config) {
                 return {
                     offset: 0,
                     power: 0.25,
-                    inputRange: 1000, // Was 400 ?
+                    inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale, //scales based on max deg/s logged
                     outputRange: 1.0
                 };
             } else if (fieldName == "rcCommand[3]") { // Throttle
