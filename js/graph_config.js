@@ -229,11 +229,36 @@ GraphConfig.load = function(config) {
             }
         } catch (e) { return 0;}
     };
-    
+
     GraphConfig.getDefaultCurveForField = function(flightLog, fieldName) {
-        var
+        var 
             sysConfig = flightLog.getSysConfig();
-        
+            minMaxValues = getMinMax(fieldName);
+
+        // This function can be called to scale and center the field based on the whole-log observed ranges for that field.        
+        function getMinMax(fieldName) {
+            var
+                stats = flightLog.getStats(),
+                fieldIndex = flightLog.getMainFieldIndexByName(fieldName),
+                fieldStat = fieldIndex !== undefined ? stats.field[fieldIndex] : false;
+
+            if (fieldStat) {
+                return {
+                    offset: - (fieldStat.max + fieldStat.min) / 2,
+                    power: 1.0,
+                    inputRange: Math.max((fieldStat.max - fieldStat.min) / 2, 1.0),
+                    outputRange: 1.0
+                };
+            } else {
+                return {
+                    offset: 0,
+                    power: 1.0,
+                    inputRange: 500,
+                    outputRange: 1.0
+                };
+            }
+        };
+
         try {
             if (fieldName.match(/^motor\[/)) {
                 return {
@@ -305,6 +330,91 @@ GraphConfig.load = function(config) {
                     inputRange: 200,
                     outputRange: 1.0
                 };
+            //Roll NAV position data
+            } else if (fieldName.match(/^navPos\[0/)     ||
+                       fieldName.match(/^navTgtPos\[0/)) {
+                var minMaxValues = getMinMax("navTgtPos[0]");
+                    return {
+                        offset: minMaxValues.offset,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            } else if (fieldName.match(/^navTgtVel\[0/)  ||
+                       fieldName.match(/^navVel\[0/)) {
+                var minMaxValues = getMinMax("navVel[0]");
+                    return {
+                        offset: 0,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            } else if (fieldName.match(/^mcVelAxis.*\[0/)  ||
+                       fieldName.match(/^mcPosAxis.*\[0/)) {
+                var minMaxValues = getMinMax("mcVelAxisP[0]");
+                    return {
+                        offset: 0,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            //Pitch NAV position data
+            } else if (fieldName.match(/^navPos\[1/)     ||
+                       fieldName.match(/^navTgtPos\[1/)) {
+                var minMaxValues = getMinMax("navTgtPos[1]");
+                    return {
+                        offset: minMaxValues.offset,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            } else if (fieldName.match(/^navTgtVel\[1/)  ||
+                       fieldName.match(/^navVel\[1/)) {
+                var minMaxValues = getMinMax("navVel[1]");
+                    return {
+                        offset: 0,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            } else if (fieldName.match(/^mcVelAxis.*\[1/)  ||
+                       fieldName.match(/^mcPosAxis.*\[1/)) {
+                var minMaxValues = getMinMax("mcVelAxisP[1]");
+                    return {
+                        offset: 0,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            //Altitude NAV position data
+            } else if (fieldName.match(/^Baro*/)        ||
+                       fieldName.match(/^navPos\[2/)     ||
+                       fieldName.match(/^navTgtPos\[2/)) {
+                var minMaxValues = getMinMax("BaroAlt");
+                    return {
+                        offset: minMaxValues.offset,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            } else if (fieldName.match(/^navTgtVel\[2/)  ||
+                       fieldName.match(/^navVel\[2/)) {
+                var minMaxValues = getMinMax("navVel[2]");
+                    return {
+                        offset: 0,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            } else if (fieldName.match(/^mcVelAxis.*\[2/)  ||
+                       fieldName.match(/^mcPosAxis.*\[2/)) {
+                var minMaxValues = getMinMax("mcVelAxisP[2]");
+                    return {
+                        offset: 0,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange,
+                        outputRange: minMaxValues.outputRange,
+                    };
             } else if (fieldName.match(/^debug.*/) && sysConfig.debug_mode!=null) {
 
                 var debugModeName = DEBUG_MODE[sysConfig.debug_mode]; 
@@ -403,27 +513,14 @@ GraphConfig.load = function(config) {
                 }
             }
             // if not found above then
-            // Scale and center the field based on the whole-log observed ranges for that field
-            var
-                stats = flightLog.getStats(),
-                fieldIndex = flightLog.getMainFieldIndexByName(fieldName),
-                fieldStat = fieldIndex !== undefined ? stats.field[fieldIndex] : false;
+            var minMaxValues = getMinMax(fieldName);
+                return {
+                    offset: minMaxValues.offset,
+                    power: minMaxValues.power,
+                    inputRange: minMaxValues.inputRange,
+                    outputRange: minMaxValues.outputRange,
+                };
 
-            if (fieldStat) {
-                return {
-                    offset: -(fieldStat.max + fieldStat.min) / 2,
-                    power: 1.0,
-                    inputRange: Math.max((fieldStat.max - fieldStat.min) / 2, 1.0),
-                    outputRange: 1.0
-                };
-            } else {
-                return {
-                    offset: 0,
-                    power: 1.0,
-                    inputRange: 500,
-                    outputRange: 1.0
-                };
-            }
         } catch(e) {
             return {
                 offset: 0,

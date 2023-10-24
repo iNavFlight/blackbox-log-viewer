@@ -514,6 +514,9 @@ var FlightLogParser = function(logData) {
             case "gyro_lpf":
             case "acc_hardware":
             case "baro_hardware":
+            case "BaroAlt":
+                that.sysConfig.BaroAlt = parseInt(fieldValue, 10);
+                break;
             case "mag_hardware":
             case "vbat_pid_compensation":
             case "rc_smoothing":

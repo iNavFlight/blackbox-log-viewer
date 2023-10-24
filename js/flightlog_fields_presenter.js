@@ -316,8 +316,7 @@ function FlightLogFieldPresenter() {
                 return (value / Math.PI * 180).toFixed(1) + "deg";
 
             case 'BaroAlt':
-                return (value / 100).toFixed(1) + "m";
-
+                return (value / 100).toFixed(2) + "m";
 
             case "navEPH":
                 return (value/100).toFixed(2);
