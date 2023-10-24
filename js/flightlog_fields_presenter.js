@@ -131,7 +131,7 @@ function FlightLogFieldPresenter() {
                 result += flagNames[i];
             }
 
-            flags >>= 1;
+            flags >>>= 1;
             i++;
         }
 
@@ -166,7 +166,7 @@ function FlightLogFieldPresenter() {
     /**
      * Attempt to decode the given raw logged value into something more human readable, or return an empty string if
      * no better representation is available.
-     * 
+     *
      * @param fieldName Name of the field
      * @param value Value of the field
      */
