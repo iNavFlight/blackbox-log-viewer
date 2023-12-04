@@ -278,14 +278,14 @@ GraphConfig.load = function(config) {
                 return {
                     offset: 0,
                     power: 0.25, /* Make this 1.0 to scale linearly */
-                    inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale, //scales based on max deg/s logged
+                    inputRange: Math.max(250, (2.0e-3 * Math.PI/180) / sysConfig.gyroScale), //scales based on max deg/s logged
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^gyroRaw\[/)) {
                 return {
                     offset: 0,
                     power: 0.25, /* Make this 1.0 to scale linearly */
-                    inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale, //scales based on max deg/s logged
+                    inputRange: Math.max(250, (2.0e-3 * Math.PI/180) / sysConfig.gyroScale), //scales based on max deg/s logged
                     outputRange: 1.0
                 };
             } else if (fieldName.match(/^accSmooth\[/)) {
@@ -306,7 +306,7 @@ GraphConfig.load = function(config) {
                 return {
                     offset: 0,
                     power: 0.25,
-                    inputRange: (2.0e-3 * Math.PI/180) / sysConfig.gyroScale, //scales based on max deg/s logged
+                    inputRange: Math.max(250, (2.0e-3 * Math.PI/180) / sysConfig.gyroScale), //scales based on max deg/s logged
                     outputRange: 1.0
                 };
             } else if (fieldName == "rcCommand[3]") { // Throttle
@@ -333,7 +333,7 @@ GraphConfig.load = function(config) {
             //Roll NAV position data
             } else if (fieldName.match(/^navPos\[0/)     ||
                        fieldName.match(/^navTgtPos\[0/)) {
-                var minMaxValues = getMinMax("navTgtPos[0]");
+                var minMaxValues = getMinMax("navPos[0]");
                     return {
                         offset: minMaxValues.offset,
                         power: minMaxValues.power,
@@ -351,7 +351,7 @@ GraphConfig.load = function(config) {
                     };
             } else if (fieldName.match(/^mcVelAxis.*\[0/)  ||
                        fieldName.match(/^mcPosAxis.*\[0/)) {
-                var minMaxValues = getMinMax("mcVelAxisP[0]");
+                var minMaxValues = getMinMax("mcVelAxisOut[0]");
                     return {
                         offset: 0,
                         power: minMaxValues.power,
@@ -361,7 +361,7 @@ GraphConfig.load = function(config) {
             //Pitch NAV position data
             } else if (fieldName.match(/^navPos\[1/)     ||
                        fieldName.match(/^navTgtPos\[1/)) {
-                var minMaxValues = getMinMax("navTgtPos[1]");
+                var minMaxValues = getMinMax("navPos[1]");
                     return {
                         offset: minMaxValues.offset,
                         power: minMaxValues.power,
@@ -379,7 +379,7 @@ GraphConfig.load = function(config) {
                     };
             } else if (fieldName.match(/^mcVelAxis.*\[1/)  ||
                        fieldName.match(/^mcPosAxis.*\[1/)) {
-                var minMaxValues = getMinMax("mcVelAxisP[1]");
+                var minMaxValues = getMinMax("mcVelAxisOut[1]");
                     return {
                         offset: 0,
                         power: minMaxValues.power,
@@ -408,11 +408,11 @@ GraphConfig.load = function(config) {
                     };
             } else if (fieldName.match(/^mcVelAxis.*\[2/)  ||
                        fieldName.match(/^mcPosAxis.*\[2/)) {
-                var minMaxValues = getMinMax("mcVelAxisP[2]");
+                var minMaxValues = getMinMax("mcVelAxisOut[2]");
                     return {
                         offset: 0,
                         power: minMaxValues.power,
-                        inputRange: minMaxValues.inputRange,
+                        inputRange: minMaxValues.inputRange * 1.75,
                         outputRange: minMaxValues.outputRange,
                     };
             } else if (fieldName.match(/^debug.*/) && sysConfig.debug_mode!=null) {
