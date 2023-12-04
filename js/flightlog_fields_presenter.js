@@ -93,27 +93,148 @@ function FlightLogFieldPresenter() {
             'debug[6]': 'debug[6]',
             'debug[7]': 'debug[7]'
         },
-        1: {       //Debug gyro
-            'debug[all]': 'Debug Gyro',
-            'debug[0]': 'gyro_raw[X]',
-            'debug[1]': 'gyro_raw[Y]',
-            'debug[2]': 'gyro_raw[Z]',
-            'debug[3]': 'Not Used',
+        1: {       //AGL
+            'debug[all]': 'Debug ABOVE GROUND LEVEL',
+            'debug[0]': 'Surface Reliability x1000',
+            'debug[1]': 'AGL Quality',
+            'debug[2]': 'AGL Altitude',
+            'debug[3]': 'AGL Velocity',
             'debug[4]': 'debug[4]',
             'debug[5]': 'debug[5]',
             'debug[6]': 'debug[6]',
             'debug[7]': 'debug[7]'
         },
-        16: {	    //RPM_FILTER
-            'debug[all]': 'Debug RPM Filter',
-            'debug[0]': 'gyro_raw[roll]',
-            'debug[1]': 'gyro_raw[pitch]',
-            'debug[2]': 'gyro_raw[yaw]',
-            'debug[3]': 'gyro_rpm[roll]',
-            'debug[4]': 'gyro_rpm[pitch]',
-            'debug[5]': 'gyro_rpm[yaw]',
-            'debug[6]': 'Not Used',
-            'debug[7]': 'Not Used'
+        2: {	    //FLOW_RAW
+            'debug[all]': 'Debug FLOW RAW',
+            'debug[0]': 'X Flow Rate',
+            'debug[1]': 'Y Flow Rate',
+            'debug[2]': 'X Body Rate',
+            'debug[3]': 'Y Body Rate',
+            'debug[4]': '[empty]',
+            'debug[5]': '[empty]',
+            'debug[6]': '[empty]',
+            'debug[7]': '[empty]'
+        },
+        3: {	    //FLOW
+            'debug[all]': 'Debug FLOW',
+            'debug[0]': 'X Flow Rate (deg)',
+            'debug[1]': 'Y Flow Rate (deg)',
+            'debug[2]': 'X Flow Coordinate',
+            'debug[3]': 'Y Flow Coordinate',
+            'debug[4]': '[empty]',
+            'debug[5]': '[empty]',
+            'debug[6]': '[empty]',
+            'debug[7]': '[empty]'
+        },
+        5: {	    //SAG_COMP_VOLTAGE
+            'debug[all]': 'Debug SAG COMPENSATION',
+            'debug[0]': 'Power Supply Impedance',
+            'debug[1]': 'Sage Compenstation',
+            'debug[2]': '[empty]',
+            'debug[3]': '[empty]',
+            'debug[4]': '[empty]',
+            'debug[5]': '[empty]',
+            'debug[6]': '[empty]',
+            'debug[7]': '[empty]'
+        },
+        6: {	    //VIBE
+            'debug[all]': 'Debug ACC VIBE',
+            'debug[0]': 'ACC X Vibe Level',
+            'debug[1]': 'ACC Y Vibe Level',
+            'debug[2]': 'ACC Z Vibe Level',
+            'debug[3]': 'SCC Clip Count',
+            'debug[4]': '[empty]',
+            'debug[5]': '[empty]',
+            'debug[6]': '[empty]',
+            'debug[7]': '[empty]'
+        },
+        10: {	    //ACC
+            'debug[all]': 'Debug ACCELEROMETER',
+            'debug[0]': 'Roll RAW ACC',
+            'debug[1]': 'Pitch RAW ACC',
+            'debug[2]': 'Vertical RAW ACC',
+            'debug[3]': '[empty]',
+            'debug[4]': '[empty]',
+            'debug[5]': '[empty]',
+            'debug[6]': '[empty]',
+            'debug[7]': '[empty]'
+        },
+        11: {	    //NAV_YAW
+            'debug[all]': 'Debug NAV YAW',
+            'debug[0]': 'Yaw Heading P-Term',
+            'debug[1]': 'Yaw Heading I-Term',
+            'debug[2]': 'Yaw Heading D-Term',
+            'debug[3]': 'Heading Error',
+            'debug[4]': 'Heading Output Constrained',
+            'debug[5]': '[empty]',
+            'debug[6]': '[empty]',
+            'debug[7]': '[empty]'
+        },
+        13: {	    //DYN_GYRO
+            'debug[all]': 'Debug DYN GYRO LPF',
+            'debug[0]': 'Gyro LPF Cutoff',
+            'debug[1]': '[empty]',
+            'debug[2]': '[empty]',
+            'debug[3]': '[empty]',
+            'debug[4]': '[empty]',
+            'debug[5]': '[empty]',
+            'debug[6]': '[empty]',
+            'debug[7]': '[empty]'
+        },
+        14: {	    //AUTOLEVEL
+            'debug[all]': 'Debug AUTOLEVEL',
+            'debug[0]': 'Target Angle x10',
+            'debug[1]': 'Level Trim x10',
+            'debug[2]': 'Vertical Velocity',
+            'debug[3]': 'Target Angle',
+            'debug[4]': 'Level Trim Multiplier',
+            'debug[5]': '[empty]',
+            'debug[6]': '[empty]',
+            'debug[7]': '[empty]'
+        },
+        15: {	    //ALTITUDE
+            'debug[all]': 'Debug ALTITUDE',
+            'debug[0]': 'Position estimate',
+            'debug[1]': 'Vertical speed estimate',
+            'debug[2]': 'Baro altitude',
+            'debug[3]': 'Vertical acceleration on earth frame',
+            'debug[4]': 'GPS altitude',
+            'debug[5]': 'GPS vertical speed',
+            'debug[6]': 'Vibration level',
+            'debug[7]': 'Clip count'
+        },
+        16: {	    //AUTOTRIM
+            'debug[all]': 'Debug AUTOTRIM',
+            'debug[0]': 'Servo2 Middle',
+            'debug[1]': 'Middle Update Count',
+            'debug[2]': 'Servo3 Middle',
+            'debug[3]': 'Max of Rotation or Target',
+            'debug[4]': 'Servo4 Middle',
+            'debug[5]': 'Roll I-term',
+            'debug[6]': 'Servo5 Middle',
+            'debug[7]': 'Pitch I-term'
+        },
+        18: {	    //RATE_DYNAMICS
+            'debug[all]': 'Debug RATE DYNAMICS',
+            'debug[0]': 'Roll RC Command',
+            'debug[1]': 'Roll after Rate Dynamics',
+            'debug[2]': 'Pitch RC Command',
+            'debug[3]': 'Pitch after Rate Dynamics',
+            'debug[4]': 'Yaw RC Command',
+            'debug[5]': 'Yaw after Rate Dynamics',
+            'debug[6]': '[empty]',
+            'debug[7]': '[empty]'
+        },
+        20: {	    //POS_EST
+            'debug[all]': 'Debug POS_EST',
+            'debug[0]': 'Position estimat X',
+            'debug[1]': 'Position estimate Y',
+            'debug[2]': 'Position estimate Z',
+            'debug[3]': 'Speed estimate VX',
+            'debug[4]': 'Speed estimate VY',
+            'debug[5]': 'Speed estimate VZ',
+            'debug[6]': 'Yaw estimate',
+            'debug[7]': 'navPositionEstimationFlags'
         }
     };
 
