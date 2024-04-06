@@ -415,6 +415,31 @@ GraphConfig.load = function(config) {
                         inputRange: minMaxValues.inputRange * 1.75,
                         outputRange: minMaxValues.outputRange,
                     };
+            //Altitude NAV position data Fixed Wing
+            } else if (fieldName.match(/^fwAlt*/)) {
+                var minMaxValues = getMinMax("fwAltOut");
+                    return {
+                        offset: 0,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange * 1.75,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            } else if (fieldName.match(/^fwPos*/)) {
+                var minMaxValues = getMinMax("fwPosOut");
+                    return {
+                        offset: 0,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange * 1.75,
+                        outputRange: minMaxValues.outputRange,
+                    };
+            } else if (fieldName.match(/^attitude\[/)) {
+                var minMaxValues = getMinMax("attitude[2]");
+                    return {
+                        offset: 0,
+                        power: minMaxValues.power,
+                        inputRange: minMaxValues.inputRange * 1.75,
+                        outputRange: minMaxValues.outputRange,
+                    }; 
             } else if (fieldName.match(/^debug.*/) && sysConfig.debug_mode!=null) {
 
                 var debugModeName = DEBUG_MODE[sysConfig.debug_mode]; 
