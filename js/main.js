@@ -203,6 +203,7 @@ function BlackboxLogViewer() {
 
             // update time field on status bar
             $(".graph-time").val(formatTime((currentBlackboxTime-flightLog.getMinTime())/1000, true));
+            $(".graph-time2").val(((currentBlackboxTime-flightLog.getMinTime())/1000000).toFixed(3));
             if(hasMarker) {
                 $(".marker-offset", statusBar).text('Marker Offset ' + formatTime((currentBlackboxTime-markerTime)/1000, true) + 'ms ' + (1000000/(currentBlackboxTime-markerTime)).toFixed(0) + "Hz");
             }

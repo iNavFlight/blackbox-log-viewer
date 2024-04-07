@@ -697,6 +697,13 @@ html.has-marker .graph-time-marker-group > .graph-time-marker {
     display:inline-block;
 }
 
+html .graph-time-marker-group2 > .graph-time-marker2 {
+    display:none;
+}
+html.has-marker2 .graph-time-marker-group2 > .graph-time-marker2 {
+    display:inline-block;
+}
+
 .log-metadata, .log-field-values {
     display:none;
 }
