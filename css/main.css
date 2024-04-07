@@ -697,6 +697,11 @@ html.has-marker .graph-time-marker-group > .graph-time-marker {
     display:inline-block;
 }
 
+.user-settings-dialog .time-switch-group img {
+	width: 125px;
+	max-height: 125px;
+}
+
 .log-metadata, .log-field-values {
     display:none;
 }
