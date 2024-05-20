@@ -436,15 +436,18 @@ function FlightLogFieldPresenter() {
             case 'windHeading':
                 return (value / Math.PI * 180).toFixed(1) + "deg";
 
-            case 'BaroAlt':
-                return (value / 100).toFixed(2) + "m";
-
             case "navEPH":
                 return (value/100).toFixed(2);
 
+            case 'BaroAlt':
+            case "navPos[0]":
+            case "navPos[1]":
             case "navPos[2]":
+            case "navTgtPos[0]":
+            case "navTgtPos[1]":
             case "navTgtPos[2]":
-                return (value / 100).toFixed(2) + "m";
+            case "homeDistance":
+                return (value / 100).toFixed(2) + " m";
 
             case 'flightModeFlags':
                 return presentFlags(value, FLIGHT_LOG_FLIGHT_MODE_NAME);
@@ -526,7 +529,8 @@ function FlightLogFieldPresenter() {
             case 'attitude[1]':
             case 'attitude[2]':
                 return (value / 10.0).toFixed(1) + " degs";
-
+            case 'navTgtHdg':
+                return (value / 100.0).toFixed(1) + " degs";
 
             default:
                 return value.toString();

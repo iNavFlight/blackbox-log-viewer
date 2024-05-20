@@ -231,7 +231,7 @@ function FlightLog(logData) {
         // Add names for our ADDITIONAL_COMPUTED_FIELDS
         fieldNames.push("axisSum[0]", "axisSum[1]", "axisSum[2]");
         fieldNames.push("axisError[0]", "axisError[1]", "axisError[2]"); // Custom calculated error field
-        fieldNames.push("velocity", "windVelocity", "windHeading");
+        fieldNames.push("velocity", "windVelocity", "windHeading", "homeDistance");
 
         fieldNameToIndex = {};
         for (i = 0; i < fieldNames.length; i++) {
@@ -525,7 +525,8 @@ function FlightLog(logData) {
             sourceChunkIndex, destChunkIndex,
             sysConfig,
             navVel = [fieldNameToIndex["navVel[0]"], fieldNameToIndex["navVel[1]"]],
-            wind = [fieldNameToIndex["wind[0]"], fieldNameToIndex["wind[1]"], fieldNameToIndex["wind[2]"]];
+            wind = [fieldNameToIndex["wind[0]"], fieldNameToIndex["wind[1]"], fieldNameToIndex["wind[2]"]],
+            navPos = [fieldNameToIndex["navPos[0]"], fieldNameToIndex["navPos[1]"]];
 
         let axisPID = [
                 [fieldNameToIndex["axisP[0]"], fieldNameToIndex["axisI[0]"], fieldNameToIndex["axisD[0]"], fieldNameToIndex["axisF[0]"]],
@@ -603,6 +604,13 @@ function FlightLog(logData) {
                         destFrame[fieldIndex+1] = windRads;
                     }
                     fieldIndex += 2;
+
+                    // Compute distance to home
+                    let posX = srcFrame[navPos[0]], posY = srcFrame[navPos[1]];
+                    if (posX != undefined && posY != undefined) {
+                        destFrame[fieldIndex] = Math.round(Math.hypot(posX, posY));
+                    }
+                    fieldIndex++;
                 }
             }
         }
