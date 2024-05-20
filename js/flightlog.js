@@ -222,6 +222,12 @@ function FlightLog(logData) {
             }
         }
 
+        if (userSettings.logDataGps && parser.frameDefs.G) {
+            for (i = 0; i < parser.frameDefs.G.name.length; i++) {
+                fieldNames.push(parser.frameDefs.G.name[i]);
+            }
+        }
+
         // Add names for our ADDITIONAL_COMPUTED_FIELDS
         fieldNames.push("axisSum[0]", "axisSum[1]", "axisSum[2]");
         fieldNames.push("axisError[0]", "axisError[1]", "axisError[2]"); // Custom calculated error field
@@ -253,7 +259,7 @@ function FlightLog(logData) {
             found = false;
 
         var refVoltage;
-        if((sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(sysConfig.firmwareVersion, '3.1.0')) || 
+        if((sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(sysConfig.firmwareVersion, '3.1.0')) ||
            (sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(sysConfig.firmwareVersion, '2.0.0'))) {
             refVoltage = sysConfig.vbatref;
         } else {
@@ -360,6 +366,11 @@ function FlightLog(logData) {
                     slowFrameLength = parser.frameDefs.S ? parser.frameDefs.S.count : 0,
                     lastSlow = parser.frameDefs.S ? iframeDirectory.initialSlow[chunkIndex].slice(0) : [];
 
+                var
+                    gpsFrameLength = userSettings.logDataGps && parser.frameDefs.G ? parser.frameDefs.G.count : 0,
+                    lastGPSData = userSettings.logDataGps && parser.frameDefs.G ? iframeDirectory.initialGPSData[chunkIndex].slice(0) : [];
+
+
                 parser.onFrameReady = function(frameValid, frame, frameType, frameOffset, frameSize) {
                     var
                         destFrame;
@@ -369,9 +380,7 @@ function FlightLog(logData) {
                             case 'P':
                             case 'I':
                                 //The parser re-uses the "frame" array so we must copy that data somewhere else
-
-                                var
-                                    numOutputFields = frame.length + slowFrameLength + ADDITIONAL_COMPUTED_FIELD_COUNT;
+                                var numOutputFields = frame.length + slowFrameLength + ADDITIONAL_COMPUTED_FIELD_COUNT + gpsFrameLength;
 
                                 //Do we have a recycled chunk to copy on top of?
                                 if (chunk.frames[mainFrameIndex]) {
@@ -391,6 +400,13 @@ function FlightLog(logData) {
                                 // Then merge in the last seen slow-frame data
                                 for (var i = 0; i < slowFrameLength; i++) {
                                     destFrame[i + frame.length] = lastSlow[i] === undefined ? null : lastSlow[i];
+                                }
+
+                                if (userSettings.logDataGps) {
+                                    // Then merge in the last seen gps-frame data
+                                    for (var i = 0; i < gpsFrameLength; i++) {
+                                        destFrame[i + frame.length + slowFrameLength] = lastGPSData[i] === undefined ? null : lastGPSData[i];
+                                    }
                                 }
 
                                 for (var i = 0; i < eventNeedsTimestamp.length; i++) {
@@ -423,6 +439,13 @@ function FlightLog(logData) {
                                     lastSlow[i] = frame[i];
                                 }
                             break;
+                            case 'G':
+                                if (userSettings.logDataGps) {
+                                    for (var i = 0; i < frame.length; i++) {
+                                        lastGPSData[i] = frame[i];
+                                    }
+                                }
+                                break;
                         }
                     } else {
                         chunk.gapStartsHere[mainFrameIndex - 1] = true;
