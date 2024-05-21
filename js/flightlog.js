@@ -11,7 +11,7 @@
  */
 function FlightLog(logData) {
     var
-        ADDITIONAL_COMPUTED_FIELD_COUNT = 9, /** attitude + PID_SUM + PID_ERROR + VELOCITY + WIND_VELOCITY + WIND_HEADING **/
+        ADDITIONAL_COMPUTED_FIELD_COUNT = 10, /** attitude + PID_SUM + PID_ERROR + VELOCITY + WIND_VELOCITY + WIND_HEADING + HOME DISTANCE**/
 
         that = this,
         logIndex = false,
@@ -380,7 +380,7 @@ function FlightLog(logData) {
                             case 'P':
                             case 'I':
                                 //The parser re-uses the "frame" array so we must copy that data somewhere else
-                                var numOutputFields = frame.length + slowFrameLength + ADDITIONAL_COMPUTED_FIELD_COUNT + gpsFrameLength;
+                                var numOutputFields = frame.length + slowFrameLength + gpsFrameLength + ADDITIONAL_COMPUTED_FIELD_COUNT ;
 
                                 //Do we have a recycled chunk to copy on top of?
                                 if (chunk.frames[mainFrameIndex]) {
