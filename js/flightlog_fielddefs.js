@@ -33,7 +33,6 @@ function setVersionSpecificFieldDefs(version) {
             "AUTOLEVEL",
             "HEADFREE",
             "HEAD ADJ",
-            "CAMSTAB",
             "BEEPER",
             "SERVO AUTOTRIM",
             "AUTO TUNE",
@@ -41,12 +40,15 @@ function setVersionSpecificFieldDefs(version) {
             "TELEMETRY",
             "BLACKBOX",
             "AIRMODE",
-            "HOME RESET",
             "GCS NAV",
             "SURFACE",
             "FLAPERON",
             "TURN ASSIST",
-            "MC BRAKING",       // last item recorded by blackbox (32 bit limit)
+            "MC BRAKING",
+            "MIXER PROFILE 2",
+            "MIXER TRANSITION",     // last item recorded by blackbox (32 bit limit)
+            "HOME RESET",
+            "CAMSTAB",
             "LIGHTS",
             "CAMERA 1",
             "CAMERA 2",
@@ -57,9 +59,9 @@ function setVersionSpecificFieldDefs(version) {
             "LEDS OFF",
             "USER 1",
             "USER 2",
-            "FPV ANGLE MIX",    // FPV Angle Mix
-            "LOITER CHANGE",    // Loiter direction change
-            "MSP RC OVERRIDE",  // MSP RC Override
+            "FPV ANGLE MIX", // FPV Angle Mix
+            "LOITER CHANGE", // Loiter direction change
+            "MSP RC OVERRIDE", // MSP RC Override
             "PREARM",
             "TURTLE",
             "WP PLANNER",
