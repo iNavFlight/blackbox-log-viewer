@@ -449,6 +449,12 @@ function FlightLogFieldPresenter() {
             case 'flightModeFlags':
                 return presentFlags(value, FLIGHT_LOG_FLIGHT_MODE_NAME);
 
+            case 'flightModeFlags2':
+                return presentFlags(value, FLIGHT_LOG_FLIGHT_MODE_NAME_2);
+
+            case 'activeFlightModeFlags':
+                return presentFlags(value, FLIGHT_LOG_ACTIVE_FLIGHT_MODE_NAME);
+
             case 'stateFlags':
                 return presentFlags(value, FLIGHT_LOG_FLIGHT_STATE_NAME);
 
