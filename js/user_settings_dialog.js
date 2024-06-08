@@ -3,7 +3,7 @@
 function UserSettingsDialog(dialog, onLoad, onSave) {
 
 	// Private Variables
-    
+
 	// generate mixer (from Cleanflight Configurator) (note that the mixerConfiguration index starts at 1)
 	var mixerList = [
 	     {name: 'Tricopter',       model: 'tricopter',    image: 'tri',				defaultMotorOrder: [0, 1, 2], 				defaultYawOffset: -Math.PI / 2},
@@ -44,11 +44,12 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 		stickTrails			: false,			// Show stick trails?
 		stickInvertYaw		: false,			// Invert yaw in stick display?
         legendUnits			: true,	            // Show units on legend?
+        logDataGps          : false,
 		velocityUnits		: "D",				// Units for composite velocity "D" / "M" / "I"
 		gapless				: false,
-		drawCraft			: "3D", 
-		drawPidTable		: true, 
-		drawSticks			: true, 
+		drawCraft			: "3D",
+		drawPidTable		: true,
+		drawSticks			: true,
 		drawTime			: true,
 		drawEvents			: true,
 		drawAnalyser		: true,             // add an analyser option
@@ -97,7 +98,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 		var customMix;
 
 		if($(".custom-mixes").is(":checked")) {
-    	
+
 			var motorOrder = new Array(mixerList[currentSettings.mixerConfiguration-1].defaultMotorOrder.length);
 			for(var i=0;i<motorOrder.length; i++) {
 				var select_e = $('select.motor_'+mixerList[currentSettings.mixerConfiguration-1].defaultMotorOrder[i]+'_');
@@ -105,13 +106,13 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 			}
 			customMix = {  motorOrder: motorOrder,
 							yawOffset: mixerList[currentSettings.mixerConfiguration-1].defaultYawOffset
-				  };       
+				  };
     	} else {
     		customMix = null;
     	}
 		return customMix;
     }
-    
+
     function convertUIToSettings() {
     	var settings = $.extend({}, currentSettings, {
     			customMix: saveCustomMix(),
@@ -126,7 +127,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
     					   size: $('.analyser-settings input[name="analyser-size"]').val() + '%', },
     			watermark: {top: $('.watermark-settings input[name="watermark-top"]').val() + '%',
 					   	   left: $('.watermark-settings input[name="watermark-left"]').val() + '%',
-					   	   size: $('.watermark-settings input[name="watermark-size"]').val() + '%', 
+					   	   size: $('.watermark-settings input[name="watermark-size"]').val() + '%',
 					   	   transparency: $('.watermark-settings input[name="watermark-transparency"]').val() + '%',
 					   	   logo: currentLogo, },
 				drawWatermark: ($(".watermark").is(":checked")),
@@ -137,29 +138,29 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
     	});
     	return settings;
     }
-        
+
     var availableMotors =[]; // motors that appear in the log file
     function getAvailableMotors(flightLog) {
-    	
+
         var fieldNames = flightLog.getMainFieldNames();
         availableMotors = [];
-        
+
         for (i = 0; i < fieldNames.length; i++) {
             var matches = fieldNames[i].match(/^(motor\[[0-9]+\])/);
             if(matches!=null) availableMotors.push(fieldNames[i]);
         };
     }
-    
+
     function renderFieldOption(i, fieldName, selectedName) {
-        var 
+        var
             option = $("<option></option>")
                 .text(FlightLogFieldPresenter.fieldNameToFriendly(fieldName))
                 .attr("value", i);
-    
+
         if (fieldName == selectedName) {
             option.attr("selected", "selected");
         }
-        
+
         return option;
     }
 
@@ -168,7 +169,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
     		select_e.append(renderFieldOption(i, availableMotors[i], selectedName));
     	};
     }
-    
+
     function buildMotorList(mixerConfiguration) {
     	var motor_list_e = $('.motorList');
     	$(motor_list_e).empty(); // clear all the motors
@@ -180,13 +181,13 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 							'There are only a maximum of ' + availableMotors.length + ' motors in the log file; the selection you have chosen requires ' +
 							mixerList[mixerConfiguration-1].defaultMotorOrder.length + ' motors.' +
 						'</p>' +
-					'</td>' +	
+					'</td>' +
 				'</tr>');
         	motor_list_e.append(motors_e);
     	} else {
 	    	for(var i=0; i<mixerList[mixerConfiguration-1].defaultMotorOrder.length; i++) {
 	    		var motors_e = $('<tr>' +
-										'<td colspan="2"><label>Motor ' + (i+1) + '</label><select class="motor_' + i + '_"><!-- list generated here --></select></td>' +	
+										'<td colspan="2"><label>Motor ' + (i+1) + '</label><select class="motor_' + i + '_"><!-- list generated here --></select></td>' +
 									'</tr>');
 	        	var select_e = $('select', motors_e);
 	        	if(currentSettings.customMix!=null) {
@@ -200,12 +201,12 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 		        	buildAvailableMotors(select_e, 'motor[' + i + ']');
 	        	}
 	        	motor_list_e.append(motors_e);
-	    	};    	
+	    	};
     	}
     }
-    
+
     // Initialisation Code ...
-    
+
     // Setup the mixer list (pretty much cloned from the configurator...)
     var mixer_list_e = $('select.mixerList');
     for (var i = 0; i < mixerList.length; i++) {
@@ -221,7 +222,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 		if(val>0 && val <= mixerList.length) {
 				$('.mixerPreview img').attr('src', './images/motor_order/' + mixerList[val - 1].image + '.svg');
 			}
-        
+
         buildMotorList(val); // rebuild the motor list based upon the current selection
 	}
 
@@ -237,7 +238,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 	}
 
  	// Buttons and Selectors
-    
+
     $('select.mixerList').change(function () {
 		mixerListSelection(parseInt($(this).val()));
     });
@@ -296,6 +297,10 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
         currentSettings.legendUnits = $(this).is(":checked");
     });
 
+    $(".logdata-gps").click(function() {
+        currentSettings.logDataGps = $(this).is(":checked");
+    });
+
     $(".velocity-units").click(function() {
         currentSettings.velocityUnits = $(this).val();
     });
@@ -304,16 +309,16 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-            
+
             reader.onload = function (e) {
                 $('#watermark-logo').attr('src', e.target.result);
                 currentLogo = e.target.result;
             }
-            
+
             reader.readAsDataURL(input.files[0]);
         }
     }
-    
+
     $("#watermark-logo-load").change(function(){
         readURL(this);
     });
@@ -329,13 +334,13 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 		onSave(currentSettings);
 	}
 
-    
+
     this.show = function(flightLog, settings) {
 
  			currentSettings = $.extend({}, defaultSettings, currentSettings, settings || {});
 
     		getAvailableMotors(flightLog); // Which motors are in the log file ?
-    		
+
     		if(currentSettings.customMix==null) {
     			// clear the toggle switch
     			$(".custom-mixes").prop('checked', false);
@@ -349,7 +354,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
     		if(currentSettings.stickUnits!=null) {
     			// set the toggle switch
     			$(".stick-units").prop('checked', currentSettings.stickUnits);
-    		} 
+    		}
 
     		if(currentSettings.stickTrails!=null) {
     			// set the toggle switch
@@ -369,6 +374,11 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
 			if(currentSettings.legendUnits!=null) {
 				// set the toggle switch
 				$(".legend-units").prop('checked', currentSettings.legendUnits);
+			}
+
+			if(currentSettings.logDataGps != null) {
+				// set the toggle switch
+				$(".logdata-gps").prop('checked', currentSettings.logDataGps);
 			}
 
 			$(".velocity-units").val(currentSettings.velocityUnits || "D");
@@ -395,12 +405,12 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
     			$(".watermark").prop('checked', currentSettings.drawWatermark);
     			(currentSettings.drawWatermark)?$(".watermark-group").show(200):$(".watermark-group").hide(200);
     		}
- 
+
     		$('.watermark-settings input[name="watermark-top"]').val(parseInt(currentSettings.watermark.top));
     		$('.watermark-settings input[name="watermark-left"]').val(parseInt(currentSettings.watermark.left));
     		$('.watermark-settings input[name="watermark-size"]').val(parseInt(currentSettings.watermark.size));
     		$('.watermark-settings input[name="watermark-transparency"]').val(parseInt(currentSettings.watermark.transparency));
-			
+
 			if(currentSettings.watermark.logo!=null) {
 				currentLogo = currentSettings.watermark.logo;
 				$('#watermark-logo').attr('src', currentLogo);
@@ -413,7 +423,7 @@ function UserSettingsDialog(dialog, onLoad, onSave) {
     			$(".laptimer").prop('checked', currentSettings.drawLapTimer);
     			(currentSettings.drawLapTimer)?$(".laptimer-group").show(200):$(".laptimer-group").hide(200);
     		}
- 
+
     		$('.laptimer-settings input[name="laptimer-top"]').val(parseInt(currentSettings.laptimer.top));
     		$('.laptimer-settings input[name="laptimer-left"]').val(parseInt(currentSettings.laptimer.left));
     		$('.laptimer-settings input[name="laptimer-transparency"]').val(parseInt(currentSettings.laptimer.transparency));
