@@ -797,9 +797,7 @@ function BlackboxLogViewer() {
         if(item) {
             workspaceGraphConfigs = item;
             } else {
-            workspaceGraphConfigs = {graphConfig : [
-                                    null,null,null,null,null,null,null,null,null,null
-                                    ]};
+            workspaceGraphConfigs = graphConfig;
             }
     });
 
