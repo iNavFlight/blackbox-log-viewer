@@ -499,6 +499,9 @@ var FlightLogParser = function(logData) {
                 that.sysConfig[fieldName] = parseInt(fieldValue, 10);
                 that.sysConfig.motorOutput[1] = that.sysConfig[fieldName]; // by default, set the maxMotorOutput to match maxThrottle
             break;
+            case "BaroAlt":
+                that.sysConfig.BaroAlt = parseInt(fieldValue, 10);
+                break;
             case "rcRate":
             case "rcExpo":
             case "rcYawExpo":
@@ -514,9 +517,6 @@ var FlightLogParser = function(logData) {
             case "gyro_lpf":
             case "acc_hardware":
             case "baro_hardware":
-            case "BaroAlt":
-                that.sysConfig.BaroAlt = parseInt(fieldValue, 10);
-                break;
             case "mag_hardware":
             case "vbat_pid_compensation":
             case "rc_smoothing":
