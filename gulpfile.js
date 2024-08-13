@@ -8,10 +8,12 @@ var path = require('path');
 var minimist = require('minimist');
 
 var archiver = require('archiver');
-//var del = require('del');
-const del = import('del');
-const NwBuilder = import('nw-builder');
-const semver = import('semver');
+var del = require('del');
+//import {deleteAsync} from 'del';
+
+//const del = import('del');
+const NwBuilder = require('nw-builder');
+const semver = require('semver');
 
 var gulp = require('gulp');
 var concat = require('gulp-concat');
@@ -218,7 +220,7 @@ gulp.task('apps', gulp.series(['dist', 'clean-apps'], function (done) {
         winIco: './images/inav_icon.ico',
         version: get_nw_version()
     });
-    builder.on('log', console.log);
+    //builder.on('log', console.log);
     builder.build(function (err) {
         if (err) {
             console.log('Error building NW apps: ' + err);
@@ -536,6 +538,7 @@ function release_deb(arch) {
 
         console.log(`Generating deb package for ${arch}`);
 
+        console.log("Metadata Version: "+metadata.version);
         return gulp.src([path.join(appsDir, metadata.name, arch, '*')])
             .pipe(deb({
                 package: metadata.name,

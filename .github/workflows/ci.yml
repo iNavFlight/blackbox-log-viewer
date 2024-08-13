@@ -50,7 +50,7 @@ jobs:
                 command: npm install
                 timeout_minutes: 10
             - name: Build Linux
-              run: node node_modules/gulp/bin/gulp.js release --platform="linux64"
+              run: npm run gulp release -- --platform="linux64"
             - name: Upload Linux deb
               uses: actions/upload-artifact@v4
               with:
@@ -104,7 +104,7 @@ jobs:
             command: npm install
             timeout_minutes: 10
         - name: Build MacOS arm64
-          run: node node_modules/gulp/bin/gulp.js release --platform="arm64"
+          run: npm run gulp release -- --platform="arm64"
         - name: Upload MacOS arm64 zip
           uses: actions/upload-artifact@v4
           with:
@@ -152,7 +152,7 @@ jobs:
             command: npm install
             timeout_minutes: 10
         - name: Build MacOS x64
-          run: node node_modules/gulp/bin/gulp.js release --platform="osx64"
+          run: npm run gulp release -- --platform="osx64"
         - name: Upload MacOS x64 zip
           uses: actions/upload-artifact@v4
           with:
@@ -205,7 +205,7 @@ jobs:
                 command: npm install
                 timeout_minutes: 10
             - name: Build Win x64
-              run: node node_modules/gulp/bin/gulp.js release --platform="win64"
+              run: npm run gulp release -- --platform="win64"
             - name: Upload Windows x64 zip
               uses: actions/upload-artifact@v4
               with:
@@ -258,7 +258,7 @@ jobs:
                 command: npm install
                 timeout_minutes: 10
             - name: Build Win32
-              run: node node_modules/gulp/bin/gulp.js release --platform="win32"
+              run: npm run gulp release -- --platform="win32"
             - name: Upload Windows ia32 zip
               uses: actions/upload-artifact@v4
               with:
