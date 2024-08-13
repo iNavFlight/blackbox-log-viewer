@@ -673,6 +673,7 @@ function releaseLinux(bits) {
         var pkg = require('./package.json');
         var src = path.join(appsDir, pkg.name, dirname);
         var output = fs.createWriteStream(path.join(appsDir, get_release_filename(dirname, 'tar.gz')));
+        console.log("Writting to " + path.join(appsDir, get_release_filename(dirname, 'tar.gz')));
         var archive = archiver('tar', {
             zlib: { level: 9 },
             gzip: true
