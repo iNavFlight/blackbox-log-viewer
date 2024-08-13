@@ -67,6 +67,13 @@ jobs:
               with:
                 name: ${{ env.BUILD_NAME }}_ZIP
                 path: ./apps/*.zip
+            - name: Upload Linux tgz
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ env.BUILD_NAME }}_TGZ
+                path: ./apps/*.tar.gz
+
+
 
 
     build-mac-arm64:
