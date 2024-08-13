@@ -56,17 +56,17 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: ${{ env.BUILD_NAME }}_DEB
-                path: ./release/*.deb
+                path: ./apps/*.deb
             - name: Upload Linux rpm
               uses: actions/upload-artifact@v4
               with:
                 name: ${{ env.BUILD_NAME }}_RPM
-                path: ./release/*.rpm
+                path: ./apps/*.rpm
             - name: Upload Linux zip
               uses: actions/upload-artifact@v4
               with:
                 name: ${{ env.BUILD_NAME }}_ZIP
-                path: ./release/*.zip
+                path: ./apps/*.zip
 
 
     build-mac-arm64:
@@ -111,12 +111,12 @@ jobs:
           uses: actions/upload-artifact@v4
           with:
             name: ${{env.BUILD_NAMEarm64}}_ZIP
-            path: ./release/*.zip
+            path: ./apps/*.zip
         - name: Upload MacOS arm64 dmg
           uses: actions/upload-artifact@v4
           with:
             name: ${{env.BUILD_NAMEarm64}}_DMG
-            path: ./release/*.dmg
+            path: ./apps/*.dmg
 
     build-mac:
         runs-on: macos-13
@@ -160,12 +160,12 @@ jobs:
           uses: actions/upload-artifact@v4
           with:
             name: ${{env.BUILD_NAMEx64}}_ZIP
-            path: ./release/*.zip
+            path: ./apps/*.zip
         - name: Upload MacOS x64 dmg
           uses: actions/upload-artifact@v4
           with:
             name: ${{env.BUILD_NAMEx64}}_DMG
-            path: ./release/*.dmg
+            path: ./apps/*.dmg
 
     build-windows:
         runs-on: windows-latest
@@ -214,12 +214,12 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAMEx64}}_ZIP
-                path: ./release/*.zip
+                path: ./apps/*.zip
             - name: Upload Windows x64 msi
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAMEx64}}_MSI
-                path: ./release/*.msi
+                path: ./apps/*.msi
 
     build-windows-win32:
         runs-on: windows-latest
@@ -268,10 +268,10 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAMEia32}}_ZIP
-                path: ./release/*.zip
+                path: ./apps/*.zip
             - name: Upload Windows ia32 msi
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAMEia32}}_MSI
-                path: ./release/*.msi
+                path: ./apps/*.msi
  
