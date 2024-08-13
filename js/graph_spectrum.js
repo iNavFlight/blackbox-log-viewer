@@ -189,6 +189,8 @@ function FlightLogAnalyser(flightLog, canvas, analyserCanvas) {
 
             var PLOTTED_BUFFER_LENGTH = fftData.fftLength / (analyserZoomX);
             var PLOTTED_BLACKBOX_RATE = blackBoxRate / (analyserZoomX);
+            console("blackBoxRate:" + blackBoxRate);
+            console("analyserZoomX:" + analyserZoomX);
 
             canvasCtx.translate(LEFT, TOP);
 
@@ -223,6 +225,7 @@ function FlightLogAnalyser(flightLog, canvas, analyserCanvas) {
             }
 
             drawAxisLabel(dataBuffer.fieldName, WIDTH - 4, HEIGHT - 6, 'right');
+            console("PLOTTED_BLACKBO_RATE:" + PLOTTED_BLACKBOX_RATE);
             drawGridLines(PLOTTED_BLACKBOX_RATE, LEFT, TOP, WIDTH, HEIGHT, MARGIN);
 
             var offset = 0;
@@ -324,8 +327,11 @@ function FlightLogAnalyser(flightLog, canvas, analyserCanvas) {
         var drawGridLines = function (sampleRate, LEFT, TOP, WIDTH, HEIGHT, MARGIN) {
 
             var ticks = 5;
+            console.log("sampleRate: " + sampleRate);
+            console.log("ticks: " + ticks);
             var frequencyInterval = (sampleRate / ticks) / 2;
             var frequency = 0;
+            console.log("frequencyInterval: " + frequencyInterval);
 
             for (var i = 0; i <= ticks; i++) {
                 canvasCtx.beginPath();
@@ -337,7 +343,8 @@ function FlightLogAnalyser(flightLog, canvas, analyserCanvas) {
 
                 canvasCtx.stroke();
                 var textAlign = (i == 0) ? 'left' : ((i == ticks) ? 'right' : 'center');
-                drawAxisLabel((frequency.toFixed(0)) + "Hz", i * (WIDTH / ticks), HEIGHT + MARGIN, textAlign);
+                console.log("freq: " + frequency);
+                drawAxisLabel((frequency.toFixed(0)) + "Hz a", i * (WIDTH / ticks), HEIGHT + MARGIN, textAlign);
                 frequency += frequencyInterval;
             }
         };

@@ -51,6 +51,6 @@
     "semver": "^7.6.3"
   },
   "optionalDependencies": {
-    "appdmg": "^0.6.2"
+    "appdmg": "^0.6.6"
   }
 }
