@@ -8,9 +8,10 @@ var path = require('path');
 var minimist = require('minimist');
 
 var archiver = require('archiver');
-var del = require('del');
-var NwBuilder = require('nw-builder');
-var semver = require('semver');
+//var del = require('del');
+const del = import('del');
+const NwBuilder = import('nw-builder');
+const semver = import('semver');
 
 var gulp = require('gulp');
 var concat = require('gulp-concat');
