@@ -220,10 +220,9 @@ gulp.task('apps', gulp.series(['dist', 'clean-apps'], function (done) {
         winIco: './images/inav_icon.ico',
         version: get_nw_version()
     });
-    //builder.on('log', console.log);
     builder.build(function (err) {
         if (err) {
-            console.log('Error building NW apps: ' + err);
+            console.log('Error building NW apps: ' + err + "\n" + err.stack);
 //            done();
 //            return;
             gulp.series(['clean-apps'], function() {
@@ -253,7 +252,7 @@ gulp.task('debug', gulp.series(['dist', 'clean-debug'], function (done) {
         version: get_nw_version()
     });
 
-    builder.on('log', console.log);
+    //builder.on('log', console.log);
     builder.build(function (err) {
         if (err) {
             console.log('Error building NW apps: ' + err);
@@ -336,7 +335,6 @@ function build_win_iss(arch) {
 }
 
 gulp.task('release-win32', gulp.series(build_win_zip('win32'), build_win_iss('win32')));
-//gulp.task('release-win64', gulp.series(build_win_zip('win64'), build_win_iss('win64')));
 
 gulp.task('release-osx64', function(done) {
     var pkg = require('./package.json');
@@ -571,18 +569,6 @@ function post_release_deb(arch) {
             done();
             return null;
         }
-        if ((arch === 'linux32') || (arch === 'linux64')) {
-            var rename = require("gulp-rename");
-            const metadata = require('./package.json');
-            const renameFrom = path.join(appsDir, metadata.name + '_' + metadata.version + '_' + getLinuxPackageArch('.deb', arch) + '.deb');
-            const renameTo = path.join(appsDir, get_release_filename_base(arch) + '_' + metadata.version + '.deb');
-            // Rename .deb build to common naming
-            console.log(`Renaming .deb installer ${renameFrom} to ${renameTo}`);
-            return gulp.src(renameFrom)
-                    .pipe(rename(renameTo))
-                    .pipe(gulp.dest("."));
-        }
-
         return done();
     }
 }
