@@ -9,9 +9,7 @@ var minimist = require('minimist');
 
 var archiver = require('archiver');
 var del = require('del');
-//import {deleteAsync} from 'del';
 
-//const del = import('del');
 const NwBuilder = require('nw-builder');
 const semver = require('semver');
 
