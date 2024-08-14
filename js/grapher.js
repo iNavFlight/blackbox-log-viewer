@@ -1054,10 +1054,12 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
             // Draw Analyser
             if (options.drawAnalyser && graphConfig.selectedFieldName) {
                 try{ // If we do not select a graph/field, then the analyser is hidden
-                var graph = graphs[graphConfig.selectedGraphIndex]; 		
-				var field = graph.fields[graphConfig.selectedFieldIndex];   	            
-                analyser.plotSpectrum(field.index, field.curve, graphConfig.selectedFieldName);
-                } catch(err) {console.log('Cannot plot analyser');}            
+                    var graph = graphs[graphConfig.selectedGraphIndex];
+                    var field = graph.fields[graphConfig.selectedFieldIndex];
+                    analyser.plotSpectrum(field.index, field.curve, graphConfig.selectedFieldName);
+                } catch(err) {
+                    console.log('Cannot plot analyser' + err);
+                }
             }
 
             //Draw Watermark
