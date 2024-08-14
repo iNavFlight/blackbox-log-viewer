@@ -56,7 +56,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: ${{ env.BUILD_NAME }}_DEB
-                path: ./apps/*.deb
+                path: ./apps/*amd64.deb
             - name: Upload Linux rpm
               uses: actions/upload-artifact@v4
               with:
@@ -124,7 +124,7 @@ jobs:
             name: ${{env.BUILD_NAMEx64}}_DMG
             path: ./apps/*.dmg
 
-    build-windows-win32:
+    build-windows-win64:
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v4
@@ -146,7 +146,7 @@ jobs:
                 VERSION=$(grep version package.json | sed 's/.*"\([0-9][0-9]*.[0-9]*.[0-9]*\)".*/\1/g')
                 echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
                 echo "BUILD_SUFFIX=${BUILD_SUFFIX}" >> $GITHUB_ENV
-                echo "BUILD_NAMEia32=inav-configurator_win32_ia32_${VERSION}_${BUILD_SUFFIX}" >> $GITHUB_ENV
+                echo "BUILD_NAMEx64=inav-configurator_win64_x64_${VERSION}_${BUILD_SUFFIX}" >> $GITHUB_ENV
                 mkdir ./apps/
               shell: bash
             - uses: actions/setup-node@v4
@@ -166,15 +166,15 @@ jobs:
                 command: npm install
                 timeout_minutes: 10
             - name: Build Win32
-              run: npm run gulp release -- --platform="win32" --installer
-            - name: Upload Windows ia32 zip
+              run: npm run gulp release -- --platform="win64" --installer
+            - name: Upload Windows x64 zip
               uses: actions/upload-artifact@v4
               with:
-                name: ${{env.BUILD_NAMEia32}}_ZIP
+                name: ${{env.BUILD_NAMEx64}}_ZIP
                 path: ./apps/*.zip
-            - name: Upload Windows ia32 msi
+            - name: Upload Windows x64 msi
               uses: actions/upload-artifact@v4
               with:
-                name: ${{env.BUILD_NAMEia32}}_MSI
+                name: ${{env.BUILD_NAMEx64}}_MSI
                 path: ./apps/*.msi
  

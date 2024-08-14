@@ -40,10 +40,10 @@ function getArguments() {
 
 // Get platform from commandline args
 // #
-// # gulp <task> [<platform>]+        Run only for platform(s) (with <platform> one of --linux64, --osx64, or --win32 --chromeos)
+// # gulp <task> [<platform>]+        Run only for platform(s) (with <platform> one of --linux64, --osx64, or --win64 --chromeos)
 // # 
 function getPlatforms() {
-    const defaultPlatforms = ['win32', 'osx64', 'linux64'];
+    const defaultPlatforms = ['win64', 'osx64', 'linux64'];
     const platform = getArguments().platform;
     if (platform) {
         if (defaultPlatforms.indexOf(platform) < 0) {
@@ -73,8 +73,8 @@ function getRunDebugAppCommand() {
         return path.join(debugDir, pkg.name, 'linux64', pkg.name);
 
         break;
-    case 'win32':
-        return path.join(debugDir, pkg.name, 'win32', pkg.name + '.exe');
+    case 'win64':
+        return path.join(debugDir, pkg.name, 'win64', pkg.name + '.exe');
 
         break;
 
@@ -311,8 +311,8 @@ function build_win_iss(arch) {
         // Extra parameters to replace inside the iss file
         parameters.push(`/Dversion=${pkg.version}`);
         parameters.push(`/DarchName=${arch}`);
-        parameters.push(`/DarchAllowed=${(arch === 'win32') ? 'x86 x64' : 'x64'}`);
-        parameters.push(`/DarchInstallIn64bit=${(arch === 'win32') ? '' : 'x64'}`);
+        parameters.push(`/DarchAllowed=x64`);
+        parameters.push(`/DarchInstallIn64bit=x64`);
         parameters.push(`/DsourceFolder=${APPS_DIR}`);
         parameters.push(`/DtargetFolder=${APPS_DIR}`);
 
@@ -334,7 +334,7 @@ function build_win_iss(arch) {
     }
 }
 
-gulp.task('release-win32', gulp.series(build_win_zip('win32'), build_win_iss('win32')));
+gulp.task('release-win64', gulp.series(build_win_zip('win64'), build_win_iss('win64')));
 
 gulp.task('release-osx64', function(done) {
     var pkg = require('./package.json');
