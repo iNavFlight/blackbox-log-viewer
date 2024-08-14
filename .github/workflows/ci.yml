@@ -165,7 +165,7 @@ jobs:
                 retry_on: error
                 command: npm install
                 timeout_minutes: 10
-            - name: Build Win32
+            - name: Build windows
               run: npm run gulp release -- --platform="win64" --installer
             - name: Upload Windows x64 zip
               uses: actions/upload-artifact@v4
