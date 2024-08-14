@@ -465,22 +465,18 @@ var FlightLogParser = function(logData) {
         fieldName = asciiArrayToString(stream.data.subarray(lineStart, separatorPos));
         fieldValue = asciiArrayToString(stream.data.subarray(separatorPos + 1, lineEnd));
 
-        //console.log("parsed field: '" + fieldName + "' = " + fieldValue);
         switch (fieldName) {
             case "I interval":
                 that.sysConfig.frameIntervalI = parseInt(fieldValue, 10);
                 if (that.sysConfig.frameIntervalI < 1)
                     that.sysConfig.frameIntervalI = 1;
-                console.log("fameIntervalI: " + that.sysConfig.frameIntervalI);
             break;
             case "P interval":
                 matches = fieldValue.match(/(\d+)\/(\d+)/);
-                console.log("P interval" + fieldValue);
 
                 if (matches) {
                     that.sysConfig.frameIntervalPNum = parseInt(matches[1], 10);
                     that.sysConfig.frameIntervalPDenom = parseInt(matches[2], 10);
-                    console.log("fameIntervalP: " + that.sysConfig.frameIntervalPNum + "/" + that.sysConfig.frameIntervalPDenom);
                 }
             break;
             case "Data version":
@@ -533,7 +529,6 @@ var FlightLogParser = function(logData) {
             case "acc_1G":
             case "debug_mode":
                 that.sysConfig[fieldName] = parseInt(fieldValue, 10);
-                console.log("+++ " + fieldName + ": "+that.sysConfig[fieldName] + "("+fieldValue+")");
             break;
 
             /*
