@@ -9,8 +9,9 @@ var minimist = require('minimist');
 
 var archiver = require('archiver');
 var del = require('del');
-var NwBuilder = require('nw-builder');
-var semver = require('semver');
+
+const NwBuilder = require('nw-builder');
+const semver = require('semver');
 
 var gulp = require('gulp');
 var concat = require('gulp-concat');
@@ -37,10 +38,10 @@ function getArguments() {
 
 // Get platform from commandline args
 // #
-// # gulp <task> [<platform>]+        Run only for platform(s) (with <platform> one of --linux64, --osx64, or --win32 --chromeos)
+// # gulp <task> [<platform>]+        Run only for platform(s) (with <platform> one of --linux64, --osx64, or --win64 --chromeos)
 // # 
 function getPlatforms() {
-    const defaultPlatforms = ['win32', 'osx64', 'linux64'];
+    const defaultPlatforms = ['win64', 'osx64', 'linux64'];
     const platform = getArguments().platform;
     if (platform) {
         if (defaultPlatforms.indexOf(platform) < 0) {
@@ -70,8 +71,8 @@ function getRunDebugAppCommand() {
         return path.join(debugDir, pkg.name, 'linux64', pkg.name);
 
         break;
-    case 'win32':
-        return path.join(debugDir, pkg.name, 'win32', pkg.name + '.exe');
+    case 'win64':
+        return path.join(debugDir, pkg.name, 'win64', pkg.name + '.exe');
 
         break;
 
@@ -217,10 +218,9 @@ gulp.task('apps', gulp.series(['dist', 'clean-apps'], function (done) {
         winIco: './images/inav_icon.ico',
         version: get_nw_version()
     });
-    builder.on('log', console.log);
     builder.build(function (err) {
         if (err) {
-            console.log('Error building NW apps: ' + err);
+            console.log('Error building NW apps: ' + err + "\n" + err.stack);
 //            done();
 //            return;
             gulp.series(['clean-apps'], function() {
@@ -250,7 +250,7 @@ gulp.task('debug', gulp.series(['dist', 'clean-debug'], function (done) {
         version: get_nw_version()
     });
 
-    builder.on('log', console.log);
+    //builder.on('log', console.log);
     builder.build(function (err) {
         if (err) {
             console.log('Error building NW apps: ' + err);
@@ -309,8 +309,8 @@ function build_win_iss(arch) {
         // Extra parameters to replace inside the iss file
         parameters.push(`/Dversion=${pkg.version}`);
         parameters.push(`/DarchName=${arch}`);
-        parameters.push(`/DarchAllowed=${(arch === 'win32') ? 'x86 x64' : 'x64'}`);
-        parameters.push(`/DarchInstallIn64bit=${(arch === 'win32') ? '' : 'x64'}`);
+        parameters.push(`/DarchAllowed=x64`);
+        parameters.push(`/DarchInstallIn64bit=x64`);
         parameters.push(`/DsourceFolder=${APPS_DIR}`);
         parameters.push(`/DtargetFolder=${APPS_DIR}`);
 
@@ -332,8 +332,7 @@ function build_win_iss(arch) {
     }
 }
 
-gulp.task('release-win32', gulp.series(build_win_zip('win32'), build_win_iss('win32')));
-//gulp.task('release-win64', gulp.series(build_win_zip('win64'), build_win_iss('win64')));
+gulp.task('release-win64', gulp.series(build_win_zip('win64'), build_win_iss('win64')));
 
 gulp.task('release-osx64', function(done) {
     var pkg = require('./package.json');
@@ -535,6 +534,7 @@ function release_deb(arch) {
 
         console.log(`Generating deb package for ${arch}`);
 
+        console.log("Metadata Version: "+metadata.version);
         return gulp.src([path.join(appsDir, metadata.name, arch, '*')])
             .pipe(deb({
                 package: metadata.name,
@@ -567,18 +567,6 @@ function post_release_deb(arch) {
             done();
             return null;
         }
-        if ((arch === 'linux32') || (arch === 'linux64')) {
-            var rename = require("gulp-rename");
-            const metadata = require('./package.json');
-            const renameFrom = path.join(appsDir, metadata.name + '_' + metadata.version + '_' + getLinuxPackageArch('.deb', arch) + '.deb');
-            const renameTo = path.join(appsDir, get_release_filename_base(arch) + '_' + metadata.version + '.deb');
-            // Rename .deb build to common naming
-            console.log(`Renaming .deb installer ${renameFrom} to ${renameTo}`);
-            return gulp.src(renameFrom)
-                    .pipe(rename(renameTo))
-                    .pipe(gulp.dest("."));
-        }
-
         return done();
     }
 }
@@ -669,6 +657,7 @@ function releaseLinux(bits) {
         var pkg = require('./package.json');
         var src = path.join(appsDir, pkg.name, dirname);
         var output = fs.createWriteStream(path.join(appsDir, get_release_filename(dirname, 'tar.gz')));
+        console.log("Writting to " + path.join(appsDir, get_release_filename(dirname, 'tar.gz')));
         var archive = archiver('tar', {
             zlib: { level: 9 },
             gzip: true

@@ -363,6 +363,24 @@ function FlightLogFieldPresenter() {
             case 'servo[13]':
             case 'servo[14]':
             case 'servo[15]':
+            case 'servo[16]':
+            case 'servo[17]':
+            case 'servo[18]':
+            case 'servo[19]':
+            case 'servo[20]':
+            case 'servo[21]':
+            case 'servo[22]':
+            case 'servo[23]':
+            case 'servo[24]':
+            case 'servo[25]':
+            case 'servo[26]':
+            case 'servo[27]':
+            case 'servo[28]':
+            case 'servo[29]':
+            case 'servo[30]':
+            case 'servo[31]':
+            case 'servo[32]':
+            case 'servo[33]':
                 return value.toFixed(0) + "us";
 
             /*
@@ -448,6 +466,12 @@ function FlightLogFieldPresenter() {
 
             case 'flightModeFlags':
                 return presentFlags(value, FLIGHT_LOG_FLIGHT_MODE_NAME);
+
+            case 'flightModeFlags2':
+                return presentFlags(value, FLIGHT_LOG_FLIGHT_MODE_NAME_2);
+
+            case 'activeFlightModeFlags':
+                return presentFlags(value, FLIGHT_LOG_ACTIVE_FLIGHT_MODE_NAME);
 
             case 'stateFlags':
                 return presentFlags(value, FLIGHT_LOG_FLIGHT_STATE_NAME);

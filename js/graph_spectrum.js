@@ -316,8 +316,7 @@ function FlightLogAnalyser(flightLog, canvas, analyserCanvas) {
             canvasCtx.lineTo(x, HEIGHT);
 
             canvasCtx.stroke();
-
-            if (label != null) drawAxisLabel(label + ' ' + (frequency.toFixed(0)) + "Hz", (x + 2), OFFSET, 'left');
+            if (label != null && isFinite(frequency) && !isNaN(frequency)) drawAxisLabel(label + ' ' + (frequency.toFixed(0)) + "Hz", (x + 2), OFFSET, 'left');
 
         };
 
@@ -337,7 +336,10 @@ function FlightLogAnalyser(flightLog, canvas, analyserCanvas) {
 
                 canvasCtx.stroke();
                 var textAlign = (i == 0) ? 'left' : ((i == ticks) ? 'right' : 'center');
-                drawAxisLabel((frequency.toFixed(0)) + "Hz", i * (WIDTH / ticks), HEIGHT + MARGIN, textAlign);
+    
+                if(isFinite(frequency)) {
+                    drawAxisLabel((frequency.toFixed(0)) + "Hz", i * (WIDTH / ticks), HEIGHT + MARGIN, textAlign);
+                }
                 frequency += frequencyInterval;
             }
         };
