@@ -51,7 +51,7 @@ jobs:
                 command: npm install
                 timeout_minutes: 10
             - name: Build Linux
-              run: npm run gulp release -- --platform="linux64" --installer
+              run: npm run gulp release -- --platform="linux" --arch="x64" --installer
             - name: Upload Linux deb
               uses: actions/upload-artifact@v4
               with:
@@ -112,13 +112,64 @@ jobs:
         - name: Bad bodge hack to fix nw-builder
           run: perl -pi -e 's/semver.satisfies\(self._version.version, "<=0.12.3"\)/false/g' node_modules/nw-builder/lib/index.cjs
         - name: Build MacOS x64
-          run: arch -arch x86_64 npm run gulp release -- --platform="osx64" --installer
+          run: arch -arch x86_64 npm run gulp release -- --platform="osx" --arch="x64" --installer
         - name: Upload MacOS x64 zip
           uses: actions/upload-artifact@v4
           with:
             name: ${{env.BUILD_NAMEx64}}_ZIP
             path: ./apps/*.zip
         - name: Upload MacOS x64 dmg
+          uses: actions/upload-artifact@v4
+          with:
+            name: ${{env.BUILD_NAMEx64}}_DMG
+            path: ./apps/*.dmg
+
+    build-mac-arm64:
+        runs-on: macos-latest
+        steps:
+        - uses: actions/checkout@v4
+        - name: Setup environment
+          env:
+            ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+          run: |
+            # This is the hash of the commit for the PR
+            # when the action is triggered by PR, empty otherwise
+            COMMIT_ID=${{ github.event.pull_request.head.sha }}
+            # This is the hash of the commit when triggered by push
+            # but the hash of refs/pull/<n>/merge, which is different
+            # from the hash of the latest commit in the PR, that's
+            # why we try github.event.pull_request.head.sha first
+            COMMIT_ID=${COMMIT_ID:-${{ github.sha }}}
+            BUILD_SUFFIX=ci-$(date '+%Y%m%d')-$(git rev-parse --short ${COMMIT_ID})
+            VERSION=$(grep version package.json | sed 's/.*"\([0-9][0-9]*.[0-9]*.[0-9]*\)".*/\1/g')
+            echo "BUILD_SUFFIX=${BUILD_SUFFIX}" >> $GITHUB_ENV
+            echo "BUILD_NAMEx64=inav-blackbox-explorer_darwin_x64_${VERSION}_${BUILD_SUFFIX}" >> $GITHUB_ENV
+            mkdir ./apps/
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 20
+            check-latest: true
+            cache: 'npm'
+        # Workaround due to a bug in node-gyp: https://github.com/electron/rebuild/issues/1116
+        - name: Install Setuptools
+          run: python3 -m pip install --break-system-packages setuptools
+        - name: Install deps
+          uses: nick-fields/retry@v3
+          with:
+            max_attempts: 3
+            retry_on: error
+            command: npm install
+            timeout_minutes: 10
+        - name: Bad bodge hack to fix nw-builder
+          run: perl -pi -e 's/semver.satisfies\(self._version.version, "<=0.12.3"\)/false/g' node_modules/nw-builder/lib/index.cjs
+        - name: Build MacOS arm64
+          run: npm run gulp release -- --platform="osx" --arch="arm64" --installer
+        - name: Upload MacOS arm64 zip
+          uses: actions/upload-artifact@v4
+          with:
+            name: ${{env.BUILD_NAMEx64}}_ZIP
+            path: ./apps/*.zip
+        - name: Upload MacOS arm64 dmg
           uses: actions/upload-artifact@v4
           with:
             name: ${{env.BUILD_NAMEx64}}_DMG
@@ -166,7 +217,7 @@ jobs:
                 command: npm install
                 timeout_minutes: 10
             - name: Build windows
-              run: npm run gulp release -- --platform="win64" --installer
+              run: npm run gulp release -- --platform="win" --arch="x64" --installer
             - name: Upload Windows x64 zip
               uses: actions/upload-artifact@v4
               with:
