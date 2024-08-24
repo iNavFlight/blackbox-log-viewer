@@ -228,8 +228,8 @@ jobs:
               with:
                 name: ${{env.BUILD_NAMEx64}}_MSI
                 path: ./apps/*.msi
-              
-     build-windows-ia32:
+
+    build-windows-ia32:
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v4
@@ -272,17 +272,17 @@ jobs:
                 timeout_minutes: 10
             - name: Build windows
               run: npm run gulp release -- --platform="win" --arch="ia32" --installer
-            - name: Upload Windows x64 zip
+            - name: Upload Windows32 zip
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAME}}_ZIP
                 path: ./apps/*.zip
-            - name: Upload Windows x64 msi
+            - name: Upload Windows32 msi
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAME}}_MSI
                 path: ./apps/*.msi
-            - name: Upload Windows ia32 installer
+            - name: Upload Windows32 installer
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAME}}_INSTALLER
