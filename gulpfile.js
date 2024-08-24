@@ -1,30 +1,64 @@
 'use strict';
 
-var pkg = require('./package.json');
+//import * as pkg from './package.json' with { type: "json"};
+const pkg = require('./package.json');
 
-var child_process = require('child_process');
-var fs = require('fs');
-var path = require('path');
-var minimist = require('minimist');
+//import NwBuilder from 'nw-builder';
+//const NwBuilder = require('nw-builder');
+let nwbuild;
+import("nw-builder")
+  .then((obj) => {
+    nwbuild = obj.default;
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
-var archiver = require('archiver');
-var del = require('del');
 
-const NwBuilder = require('nw-builder');
+//import child_process from 'child_process';
+const child_process = require('child_process');
+
+const process = require('process');
+
+//import fs from 'fs';
+const fs = require('fs');
+
+//import path from 'path';
+const path = require('path');
+
+//import minimist from 'minimist';
+const minimist = require('minimist');
+
+//import archiver from 'archiver';
+const archiver = require('archiver');
+//import del from 'del';
+const del = require('del');
+
+//import semver from 'semver';
 const semver = require('semver');
 
-var gulp = require('gulp');
-var concat = require('gulp-concat');
+//import { series, parallel, src /*, dst */} from 'gulp';
+const gulp = require('gulp');
 
-var os = require('os');
+//import concat from 'gulp-concat';
+const concat = require('gulp-concat');
 
+//import os from 'os';
+const os = require('os');
+const { foreignKey } = require('inflection');
+
+//import {sync as commandExistsSync} from 'command-exists';
 const commandExistsSync = require('command-exists').sync;
+
+
+console.log("-------");
+console.log(nwbuild);
+console.log("-------");
 
 var distDir = './dist/';
 var appsDir = './apps/';
 var debugDir = './debug/';
 var releaseDir = './release/';
-var destDir;
 
 var platforms = [];
 
@@ -41,7 +75,7 @@ function getArguments() {
 // # gulp <task> [<platform>]+        Run only for platform(s) (with <platform> one of --linux64, --osx64, or --win64 --chromeos)
 // # 
 function getPlatforms() {
-    const defaultPlatforms = ['win64', 'osx64', 'linux64'];
+    const defaultPlatforms = ['win', 'osx', 'linux'];
     const platform = getArguments().platform;
     if (platform) {
         if (defaultPlatforms.indexOf(platform) < 0) {
@@ -50,6 +84,24 @@ function getPlatforms() {
         return [platform];
     }
     return defaultPlatforms;
+}
+
+function getArchs(platform) {
+    const arch = getArguments().arch;
+    if (arch) {
+        return [arch];
+    }
+
+    switch(platform) {
+        case 'win':
+            return ['x64'];
+        case 'linux':
+        case 'osx':
+            return ['x64', 'arm64'];
+            //return ['arm64'];
+        default:
+            return ['x64'];
+    }
 }
 
 function execSync() {
@@ -64,11 +116,11 @@ function execSync() {
 function getRunDebugAppCommand() {
     switch (os.platform()) {
     case 'darwin':
-        return 'open ' + path.join(debugDir, pkg.name, 'osx64', pkg.name + '.app');
+        return 'open ' + path.join(debugDir, pkg.name, 'osx', pkg.name + '.app');
 
         break;
     case 'linux':
-        return path.join(debugDir, pkg.name, 'linux64', pkg.name);
+        return path.join(debugDir, pkg.name, 'linux', pkg.name);
 
         break;
     case 'win64':
@@ -77,18 +129,19 @@ function getRunDebugAppCommand() {
         break;
 
     default:
+        console.log("*** Unknown platform: " + os.platform());
         return '';
 
         break;
     }
 }
 
-function get_release_filename_base(platform) {
-    return 'INAV-BlackboxExplorer_' + platform;
+function get_release_filename_base(platform, arch) {
+    return 'INAV-BlackboxExplorer_' + platform + "-" + arch;
 }
 
-function get_release_filename(platform, ext, addition = '') {
-    return get_release_filename_base(platform) + addition + '_' + pkg.version + '.' + ext;
+function get_release_filename(platform, arch, ext, addition = '') {
+    return get_release_filename_base(platform, arch) + addition + '_' + pkg.version + '.' + ext;
 }
 
 function get_nw_version() {
@@ -121,9 +174,30 @@ gulp.task('clean-cache', function () {
 
 gulp.task('clean', gulp.series(['clean-dist', 'clean-apps', 'clean-debug', 'clean-release']));
 
+function getAppInfo(platform, arch) {
+    switch(platform) {
+        default:
+        case 'win':
+            return {
+                //icon: './images/inav_icon.ico'
+            };
+        case 'osx':
+            return {
+                CFBundleDisplayName: 'INAV Blackbox Explorer',
+                icon: './images/inav_icon.icns'
+            };
+        case 'linux':
+            return {
+                terminal: false,
+                icon: './images/inav_icon.ico'
+            };
+    }
+}
+
 // Real work for dist task. Done in another task to call it via
 // run-sequence.
 gulp.task('dist', gulp.series(['clean-dist'], function () {
+    console.log('dist');
     var distSources = [
         // CSS files
         './css/bootstrap-theme.css',
@@ -201,71 +275,65 @@ gulp.task('dist', gulp.series(['clean-dist'], function () {
 }));
 
 // Create runable app directories in ./apps
-gulp.task('apps', gulp.series(['dist', 'clean-apps'], function (done) {
+gulp.task('apps', gulp.series(['clean-apps', 'dist'], async function (done) {
     platforms = getPlatforms();
     console.log('Release build.');
 
-    destDir = appsDir;
+    process.chdir("dist");
 
-    var builder = new NwBuilder({
-        files: './dist/**/*',
-        buildDir: appsDir,
-        platforms: platforms,
-        flavor: 'normal',
-        zip: false,
-        macIcns: './images/inav_icon.icns',
-        macPlist: { 'CFBundleDisplayName': 'INAV Blackbox Explorer'},
-        winIco: './images/inav_icon.ico',
-        version: get_nw_version()
-    });
-    builder.build(function (err) {
-        if (err) {
-            console.log('Error building NW apps: ' + err + "\n" + err.stack);
-//            done();
-//            return;
-            gulp.series(['clean-apps'], function() {
-                process.exit(1);
+    for (let i = 0; i < platforms.length; ++i) {
+        var archs = getArchs(platforms[i]);
+        for (let j = 0; j < archs.length; ++j) {
+            console.log('Building: ' + platforms[i] + '/' + archs[j]);
+            await nwbuild({
+                srcDir: './**/*',
+                cacheDir: '../cache',
+                mode: "build",
+                outDir: path.join("..", appsDir, pkg.name, platforms[i], archs[j]),
+                platform: platforms[i],
+                arch: archs[j],
+                flavor: 'normal',
+                zip: false,
+                app: getAppInfo(platforms[i], archs[j]),
+                version: get_nw_version(),
+                logLevel: 'debug'
             });
         }
-        done();
-    });
+    }
+
+    process.chdir("..");
+    done();
 }));
 
 // Create debug app directories in ./debug
-gulp.task('debug', gulp.series(['dist', 'clean-debug'], function (done) {
+gulp.task('debug', gulp.series(['dist', 'clean-debug'], async function (done) {
     
     platforms = getPlatforms();
     console.log('Debug build.');
 
-    destDir = debugDir;
+    process.chdir("./dist");
 
-    var builder = new NwBuilder({
-        files: './dist/**/*',
-        buildDir: debugDir,
-        platforms: platforms,
-        flavor: 'sdk',
-        macIcns: './images/inav_icon.icns',
-        macPlist: { 'CFBundleDisplayName': 'INAV Blackbox Explorer'},
-        winIco: './images/inav_icon.ico',
-        version: get_nw_version()
-    });
-
-    //builder.on('log', console.log);
-    builder.build(function (err) {
-        if (err) {
-            console.log('Error building NW apps: ' + err);
-            gulp.series(['clean-debug'], function() {
-                process.exit(1);
+    for (let i = 0; i < platforms.length; ++i) {
+        var archs = getArchs(platforms[i]);
+        for (let j = 0; j < archs.length; ++j) {
+            console.log('Building: ' + platforms[i] + '/' + archs[j]);
+            await nwbuild({
+                srcDir: './**/*',
+                cacheDir: '../cache',
+                mode: "build",
+                outDir: path.join("..", debugDir, pkg.name, platforms[i], archs[j]),
+                platform: platforms[i],
+                arch: archs[j],
+                flavor: 'sdk',
+                zip: false,
+                app: getAppInfo(platforms[i], archs[j]),
+                version: get_nw_version(),
+                logLevel: 'debug'
             });
         }
+    }
 
-        var exec = require('child_process').exec;
-        var run = getRunDebugAppCommand();
-        console.log('Starting debug app (' + run + ')...');
-        exec(run);
-        done();
-    });
-            
+    process.chdir("..");
     done();
 }));
 
@@ -274,10 +342,13 @@ function build_win_zip(arch) {
         var pkg = require('./package.json');
     
         // Create ZIP
-        console.log(`Creating ${arch} ZIP file...`);
-        var src = path.join(appsDir, pkg.name, arch);
+        console.log(`Creating ${arch} windows ZIP file...`);
+        var src = path.join(appsDir, pkg.name, 'win', arch);
+        console.log("Src: " + src);
         //var output = fs.createWriteStream(path.join(appsDir, get_release_filename(arch, 'zip', '-portable')));
-        var output = fs.createWriteStream(path.join(appsDir, get_release_filename(arch, 'zip')));
+        var outputPath = path.join(appsDir, get_release_filename('win', arch, 'zip'));
+        console.log('Dst: ' + outputPath);
+        var output = fs.createWriteStream(outputPath);
         var archive = archiver('zip', {
                 zlib: { level: 9 }
         });
@@ -297,10 +368,10 @@ function build_win_iss(arch) {
         }
 
         // Create Installer
-        console.log(`Creating ${arch} Installer...`);
+        console.log(`Creating ${arch} windows Installer...`);
         const innoSetup = require('@quanle94/innosetup');
             
-        const APPS_DIR = './apps/';
+        const APPS_DIR = path.join(appsDir);
         const pkg = require('./package.json');
 
         // Parameters passed to the installer script
@@ -312,7 +383,7 @@ function build_win_iss(arch) {
         parameters.push(`/DarchAllowed=x64`);
         parameters.push(`/DarchInstallIn64bit=x64`);
         parameters.push(`/DsourceFolder=${APPS_DIR}`);
-        parameters.push(`/DtargetFolder=${APPS_DIR}`);
+        parameters.push(`/DtargetFolder=${appsDir}`);
 
         // Show only errors in console
         parameters.push(`/Q`);
@@ -332,11 +403,12 @@ function build_win_iss(arch) {
     }
 }
 
-gulp.task('release-win64', gulp.series(build_win_zip('win64'), build_win_iss('win64')));
+gulp.task('release-win-x64', gulp.series(build_win_zip('x64'), build_win_iss('x64')));
+gulp.task('release-win-ia32', gulp.series(build_win_zip('ia32'), build_win_iss('ia32')));
 
-gulp.task('release-osx64', function(done) {
+gulp.task('release-osx-x64', function(done) {
     var pkg = require('./package.json');
-    var src = path.join(appsDir, pkg.name, 'osx64', pkg.name + '.app');
+    var src = path.join(appsDir, pkg.name, 'osx', 'x64', pkg.name + '.app');
     // Check if we want to sign the .app bundle
     if (getArguments().codesign) {
         // macapptool can be downloaded from
@@ -361,7 +433,7 @@ gulp.task('release-osx64', function(done) {
 
     // 'old' .zip mode
     if (!getArguments().installer) {
-        const zipFilename = path.join(appsDir, get_release_filename('macOS', 'zip'));
+        const zipFilename = path.join(appsDir, get_release_filename('macOS', 'x64', 'zip'));
         console.log('Creating ZIP file: ' + zipFilename);
         var output = fs.createWriteStream(zipFilename);
         var archive = archiver('zip', {
@@ -394,9 +466,9 @@ gulp.task('release-osx64', function(done) {
     else {
         const appdmg = require('appdmg');
 
-        var target = path.join(appsDir, get_release_filename('macOS', 'dmg'));
+        var target = path.join(appsDir, get_release_filename('macOS', 'x64', 'dmg'));
         console.log('Creating DMG file: ' + target);
-        var basepath = path.join(appsDir, pkg.name, 'osx64');
+        var basepath = path.join(appsDir, pkg.name, 'osx', 'x64');
         console.log('Base path: ' + basepath);
 
         if (fs.existsSync(target)) {
@@ -490,15 +562,174 @@ gulp.task('release-osx64', function(done) {
     }
 });
 
-function post_build(arch, folder) {
+gulp.task('release-osx-arm64', function(done) {
+    var pkg = require('./package.json');
+    var src = path.join(appsDir, pkg.name, 'osx', 'arm64', pkg.name + '.app');
+    // Check if we want to sign the .app bundle
+    if (getArguments().codesign) {
+        // macapptool can be downloaded from
+        // https://github.com/fiam/macapptool
+        //
+        // Make sure the bundle is well formed
+        execSync('macapptool', '-v', '1', 'fix', src);
+        // Sign
+        const codesignArgs = ['macapptool', '-v', '1', 'sign'];
+        const codesignIdentity = getArguments()['codesign-identity'];
+        if (codesignIdentity) {
+            codesignArgs.push('-i', codesignIdentity);
+        }
+        codesignArgs.push('-e', 'entitlements.plist');
+        codesignArgs.push(src)
+        execSync.apply(this, codesignArgs);
+
+        // Check if the bundle is signed
+        const codesignCheckArgs = [ 'codesign', '-vvv', '--deep', '--strict', src ];
+        execSync.apply(this, codesignCheckArgs); 
+    }
+
+    // 'old' .zip mode
+    if (!getArguments().installer) {
+        const zipFilename = path.join(appsDir, get_release_filename('macOS', 'arm64', 'zip'));
+        console.log('Creating ZIP file: ' + zipFilename);
+        var output = fs.createWriteStream(zipFilename);
+        var archive = archiver('zip', {
+            zlib: { level: 9 }
+        });
+        archive.on('warning', function(err) { throw err; });
+        archive.on('error', function(err) { throw err; });
+        archive.pipe(output);
+        archive.directory(src, 'INAV Blackbox Explorer.app');
+        output.on('close', function() {
+            if (getArguments().notarize) {
+                console.log('Notarizing DMG file: ' + zipFilename);
+                const notarizeArgs = ['macapptool', '-v', '1', 'notarize'];
+                const notarizationUsername = getArguments()['notarization-username'];
+                if (notarizationUsername) {
+                    notarizeArgs.push('-u', notarizationUsername)
+                }
+                const notarizationPassword = getArguments()['notarization-password'];
+                if (notarizationPassword) {
+                    notarizeArgs.push('-p', notarizationPassword)
+                }
+                notarizeArgs.push(zipFilename)
+                execSync.apply(this, notarizeArgs);
+            }
+            done();
+        });
+        archive.finalize();
+    } 
+    // 'new' .dmg mode
+    else {
+        const appdmg = require('appdmg');
+
+        var target = path.join(appsDir, get_release_filename('macOS', 'arm64', 'dmg'));
+        console.log('Creating DMG file: ' + target);
+        var basepath = path.join(appsDir, pkg.name, 'osx', 'arm64');
+        console.log('Base path: ' + basepath);
+
+        if (fs.existsSync(target)) {
+            fs.unlinkSync(target);
+        }
+
+        var specs = {};
+
+        specs["title"] = "INAV Backbox Explorer";
+        specs["contents"] = [
+            { "x": 448, "y": 342, "type": "link", "path": "/Applications" },
+            { "x": 192, "y": 344, "type": "file", "path": pkg.name + ".app", "name": "INAV Blackbox Explorer.app" },
+        ];
+        specs["background"] = path.join(__dirname, 'assets/osx/dmg-background.png');
+        specs["format"] = "UDZO";
+        specs["window"] = {
+            "size": {
+                "width": 638,
+                "height": 479,
+            }
+        };
+
+        const codesignIdentity = getArguments()['codesign-identity'];
+        if (getArguments().codesign) {
+            specs['code-sign'] = {
+                'signing-identity': codesignIdentity,
+            }
+        }
+
+        const ee = appdmg({
+            target: target,
+            basepath: basepath,
+            specification: specs,
+        });
+
+        ee.on('progress', function(info) {
+            //console.log(info);
+        });
+
+        ee.on('error', function(err) {
+            console.log(err);
+        });
+
+        ee.on('finish', function() {
+            if (getArguments().codesign) {
+                // Check if the bundle is signed
+                const codesignCheckArgs = [ 'codesign', '-vvv', '--deep', '--strict', target ];
+                execSync.apply(this, codesignCheckArgs);
+            }
+            if (getArguments().notarize) {
+                console.log('Notarizing DMG file: ' + target);
+                const notarizeArgs = ['xcrun', 'notarytool', 'submit'];
+                notarizeArgs.push(target);
+                const notarizationUsername = getArguments()['notarization-username'];
+                if (notarizationUsername) {
+                    notarizeArgs.push('--apple-id', notarizationUsername)
+                } else {
+                    throw new Error('Missing notarization username');
+                }
+                const notarizationPassword = getArguments()['notarization-password'];
+                if (notarizationPassword) {
+                    notarizeArgs.push('--password', notarizationPassword)
+                } else {
+                    throw new Error('Missing notarization password');
+                }
+                const notarizationTeamId = getArguments()['notarization-team-id'];
+                if (notarizationTeamId) {
+                    notarizeArgs.push('--team-id', notarizationTeamId)
+                } else {
+                    throw new Error('Missing notarization Team ID');
+                }
+                notarizeArgs.push('--wait');
+
+                const notarizationWebhook = getArguments()['notarization-webhook'];
+                if (notarizationWebhook) {
+                    notarizeArgs.push('--webhook', notarizationWebhook);
+                }
+                execSync.apply(this, notarizeArgs);
+
+                console.log('Stapling DMG file: ' + target);
+                const stapleArgs = ['xcrun', 'stapler', 'staple'];
+                stapleArgs.push(target);
+                execSync.apply(this, stapleArgs);
+
+                console.log('Checking DMG file: ' + target);
+                const checkArgs = ['spctl', '-vvv', '--assess', '--type', 'install', target];
+                execSync.apply(this, checkArgs);
+            }
+            done();
+        });
+    }
+});
+
+function post_build(platform, arch, folder) {
     return function post_build_linux(done) {
-        if ((arch === 'linux32') || (arch === 'linux64')) {
-            const metadata = require('./package.json');
-            // Copy Ubuntu launcher scripts to destination dir
-            const launcherDir = path.join(folder, metadata.name, arch);
-            console.log(`Copy Ubuntu launcher scripts to ${launcherDir}`);
-            return gulp.src('assets/linux/**')
+        if (platform == 'linux') {
+            console.log('post_build_linux: arch: ' + arch)
+            if ((arch === 'ia32') || (arch === 'x64') || (arch == 'arm64')) {
+                const metadata = require('./package.json');
+                // Copy Ubuntu launcher scripts to destination dir
+                const launcherDir = path.join(folder, metadata.name, platform, arch);
+                console.log(`Copy Ubuntu launcher scripts to ${launcherDir}`);
+                return gulp.src('assets/linux/**')
                     .pipe(gulp.dest(launcherDir));
+            }
         }
 
         return done();
@@ -535,7 +766,7 @@ function release_deb(arch) {
         console.log(`Generating deb package for ${arch}`);
 
         console.log("Metadata Version: "+metadata.version);
-        return gulp.src([path.join(appsDir, metadata.name, arch, '*')])
+        return gulp.src([path.join(appsDir, metadata.name, 'linux', arch, '*')])
             .pipe(deb({
                 package: metadata.name,
                 version: metadata.version,
@@ -605,7 +836,7 @@ function release_rpm(arch) {
             requires: ['libgconf-2-4', 'libatomic1'],
             prefix: '/opt',
             files: [{
-                cwd: path.join(appsDir, metadata.name, arch),
+                cwd: path.join(appsDir, metadata.name, 'linux', arch),
                 src: '*',
                 dest: `${LINUX_INSTALL_DIR}/${metadata.name}`,
             }],
@@ -631,33 +862,36 @@ function getLinuxPackageArch(type, arch) {
     let packArch;
 
     switch (arch) {
-    case 'linux32':
-        packArch = 'i386';
-        break;
-    case 'linux64':
-        if (type === 'rpm') {
-            packArch = 'x86_64';
-        } else {
-            packArch = 'amd64';
-        }
-        break;
-    default:
-        console.error(`Package error, arch: ${arch}`);
-        process.exit(1);
-        break;
+        case 'ia32':
+        case 'linux32':
+            packArch = 'i386';
+            break;
+        case 'x64':
+        case 'linux64':
+            if (type === 'rpm') {
+                packArch = 'x86_64';
+            } else {
+                packArch = 'amd64';
+            }
+            break;
+        default:
+            console.error(`Package error, arch: ${arch}`);
+            process.exit(1);
+            break;
     }
 
     return packArch;
 }
 
-function releaseLinux(bits) {
+function releaseLinux(arch) {
     return function() {
-        console.log(`Generating zip package for linux${bits}`);
-        var dirname = 'linux' + bits;
+        console.log(`Generating zip package for linux-${arch}`);
+        var dirname = 'linux';
         var pkg = require('./package.json');
         var src = path.join(appsDir, pkg.name, dirname);
-        var output = fs.createWriteStream(path.join(appsDir, get_release_filename(dirname, 'tar.gz')));
-        console.log("Writting to " + path.join(appsDir, get_release_filename(dirname, 'tar.gz')));
+        console.log("src: " + src);
+        var output = fs.createWriteStream(path.join(appsDir, get_release_filename(dirname, arch, 'tar.gz')));
+        console.log("Writting to " + path.join(appsDir, get_release_filename(dirname, arch, 'tar.gz')));
         var archive = archiver('tar', {
             zlib: { level: 9 },
             gzip: true
@@ -670,9 +904,25 @@ function releaseLinux(bits) {
     }
 }
 
-//gulp.task('release-linux32', gulp.series(releaseLinux(32), post_build('linux32', appsDir), release_deb('linux32')));
-gulp.task('release-linux64', gulp.series(releaseLinux(64), post_build('linux64', appsDir), release_deb('linux64'), post_release_deb('linux64'), release_rpm('linux64')));
+function mapPlatformsToTasks(platforms)
+{
+    console.log(platforms);
+    let tasks = [];
+    for(let i = 0; i < platforms.length; ++i) {
+        let archs = getArchs(platforms[i]);
+        console.log(archs);
+        for(let j = 0; j < archs.length;++j) {
+            tasks.push('release-'+platforms[i]+'-'+archs[j])
+        }
+    }
 
-gulp.task('release', gulp.series('apps', 'clean-release',  getPlatforms().map(function(v) { return 'release-' + v; })));
+    return tasks;
+}
+
+//gulp.task('release-linux32', gulp.series(releaseLinux(32), post_build('ia32', appsDir), release_deb('ia32')));
+gulp.task('release-linux-x64', gulp.series(releaseLinux('x64'), post_build('x64', appsDir), release_deb('x64'), post_release_deb('x64'), release_rpm('x64')));
+gulp.task('release-linux-arm64', gulp.series(releaseLinux('x64'), post_build('x64', appsDir), release_deb('x64'), post_release_deb('x64'), release_rpm('x64')));
+
+gulp.task('release', gulp.series('clean-release', 'apps', mapPlatformsToTasks(getPlatforms())));
 
 gulp.task('default', gulp.series(['debug']));
