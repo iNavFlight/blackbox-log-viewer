@@ -331,6 +331,7 @@ function build_win_zip(arch) {
         // Create ZIP
         console.log(`Creating ${arch} ZIP file...`);
         var src = path.join(appsDir, pkg.name, arch);
+        console.log("Src: " + src);
         //var output = fs.createWriteStream(path.join(appsDir, get_release_filename(arch, 'zip', '-portable')));
         var output = fs.createWriteStream(path.join(appsDir, get_release_filename(arch, 'zip')));
         var archive = archiver('zip', {
@@ -702,15 +703,18 @@ gulp.task('release-osx-arm64', function(done) {
     }
 });
 
-function post_build(arch, folder) {
+function post_build(platform, arch, folder) {
     return function post_build_linux(done) {
-        if ((arch === 'linux32') || (arch === 'linux64')) {
-            const metadata = require('./package.json');
-            // Copy Ubuntu launcher scripts to destination dir
-            const launcherDir = path.join(folder, metadata.name, arch);
-            console.log(`Copy Ubuntu launcher scripts to ${launcherDir}`);
-            return gulp.src('assets/linux/**')
+        if (platform == 'linux') {
+            console.log('post_build_linux: arch: ' + arch)
+            if ((arch === 'ia32') || (arch === 'x64') || (arch == 'arm64')) {
+                const metadata = require('./package.json');
+                // Copy Ubuntu launcher scripts to destination dir
+                const launcherDir = path.join(folder, metadata.name, platform, arch);
+                console.log(`Copy Ubuntu launcher scripts to ${launcherDir}`);
+                return gulp.src('assets/linux/**')
                     .pipe(gulp.dest(launcherDir));
+            }
         }
 
         return done();
@@ -747,7 +751,7 @@ function release_deb(arch) {
         console.log(`Generating deb package for ${arch}`);
 
         console.log("Metadata Version: "+metadata.version);
-        return gulp.src([path.join(appsDir, metadata.name, arch, '*')])
+        return gulp.src([path.join(appsDir, metadata.name, 'linux', arch, '*')])
             .pipe(deb({
                 package: metadata.name,
                 version: metadata.version,
@@ -817,7 +821,7 @@ function release_rpm(arch) {
             requires: ['libgconf-2-4', 'libatomic1'],
             prefix: '/opt',
             files: [{
-                cwd: path.join(appsDir, metadata.name, arch),
+                cwd: path.join(appsDir, metadata.name, 'linux', arch),
                 src: '*',
                 dest: `${LINUX_INSTALL_DIR}/${metadata.name}`,
             }],
@@ -843,33 +847,36 @@ function getLinuxPackageArch(type, arch) {
     let packArch;
 
     switch (arch) {
-    case 'linux32':
-        packArch = 'i386';
-        break;
-    case 'linux64':
-        if (type === 'rpm') {
-            packArch = 'x86_64';
-        } else {
-            packArch = 'amd64';
-        }
-        break;
-    default:
-        console.error(`Package error, arch: ${arch}`);
-        process.exit(1);
-        break;
+        case 'ia32':
+        case 'linux32':
+            packArch = 'i386';
+            break;
+        case 'x64':
+        case 'linux64':
+            if (type === 'rpm') {
+                packArch = 'x86_64';
+            } else {
+                packArch = 'amd64';
+            }
+            break;
+        default:
+            console.error(`Package error, arch: ${arch}`);
+            process.exit(1);
+            break;
     }
 
     return packArch;
 }
 
-function releaseLinux(bits) {
+function releaseLinux(arch) {
     return function() {
-        console.log(`Generating zip package for linux${bits}`);
-        var dirname = 'linux' + bits;
+        console.log(`Generating zip package for linux-${arch}`);
+        var dirname = 'linux';
         var pkg = require('./package.json');
         var src = path.join(appsDir, pkg.name, dirname);
-        var output = fs.createWriteStream(path.join(appsDir, get_release_filename(dirname, 'tar.gz')));
-        console.log("Writting to " + path.join(appsDir, get_release_filename(dirname, 'tar.gz')));
+        console.log("src: " + src);
+        var output = fs.createWriteStream(path.join(appsDir, get_release_filename(dirname, arch, 'tar.gz')));
+        console.log("Writting to " + path.join(appsDir, get_release_filename(dirname, arch, 'tar.gz')));
         var archive = archiver('tar', {
             zlib: { level: 9 },
             gzip: true
@@ -897,8 +904,9 @@ function mapPlatformsToTasks(platforms)
     return tasks;
 }
 
-//gulp.task('release-linux32', gulp.series(releaseLinux(32), post_build('linux32', appsDir), release_deb('linux32')));
-gulp.task('release-linux-x64', gulp.series(releaseLinux(64), post_build('linux64', appsDir), release_deb('linux64'), post_release_deb('linux64'), release_rpm('linux64')));
+//gulp.task('release-linux32', gulp.series(releaseLinux(32), post_build('ia32', appsDir), release_deb('ia32')));
+gulp.task('release-linux-x64', gulp.series(releaseLinux('x64'), post_build('x64', appsDir), release_deb('x64'), post_release_deb('x64'), release_rpm('x64')));
+gulp.task('release-linux-arm64', gulp.series(releaseLinux('x64'), post_build('x64', appsDir), release_deb('x64'), post_release_deb('x64'), release_rpm('x64')));
 
 gulp.task('release', gulp.series('apps', 'clean-release', mapPlatformsToTasks(getPlatforms())));
 
