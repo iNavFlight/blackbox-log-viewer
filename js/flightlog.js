@@ -11,7 +11,7 @@
  */
 function FlightLog(logData) {
     var
-        ADDITIONAL_COMPUTED_FIELD_COUNT = 9, /** attitude + PID_SUM + PID_ERROR + VELOCITY + WIND_VELOCITY + WIND_HEADING **/
+        ADDITIONAL_COMPUTED_FIELD_COUNT = 10, /** attitude + PID_SUM + PID_ERROR + VELOCITY + WIND_VELOCITY + WIND_HEADING + HOME DISTANCE**/
 
         that = this,
         logIndex = false,
@@ -222,10 +222,16 @@ function FlightLog(logData) {
             }
         }
 
+        if (userSettings.logDataGps && parser.frameDefs.G) {
+            for (i = 0; i < parser.frameDefs.G.name.length; i++) {
+                fieldNames.push(parser.frameDefs.G.name[i]);
+            }
+        }
+
         // Add names for our ADDITIONAL_COMPUTED_FIELDS
         fieldNames.push("axisSum[0]", "axisSum[1]", "axisSum[2]");
         fieldNames.push("axisError[0]", "axisError[1]", "axisError[2]"); // Custom calculated error field
-        fieldNames.push("velocity", "windVelocity", "windHeading");
+        fieldNames.push("velocity", "windVelocity", "windHeading", "homeDistance");
 
         fieldNameToIndex = {};
         for (i = 0; i < fieldNames.length; i++) {
@@ -253,7 +259,7 @@ function FlightLog(logData) {
             found = false;
 
         var refVoltage;
-        if((sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(sysConfig.firmwareVersion, '3.1.0')) || 
+        if((sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(sysConfig.firmwareVersion, '3.1.0')) ||
            (sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(sysConfig.firmwareVersion, '2.0.0'))) {
             refVoltage = sysConfig.vbatref;
         } else {
@@ -360,6 +366,11 @@ function FlightLog(logData) {
                     slowFrameLength = parser.frameDefs.S ? parser.frameDefs.S.count : 0,
                     lastSlow = parser.frameDefs.S ? iframeDirectory.initialSlow[chunkIndex].slice(0) : [];
 
+                var
+                    gpsFrameLength = userSettings.logDataGps && parser.frameDefs.G ? parser.frameDefs.G.count : 0,
+                    lastGPSData = userSettings.logDataGps && parser.frameDefs.G ? iframeDirectory.initialGPSData[chunkIndex].slice(0) : [];
+
+
                 parser.onFrameReady = function(frameValid, frame, frameType, frameOffset, frameSize) {
                     var
                         destFrame;
@@ -369,9 +380,7 @@ function FlightLog(logData) {
                             case 'P':
                             case 'I':
                                 //The parser re-uses the "frame" array so we must copy that data somewhere else
-
-                                var
-                                    numOutputFields = frame.length + slowFrameLength + ADDITIONAL_COMPUTED_FIELD_COUNT;
+                                var numOutputFields = frame.length + slowFrameLength + gpsFrameLength + ADDITIONAL_COMPUTED_FIELD_COUNT ;
 
                                 //Do we have a recycled chunk to copy on top of?
                                 if (chunk.frames[mainFrameIndex]) {
@@ -391,6 +400,13 @@ function FlightLog(logData) {
                                 // Then merge in the last seen slow-frame data
                                 for (var i = 0; i < slowFrameLength; i++) {
                                     destFrame[i + frame.length] = lastSlow[i] === undefined ? null : lastSlow[i];
+                                }
+
+                                if (userSettings.logDataGps) {
+                                    // Then merge in the last seen gps-frame data
+                                    for (var i = 0; i < gpsFrameLength; i++) {
+                                        destFrame[i + frame.length + slowFrameLength] = lastGPSData[i] === undefined ? null : lastGPSData[i];
+                                    }
                                 }
 
                                 for (var i = 0; i < eventNeedsTimestamp.length; i++) {
@@ -423,6 +439,13 @@ function FlightLog(logData) {
                                     lastSlow[i] = frame[i];
                                 }
                             break;
+                            case 'G':
+                                if (userSettings.logDataGps) {
+                                    for (var i = 0; i < frame.length; i++) {
+                                        lastGPSData[i] = frame[i];
+                                    }
+                                }
+                                break;
                         }
                     } else {
                         chunk.gapStartsHere[mainFrameIndex - 1] = true;
@@ -502,7 +525,8 @@ function FlightLog(logData) {
             sourceChunkIndex, destChunkIndex,
             sysConfig,
             navVel = [fieldNameToIndex["navVel[0]"], fieldNameToIndex["navVel[1]"]],
-            wind = [fieldNameToIndex["wind[0]"], fieldNameToIndex["wind[1]"], fieldNameToIndex["wind[2]"]];
+            wind = [fieldNameToIndex["wind[0]"], fieldNameToIndex["wind[1]"], fieldNameToIndex["wind[2]"]],
+            navPos = [fieldNameToIndex["navPos[0]"], fieldNameToIndex["navPos[1]"]];
 
         let axisPID = [
                 [fieldNameToIndex["axisP[0]"], fieldNameToIndex["axisI[0]"], fieldNameToIndex["axisD[0]"], fieldNameToIndex["axisF[0]"]],
@@ -580,6 +604,13 @@ function FlightLog(logData) {
                         destFrame[fieldIndex+1] = windRads;
                     }
                     fieldIndex += 2;
+
+                    // Compute distance to home
+                    let posX = srcFrame[navPos[0]], posY = srcFrame[navPos[1]];
+                    if (posX != undefined && posY != undefined) {
+                        destFrame[fieldIndex] = Math.round(Math.hypot(posX, posY));
+                    }
+                    fieldIndex++;
                 }
             }
         }

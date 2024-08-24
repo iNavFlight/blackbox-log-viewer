@@ -297,7 +297,7 @@ function FlightLogFieldPresenter() {
      * @param value Value of the field
      */
     FlightLogFieldPresenter.decodeFieldToFriendly = function (flightLog, fieldName, value, currentFlightMode) {
-        if (value === undefined)
+        if (value === undefined || value === null)
             return "";
 
         switch (fieldName) {
@@ -454,15 +454,18 @@ function FlightLogFieldPresenter() {
             case 'windHeading':
                 return (value / Math.PI * 180).toFixed(1) + "deg";
 
-            case 'BaroAlt':
-                return (value / 100).toFixed(2) + "m";
-
             case "navEPH":
                 return (value/100).toFixed(2);
 
+            case 'BaroAlt':
+            case "navPos[0]":
+            case "navPos[1]":
             case "navPos[2]":
+            case "navTgtPos[0]":
+            case "navTgtPos[1]":
             case "navTgtPos[2]":
-                return (value / 100).toFixed(2) + "m";
+            case "homeDistance":
+                return (value / 100).toFixed(2) + " m";
 
             case 'flightModeFlags':
                 return presentFlags(value, FLIGHT_LOG_FLIGHT_MODE_NAME);
@@ -506,6 +509,7 @@ function FlightLogFieldPresenter() {
             case 'wind[0]':
             case 'wind[1]':
             case 'windVelocity':
+            case 'GPS_speed':
                 if (userSettings.velocityUnits == 'I') // Imperial
                     return (value * 0.0223694).toFixed(1) + "mph";
                 if (userSettings.velocityUnits == 'M') // Metric
@@ -539,6 +543,18 @@ function FlightLogFieldPresenter() {
             case 'sens7Temp':
             case 'escTemperature':
                 return (value == -1250) ? "" : (value / 10.0).toFixed(1) + '&deg;';
+            case 'GPS_coord[0]':
+            case 'GPS_coord[1]':
+                return (value / 10000000.0).toFixed(7) + " degs";
+            case 'GPS_altitude':
+                return value + " m";
+            case 'GPS_ground_course':
+            case 'attitude[0]':
+            case 'attitude[1]':
+            case 'attitude[2]':
+                return (value / 10.0).toFixed(1) + " degs";
+            case 'navTgtHdg':
+                return (value / 100.0).toFixed(1) + " degs";
 
             default:
                 return value.toString();

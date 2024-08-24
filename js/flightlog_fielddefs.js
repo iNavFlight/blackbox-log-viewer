@@ -354,7 +354,18 @@ var
             "CRUISE_3D_ADJUSTING",
             "WAYPOINT_HOLD",
             "RTH_HOVER_ABOVE_HOME",
-            "UNUSED_4"
+            "UNUSED_4",
+            "RTH_TRACKBACK",
+            "MIXERAT_INITIALIZE",
+            "MIXERAT_IN_PROGRESS",
+            "MIXERAT_ABORT",
+            "FW_LANDING_CLIMB_TO_LOITER",
+            "FW_LANDING_LOITER",
+            "FW_LANDING_APPROACH",
+            "FW_LANDING_GLIDE",
+            "FW_LANDING_FLARE",
+            "FW_LANDING_ABORT",
+            "FW_LANDING_FINISHED"
     ]),
 
     FLIGHT_LOG_NAV_FLAGS = makeReadOnly([
