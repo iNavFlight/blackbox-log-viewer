@@ -174,9 +174,30 @@ gulp.task('clean-cache', function () {
 
 gulp.task('clean', gulp.series(['clean-dist', 'clean-apps', 'clean-debug', 'clean-release']));
 
+function getAppInfo(platform, arch) {
+    switch(platform) {
+        default:
+        case 'win':
+            return {
+                //icon: './images/inav_icon.ico'
+            };
+        case 'osx':
+            return {
+                CFBundleDisplayName: 'INAV Blackbox Explorer',
+                icon: './images/inav_icon.icns'
+            };
+        case 'linux':
+            return {
+                terminal: false,
+                icon: './images/inav_icon.ico'
+            };
+    }
+}
+
 // Real work for dist task. Done in another task to call it via
 // run-sequence.
 gulp.task('dist', gulp.series(['clean-dist'], function () {
+    console.log('dist');
     var distSources = [
         // CSS files
         './css/bootstrap-theme.css',
@@ -254,31 +275,26 @@ gulp.task('dist', gulp.series(['clean-dist'], function () {
 }));
 
 // Create runable app directories in ./apps
-gulp.task('apps', gulp.series(['dist', 'clean-apps'], async function (done) {
+gulp.task('apps', gulp.series(['clean-apps', 'dist'], async function (done) {
     platforms = getPlatforms();
     console.log('Release build.');
 
-    //destDir = appsDir;
-
-    process.chdir("./dist");
+    process.chdir("dist");
+    console.log("cwd: " + process.cwd());
 
     for (let i = 0; i < platforms.length; ++i) {
         var archs = getArchs(platforms[i]);
         for (let j = 0; j < archs.length; ++j) {
             console.log('Building: ' + platforms[i] + '/' + archs[j]);
-            var builder = await nwbuild({
+            await nwbuild({
                 srcDir: './**/*',
                 mode: "build",
-                outDir: "../" + appsDir + '/' + pkg.name + '/' + platforms[i] + '/' + archs[j],
+                outDir: path.join("..", appsDir, pkg.name, platforms[i], archs[j]),
                 platform: platforms[i],
                 arch: archs[j],
                 flavor: 'normal',
                 zip: false,
-                icon: './images/inav_icon.icns',
-                app: {
-                    'CFBundleDisplayName': 'INAV Blackbox Explorer',
-                    'icon': './images/inav_icon.ico'
-                },
+                app: getAppInfo(platforms[i], archs[j]),
                 version: get_nw_version(),
                 logLevel: 'debug'
             });
@@ -301,19 +317,15 @@ gulp.task('debug', gulp.series(['dist', 'clean-debug'], async function (done) {
         var archs = getArchs(platforms[i]);
         for (let j = 0; j < archs.length; ++j) {
             console.log('Building: ' + platforms[i] + '/' + archs[j]);
-            var builder = await nwbuild({
+            await nwbuild({
                 srcDir: './**/*',
                 mode: "build",
-                outDir: "../" + debugDir + '/' + pkg.name + '/' + platforms[i] + '/' + archs[j],
+                outDir: path.join("..", debugDir, pkg.name, platforms[i], archs[j]),
                 platform: platforms[i],
                 arch: archs[j],
                 flavor: 'sdk',
                 zip: false,
-                icon: './images/inav_icon.icns',
-                app: {
-                    'CFBundleDisplayName': 'INAV Blackbox Explorer',
-                    'icon': './images/inav_icon.ico'
-                },
+                app: getAppInfo(platforms[i], archs[j]),
                 version: get_nw_version(),
                 logLevel: 'debug'
             });
@@ -908,6 +920,6 @@ function mapPlatformsToTasks(platforms)
 gulp.task('release-linux-x64', gulp.series(releaseLinux('x64'), post_build('x64', appsDir), release_deb('x64'), post_release_deb('x64'), release_rpm('x64')));
 gulp.task('release-linux-arm64', gulp.series(releaseLinux('x64'), post_build('x64', appsDir), release_deb('x64'), post_release_deb('x64'), release_rpm('x64')));
 
-gulp.task('release', gulp.series('apps', 'clean-release', mapPlatformsToTasks(getPlatforms())));
+gulp.task('release', gulp.series('clean-release', 'apps', mapPlatformsToTasks(getPlatforms())));
 
 gulp.task('default', gulp.series(['debug']));
