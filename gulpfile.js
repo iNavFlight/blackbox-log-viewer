@@ -280,7 +280,6 @@ gulp.task('apps', gulp.series(['clean-apps', 'dist'], async function (done) {
     console.log('Release build.');
 
     process.chdir("dist");
-    console.log("cwd: " + process.cwd());
 
     for (let i = 0; i < platforms.length; ++i) {
         var archs = getArchs(platforms[i]);
@@ -288,6 +287,7 @@ gulp.task('apps', gulp.series(['clean-apps', 'dist'], async function (done) {
             console.log('Building: ' + platforms[i] + '/' + archs[j]);
             await nwbuild({
                 srcDir: './**/*',
+                cacheDir: '../cache',
                 mode: "build",
                 outDir: path.join("..", appsDir, pkg.name, platforms[i], archs[j]),
                 platform: platforms[i],
@@ -319,6 +319,7 @@ gulp.task('debug', gulp.series(['dist', 'clean-debug'], async function (done) {
             console.log('Building: ' + platforms[i] + '/' + archs[j]);
             await nwbuild({
                 srcDir: './**/*',
+                cacheDir: '../cache',
                 mode: "build",
                 outDir: path.join("..", debugDir, pkg.name, platforms[i], archs[j]),
                 platform: platforms[i],
@@ -341,11 +342,13 @@ function build_win_zip(arch) {
         var pkg = require('./package.json');
     
         // Create ZIP
-        console.log(`Creating ${arch} ZIP file...`);
-        var src = path.join(appsDir, pkg.name, arch);
+        console.log(`Creating ${arch} windows ZIP file...`);
+        var src = path.join(appsDir, pkg.name, 'win', arch);
         console.log("Src: " + src);
         //var output = fs.createWriteStream(path.join(appsDir, get_release_filename(arch, 'zip', '-portable')));
-        var output = fs.createWriteStream(path.join(appsDir, get_release_filename(arch, 'zip')));
+        var outputPath = path.join(appsDir, get_release_filename('win', arch, 'zip'));
+        console.log('Dst: ' + outputPath);
+        var output = fs.createWriteStream(outputPath);
         var archive = archiver('zip', {
                 zlib: { level: 9 }
         });
@@ -365,10 +368,10 @@ function build_win_iss(arch) {
         }
 
         // Create Installer
-        console.log(`Creating ${arch} Installer...`);
+        console.log(`Creating ${arch} windows Installer...`);
         const innoSetup = require('@quanle94/innosetup');
             
-        const APPS_DIR = './apps/';
+        const APPS_DIR = path.join(appsDir);
         const pkg = require('./package.json');
 
         // Parameters passed to the installer script
@@ -380,7 +383,7 @@ function build_win_iss(arch) {
         parameters.push(`/DarchAllowed=x64`);
         parameters.push(`/DarchInstallIn64bit=x64`);
         parameters.push(`/DsourceFolder=${APPS_DIR}`);
-        parameters.push(`/DtargetFolder=${APPS_DIR}`);
+        parameters.push(`/DtargetFolder=${appsDir}`);
 
         // Show only errors in console
         parameters.push(`/Q`);
@@ -400,8 +403,8 @@ function build_win_iss(arch) {
     }
 }
 
-gulp.task('release-win-x64', gulp.series(build_win_zip('win', 'x64'), build_win_iss('win', 'x64')));
-gulp.task('release-win-ia32', gulp.series(build_win_zip('win', 'ia32'), build_win_iss('win', 'ia32')));
+gulp.task('release-win-x64', gulp.series(build_win_zip('x64'), build_win_iss('x64')));
+gulp.task('release-win-ia32', gulp.series(build_win_zip('ia32'), build_win_iss('ia32')));
 
 gulp.task('release-osx-x64', function(done) {
     var pkg = require('./package.json');

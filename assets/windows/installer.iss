@@ -14,8 +14,8 @@
 #define CompanyUrl "https://github.com/iNavFlight/inav-blackbox-log-viewer"
 #define ExecutableFileName "inav-blackbox-explorer.exe"
 #define GroupName "INAV"
-#define InstallerFileName "INAV-BlackboxExplorer_" + archName + "-installer" + "_" + version
-#define SourcePath "..\..\" + sourceFolder + "\inav-blackbox-explorer\" + archName
+#define InstallerFileName "INAV-BlackboxExplorer_win-" + archName + "-installer" + "_" + version
+#define SourcePath "..\..\" + sourceFolder + "\inav-blackbox-explorer\win\" + archName
 #define TargetFolderName "INAV-BlackboxExplorer"
 #define UpdatesUrl "https://github.com/iNavFlight/blackbox-log-viewer/releases"
 
