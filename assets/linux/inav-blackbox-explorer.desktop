@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=INAV BlackboxExplorer
-Comment=Crossplatform blackbox analitics tool for INAV flight control system
+Name=INAV Blackbox Explorer
+Comment=Blackbox analytics tool for INAV
 Exec=/opt/inav/inav-blackbox-explorer/inav-blackbox-explorer
 Icon=/opt/inav/inav-blackbox-explorer/icon/inav_icon_128.png
 Terminal=false
