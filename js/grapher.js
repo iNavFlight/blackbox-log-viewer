@@ -615,6 +615,58 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
         canvasContext.fillRect(0,-plotHeight/2,canvas.width, plotHeight);
     }
 
+    // Human-friendly time intervals in microseconds
+    var FRIENDLY_INTERVALS_MICROS = [
+        10000,      // 10ms
+        25000,      // 25ms
+        50000,      // 50ms
+        100000,     // 100ms
+        250000,     // 250ms
+        500000,     // 500ms
+        1000000,    // 1 second
+        2000000,    // 2 seconds
+        5000000,    // 5 seconds
+        10000000,   // 10 seconds
+        30000000,   // 30 seconds
+        60000000,   // 1 minute
+        300000000,  // 5 minutes
+        900000000,  // 15 minutes
+    ];
+
+    function calculateGridInterval(windowWidth) {
+        var idealInterval = windowWidth / 8;
+        return FRIENDLY_INTERVALS_MICROS.reduce(function(prev, curr) {
+            return Math.abs(curr - idealInterval) < Math.abs(prev - idealInterval) ? curr : prev;
+        });
+    }
+
+    function formatTimeLabel(timeMicros, intervalMicros) {
+        var timeSec = timeMicros / 1000000;
+        var timeMin = timeSec / 60;
+        var mins = Math.floor(timeMin);
+        var secs = timeSec % 60;
+
+        // Determine decimal places needed based on interval
+        var decimalPlaces = 0;
+        if (intervalMicros < 100000) {
+            decimalPlaces = 2;  // 10ms, 25ms, 50ms intervals
+        } else if (intervalMicros < 1000000) {
+            decimalPlaces = 1;  // 100ms-500ms intervals
+        }
+
+        if (timeSec < 60) {
+            // Under 1 minute: show as seconds
+            return timeSec.toFixed(decimalPlaces) + "s";
+        } else {
+            // Over 1 minute: show as min:sec
+            var secsStr = secs.toFixed(decimalPlaces);
+            if (secs < 10) {
+                secsStr = "0" + secsStr;
+            }
+            return mins + ":" + secsStr;
+        }
+    }
+
     //Draw a grid
     function drawGrid(curve, plotHeight) {
         var settings = curve.getCurve(),
@@ -625,7 +677,7 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
             yScale = -plotHeight/2;
 
         canvasContext.strokeStyle = "rgba(255,255,255,0.5)"; // Grid Color
-		canvasContext.setLineDash([1,10]); // Make the grid line a dash        
+		canvasContext.setLineDash([1,10]); // Make the grid line a dash
         canvasContext.lineWidth = 1;
         canvasContext.beginPath();
 
@@ -637,21 +689,44 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
                 canvasContext.lineTo(canvas.width, yValue);
             }
         }
-		// vertical lines
-		for(var i=(windowStartTime / 100000).toFixed(0) * 100000; i<windowEndTime; i+=100000) {
-            var x = timeToCanvasX(i);
+
+        // vertical lines with scaled intervals, aligned to log start time
+        var timeInterval = calculateGridInterval(windowWidthMicros);
+        var logMinTime = flightLog.getMinTime();
+        var startTime = logMinTime + Math.floor((windowStartTime - logMinTime) / timeInterval) * timeInterval;
+
+        for (var t = startTime; t < windowEndTime; t += timeInterval) {
+            var x = timeToCanvasX(t);
             canvasContext.moveTo(x, yScale);
             canvasContext.lineTo(x, -yScale);
-		}
+        }
 
         canvasContext.stroke();
 		canvasContext.setLineDash([]); // clear the dash
+    }
 
-        // range values,
-        //drawAxisLabel(max.toFixed(0), yScale + 12);
-        //drawAxisLabel(min.toFixed(0), -yScale - 8);
-        
+    // Draw time labels at the bottom of the canvas
+    function drawTimeAxisLabels() {
+        var timeInterval = calculateGridInterval(windowWidthMicros);
+        var logMinTime = flightLog.getMinTime();
+        // Align grid to log start time so labels show time from beginning of log
+        var startTime = logMinTime + Math.floor((windowStartTime - logMinTime) / timeInterval) * timeInterval;
+        // Leave margin on right for frame label
+        var rightMargin = 120;
 
+        canvasContext.font = drawingParams.fontSizeAxisLabel + "pt " + DEFAULT_FONT_FACE;
+        canvasContext.fillStyle = "rgba(255,255,255,0.7)";
+        canvasContext.textAlign = 'center';
+
+        for (var t = startTime; t < windowEndTime; t += timeInterval) {
+            var x = timeToCanvasX(t);
+            // Only draw if within visible canvas area, with right margin for frame label
+            if (x >= 0 && x <= canvas.width - rightMargin) {
+                var relativeTime = t - logMinTime;
+                var label = formatTimeLabel(relativeTime, timeInterval);
+                canvasContext.fillText(label, x, canvas.height - 4);
+            }
+        }
     }
 
     function drawAxisLabel(axisLabel, y) {
@@ -993,7 +1068,7 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
             
             //Draw a bar highlighting the current time if we are drawing any graphs
             if (graphs.length) {
-                var 
+                var
                     centerX = canvas.width / 2;
 
                 canvasContext.strokeStyle = 'rgba(255, 64, 64, 0.2)';
@@ -1010,9 +1085,11 @@ function FlightLogGrapher(flightLog, graphConfig, canvas, craftCanvas, analyserC
                 canvasContext.moveTo(centerX, 0);
                 canvasContext.lineTo(centerX, canvas.height);
                 canvasContext.stroke();
-		         
+
+                // Draw time axis labels at bottom
+                drawTimeAxisLabels();
             }
-            
+
             // Draw events - if option set or even if option is not set but there are graphs
             // the option is for video export; if you export the video without any graphs set,
             // then the events are not shown either (to keep the video clean. but
