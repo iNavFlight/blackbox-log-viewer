@@ -1,7 +1,6 @@
 /.settings/
 /.project
 .DS_Store
-/blackbox-chrome-app.zip
 .idea/workspace.xml
 .idea/tasks.xml
 /.idea/
@@ -12,10 +11,18 @@ apps/
 dist/
 debug/
 release/
+# electron-forge packages (npm run desktop:package, desktop:make)
+out/
 
 # artefacts for Visual Studio Code
 /.vscode/
+npm-debug.log*
 
-*~
-*.swp
+# Nuxt UI auto-generated
+auto-imports.d.ts
+components.d.ts
 
+# Internal docs
+CLAUDE.md
+plan.md
+issues.md
