@@ -28,7 +28,9 @@ const MAG_BIAS_FLAG_NAMES = [
 ];
 
 // Bits of gsfFlags, as in INAV's gsf_yaw.h
-const GSF_FLAG_NAMES = ["FUSING", "USABLE"];
+const GSF_FLAG_NAMES = [
+  "FUSING", "USABLE", "INCONSISTENT", "DELAY_MEASURED", "MAG_COMPARED", "MAG_DISAGREES", "IN_AHRS", "RESET",
+];
 
 function presentValue(value, names) {
   return names[value] ?? String(value);
@@ -161,7 +163,10 @@ function decodeInavUnits(flightLog, fieldName, value, settings) {
       return `${(value / 10).toFixed(1)} %`;
     case "gsfYaw":
     case "gsfYawStd":
+    case "gsfMagErr":
       return `${(value / 10).toFixed(1)} °`;
+    case "gsfGpsDelay":
+      return `${value} ms`;
     case "gsfExcitation":
       return `${value} m/s`;
     // about 2 while the leading model agrees with the GPS
@@ -236,6 +241,7 @@ const INAV_SCALE = {
   magBiasSpread: 10,
   gsfYaw: 10,
   gsfYawStd: 10,
+  gsfMagErr: 10,
   gsfNis: 100,
 };
 

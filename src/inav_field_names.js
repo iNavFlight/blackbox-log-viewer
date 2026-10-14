@@ -87,5 +87,7 @@ export const INAV_FRIENDLY_FIELD_NAMES = Object.freeze({
   gsfExcitation: "GSF Velocity Change Seen",
   gsfNis: "GSF Innovation Ratio",
   gsfFlags: "GSF Status",
+  gsfGpsDelay: "GSF GPS Delay",
+  gsfMagErr: "Compass minus GSF Yaw",
   ...Object.fromEntries(Array.from({ length: 8 }, (_, i) => [`sens${i}Temp`, `Temperature Sensor ${i}`])),
 });
