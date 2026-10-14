@@ -61,7 +61,8 @@ export const defaultUserSettings = {
   overdrawSpectrumType: 0,
   psdHeatmapMin: -40,
   psdHeatmapMax: 10,
-  craft: { left: "15%", top: "48%", size: "40%" },
+  // top is the centre: at 30% the 40% box ends at 50%, clear of the analyser from 60%
+  craft: { left: "15%", top: "30%", size: "40%" },
   sticks: { left: "75%", top: "20%", size: "30%" },
   analyser: { left: "2%", top: "60%", size: "35%" },
   analyser_legend: { left: "88%", top: "7%", width: "10%" },
