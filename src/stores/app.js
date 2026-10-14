@@ -38,6 +38,7 @@ export const useAppStore = defineStore("app", () => {
   const getVideoExportParams = shallowRef(null);
   const saveVideoConfig = shallowRef(null);
   const saveUserSettings = shallowRef(null);
+  const previewUserSettings = shallowRef(null);
   const refreshGraph = shallowRef(null);
 
   function setLegendHidden(hidden) {
@@ -77,6 +78,7 @@ export const useAppStore = defineStore("app", () => {
     getVideoExportParams,
     saveVideoConfig,
     saveUserSettings,
+    previewUserSettings,
     refreshGraph,
     setLegendHidden,
     setViewVideo,

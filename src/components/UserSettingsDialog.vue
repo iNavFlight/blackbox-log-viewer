@@ -216,10 +216,12 @@ import SettingRow from "./SettingRow.vue";
 import PercentInput from "./PercentInput.vue";
 import { mixerList } from "../user_settings_data.js";
 import { useSettingsStore } from "../stores/settings.js";
+import { useAppStore } from "../stores/app.js";
 
 const open = defineModel("open", { type: Boolean, default: false });
 
 const settingsStore = useSettingsStore();
+const appStore = useAppStore();
 
 const emit = defineEmits(["save"]);
 
@@ -230,12 +232,32 @@ function cloneSettings() {
 
 const local = ref(cloneSettings());
 
+// The overlays follow these while the dialog is open; anything but Save puts them back
+const POSITION_KEYS = ["sticks", "craft", "analyser", "analyser_legend", "map", "watermark", "laptimer"];
+const positionsJson = (settings) =>
+  JSON.stringify(Object.fromEntries(POSITION_KEYS.map((key) => [key, settings[key]])));
+let originalPositions = null;
+let saved = false;
+
 // Re-clone when dialog opens to pick up any external changes
 watch(open, (val) => {
   if (val) {
     local.value = cloneSettings();
+    originalPositions = positionsJson(local.value);
+    saved = false;
+  } else if (!saved && originalPositions) {
+    appStore.previewUserSettings?.(JSON.parse(originalPositions));
   }
 });
+
+watch(
+  () => positionsJson(local.value),
+  (json) => {
+    if (open.value) {
+      appStore.previewUserSettings?.(JSON.parse(json));
+    }
+  },
+);
 
 // customMix is truthy object or null — expose as boolean for USwitch
 const customMixBool = computed({
@@ -315,6 +337,7 @@ function onLogoChange(e) {
 
 function onSave() {
   const raw = JSON.parse(JSON.stringify(toRaw(local.value))); // NOSONAR
+  saved = true;
   emit("save", raw);
   open.value = false;
 }

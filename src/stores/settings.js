@@ -34,6 +34,11 @@ export const useSettingsStore = defineStore("settings", () => {
     prefs.set("userSettings", toRaw(userSettings));
   }
 
+  // For a live preview: nothing reaches storage until saveAll
+  function preview(newSettings) {
+    Object.assign(userSettings, newSettings);
+  }
+
   function saveSetting(key, value) {
     userSettings[key] = value;
     prefs.set("userSettings", { ...toRaw(userSettings) });
@@ -46,6 +51,7 @@ export const useSettingsStore = defineStore("settings", () => {
     userSettings,
     load,
     saveAll,
+    preview,
     saveSetting,
   };
 });

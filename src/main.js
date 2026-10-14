@@ -688,6 +688,13 @@ function BlackboxLogViewer() {
       updateCanvasSize();
     }
   };
+  appStore.previewUserSettings = (newSettings) => {
+    settingsStore.preview(newSettings);
+    if (graph != null) {
+      graph.refreshOptions(userSettings);
+      updateCanvasSize();
+    }
+  };
   graphStore.applyGraphZoom = setGraphZoom;
   playbackStore.applyPlaybackRate = setPlaybackRate;
   playbackStore.logPlayPause = logPlayPause;
