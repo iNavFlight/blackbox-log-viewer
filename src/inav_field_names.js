@@ -82,5 +82,10 @@ export const INAV_FRIENDLY_FIELD_NAMES = Object.freeze({
   magBiasFlags: "Mag Zero Learning",
   magBiasSectors: "Mag Learning Sectors",
   magBiasSpread: "Mag Learning Radius Spread",
+  gsfYaw: "GSF Yaw",
+  gsfYawStd: "GSF Yaw Sigma",
+  gsfExcitation: "GSF Velocity Change Seen",
+  gsfNis: "GSF Innovation Ratio",
+  gsfFlags: "GSF Status",
   ...Object.fromEntries(Array.from({ length: 8 }, (_, i) => [`sens${i}Temp`, `Temperature Sensor ${i}`])),
 });
