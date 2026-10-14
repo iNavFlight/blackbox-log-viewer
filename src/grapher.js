@@ -9,7 +9,15 @@ import {
 import { Craft2D } from "./craft_2d";
 import { Craft3D } from "./craft_3d";
 import { CraftWing2D } from "./craft_wing.js";
-import { isInavFixedWingLog } from "./inav_graphs.js";
+import { CraftPlane3D } from "./craft_plane_3d.js";
+import {
+  craftKind,
+  craftModelFor,
+  CRAFT_MODEL_BY_COUNT,
+  CRAFT_MODEL_GAUGES,
+  PLANE_MODELS,
+} from "./craft_kind.js";
+import { mixerList } from "./user_settings_data.js";
 import { FlightLogAnalyser } from "./graph_spectrum";
 import { LapTimer } from "./laptimer";
 import { GraphConfig } from "./graph_config";
@@ -60,7 +68,6 @@ export function FlightLogGrapher(
   const canvasContext = canvas.getContext("2d");
   const defaultOptions = {
     gapless: false,
-    craftType: "3D",
     drawPidTable: true,
     drawSticks: true,
     drawTime: true,
@@ -75,9 +82,8 @@ export function FlightLogGrapher(
     outTime = false,
     lastMouseX,
     sticks = null,
-    craft3D = null,
-    craft2D = null,
-    craftWing = null,
+    craftView = null,
+    currentCraftKind = null,
     analyser = null /* define a new spectrum analyser */,
     watermarkLogo /* Watermark feature */;
   this.onSeek = null;
@@ -876,13 +882,7 @@ export function FlightLogGrapher(
 
     const craftSize = canvas.height * (Number.parseInt(options.craft.size, 10) / 100);
 
-    if (craftWing) {
-      craftWing.resize(craftSize, craftSize);
-    } else if (craft2D) {
-      craft2D.resize(craftSize, craftSize);
-    } else if (craft3D) {
-      craft3D.resize(craftSize, craftSize);
-    }
+    craftView?.resize(craftSize, craftSize);
 
     // Position the craft canvas according to options
     craftCanvas.style.left = `${Math.max(
@@ -1034,13 +1034,7 @@ export function FlightLogGrapher(
           );
         }
 
-        if (craftWing) {
-          craftWing.render(centerFrame, flightLog.getMainFieldIndexes());
-        } else if (options.craftType === "3D") {
-          craft3D.render(centerFrame, flightLog.getMainFieldIndexes());
-        } else if (options.craftType === "2D") {
-          craft2D.render(centerFrame, flightLog.getMainFieldIndexes());
-        }
+        craftView?.render(centerFrame, flightLog.getMainFieldIndexes());
       }
 
       // Draw Analyser
@@ -1153,34 +1147,41 @@ export function FlightLogGrapher(
   };
 
   this.initializeCraftModel = function () {
-    // Ensure craftType is a valid value
-    if (!["2D", "3D"].includes(options.craftType)) {
-      options.craftType = defaultOptions.craftType;
-    }
-
-    // INAV planes: no motor layout to draw, see craft_wing.js
-    if (craftCanvas && isInavFixedWingLog(flightLog)) {
-      craftWing = new CraftWing2D(flightLog, craftCanvasFor("2d"));
+    craftView = null;
+    if (!craftCanvas) {
       return;
     }
+    currentCraftKind = craftKind(flightLog);
+    const model = craftModelFor(currentCraftKind, options.craftModels);
 
-    if (options.craftType === "3D") {
-      if (craftCanvas) {
-        try {
-          craft3D = new Craft3D(flightLog, craftCanvasFor("webgl"), idents.motorColors);
-        } catch {
-          //WebGL not supported, fall back to 2D rendering
-          options.craftType = "2D";
+    if (model !== CRAFT_MODEL_GAUGES) {
+      const isPlane = PLANE_MODELS.includes(model);
+      const mix =
+        model === CRAFT_MODEL_BY_COUNT
+          ? null
+          : (mixerList.find((mixer) => mixer.name === model) ?? null);
+      const colors = idents.motorColors;
+      try {
+        craftView = isPlane
+          ? new CraftPlane3D(
+              flightLog,
+              craftCanvasFor("webgl"),
+              colors,
+              model === "Flying Wing",
+            )
+          : new Craft3D(flightLog, craftCanvasFor("webgl"), colors, mix);
+      } catch {
+        // No WebGL: the multirotors have a flat drawing, the planes the gauges
+        if (!isPlane) {
+          craftView = new Craft2D(flightLog, craftCanvasFor("2d"), colors, mix);
         }
-      } else {
-        //Dedicated craft canvas not provided so we can't render in 3D, fall back
-        options.craftType = "2D";
       }
     }
+    craftView ??= new CraftWing2D(flightLog, craftCanvasFor("2d"));
+  };
 
-    if (options.craftType === "2D") {
-      craft2D = new Craft2D(flightLog, craftCanvasFor("2d"), idents.motorColors);
-    }
+  this.getCraftKind = function () {
+    return currentCraftKind;
   };
 
   this.destroy = function () {

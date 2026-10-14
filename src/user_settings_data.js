@@ -30,8 +30,8 @@ export const mixerList = [
 
 // Default user settings — used as baseline before user overrides
 export const defaultUserSettings = {
-  mixerConfiguration: 3,
-  customMix: null,
+  // The craft model chosen for each kind of log (craft_kind.js); a kind not listed is left to the log
+  craftModels: {},
   stickMode: 2,
   stickUnits: false,
   stickTrails: false,

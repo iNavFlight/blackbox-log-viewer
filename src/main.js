@@ -147,6 +147,7 @@ function BlackboxLogViewer() {
       userSettings,
     );
     graphStore.graph = graph;
+    graphStore.craftKind = graph.getCraftKind();
 
     setVideoInTime(false);
     setVideoOutTime(false);
@@ -685,6 +686,7 @@ function BlackboxLogViewer() {
       graph.refreshOptions(userSettings);
       graph.refreshLogo();
       graph.initializeCraftModel();
+      graphStore.craftKind = graph.getCraftKind();
       updateCanvasSize();
     }
   };

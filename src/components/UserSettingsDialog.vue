@@ -10,25 +10,31 @@
       >
         <!-- Left column -->
         <div class="flex flex-col gap-4">
-          <!-- Mixer Settings -->
-          <UiBox title="Mixer Settings">
-            <SettingRow label="Custom" help="Select custom craft display">
-              <USwitch v-model="customMixBool" size="sm" />
-            </SettingRow>
-            <div v-if="local.customMix" class="flex items-center gap-4 mt-2">
-              <USelect
-                v-model="local.mixerConfiguration"
-                :items="mixerOptions"
-                :ui="{ content: 'z-[300]' }"
-                size="sm"
-                class="flex-1"
-              />
-              <img
-                :src="`./images/motor_order/${mixerImageName}.svg`"
-                class="w-16 h-16 object-contain"
-                :alt="mixerName"
-              />
-            </div>
+          <!-- Craft model: one choice per kind of log -->
+          <UiBox title="Craft Model">
+            <template v-if="craftKind">
+              <p class="text-xs text-dimmed mb-2">
+                From the log: {{ craftKind.label }}
+              </p>
+              <div class="flex items-center gap-4">
+                <USelect
+                  v-model="craftModel"
+                  :items="craftModelOptions"
+                  :ui="{ content: 'z-[300]' }"
+                  size="sm"
+                  class="flex-1"
+                />
+                <img
+                  v-if="craftModelImage"
+                  :src="`./images/motor_order/${craftModelImage}.svg`"
+                  class="w-16 h-16 object-contain"
+                  alt=""
+                />
+              </div>
+            </template>
+            <p v-else class="text-xs text-dimmed">
+              Open a log to choose how its craft is drawn.
+            </p>
           </UiBox>
 
           <!-- Stick Settings -->
@@ -215,13 +221,22 @@ import UiBox from "./UiBox.vue";
 import SettingRow from "./SettingRow.vue";
 import PercentInput from "./PercentInput.vue";
 import { mixerList } from "../user_settings_data.js";
+import {
+  craftModelChoices,
+  craftModelFor,
+  CRAFT_MODEL_AUTO,
+  CRAFT_MODEL_BY_COUNT,
+  CRAFT_MODEL_GAUGES,
+} from "../craft_kind.js";
 import { useSettingsStore } from "../stores/settings.js";
 import { useAppStore } from "../stores/app.js";
+import { useGraphStore } from "../stores/graph.js";
 
 const open = defineModel("open", { type: Boolean, default: false });
 
 const settingsStore = useSettingsStore();
 const appStore = useAppStore();
+const graphStore = useGraphStore();
 
 const emit = defineEmits(["save"]);
 
@@ -259,23 +274,44 @@ watch(
   },
 );
 
-// customMix is truthy object or null — expose as boolean for USwitch
-const customMixBool = computed({
-  get: () => !!local.value.customMix,
-  set: (val) => { local.value.customMix = val ? {} : null; },
+// Craft model of the open log's kind: auto lets craft_kind.js decide
+const craftKind = computed(() => graphStore.craftKind);
+
+const modelLabel = (model) => {
+  if (model === CRAFT_MODEL_GAUGES) {
+    return "2D gauges";
+  }
+  return model === CRAFT_MODEL_BY_COUNT ? "3D, motors by count" : `${model} (3D)`;
+};
+
+const craftModelOptions = computed(() => {
+  const kind = craftKind.value;
+  if (!kind) {
+    return [];
+  }
+  return [
+    { label: `Auto: ${modelLabel(kind.model ?? CRAFT_MODEL_GAUGES)}`, value: CRAFT_MODEL_AUTO },
+    { label: modelLabel(CRAFT_MODEL_GAUGES), value: CRAFT_MODEL_GAUGES },
+    ...craftModelChoices(kind).map((name) => ({ label: modelLabel(name), value: name })),
+  ];
 });
 
-// Mixer helpers
-const mixerOptions = mixerList.map((m, i) => ({ label: m.name, value: i + 1 }));
-
-const mixerImageName = computed(() => {
-  const idx = (local.value.mixerConfiguration || 3) - 1;
-  return mixerList[idx]?.image ?? "custom";
+const craftModel = computed({
+  get: () => local.value.craftModels?.[craftKind.value?.key] ?? CRAFT_MODEL_AUTO,
+  set: (value) => {
+    const models = { ...local.value.craftModels };
+    if (value === CRAFT_MODEL_AUTO) {
+      delete models[craftKind.value.key];
+    } else {
+      models[craftKind.value.key] = value;
+    }
+    local.value.craftModels = models;
+  },
 });
 
-const mixerName = computed(() => {
-  const idx = (local.value.mixerConfiguration || 3) - 1;
-  return mixerList[idx]?.name ?? "Custom";
+const craftModelImage = computed(() => {
+  const model = craftKind.value && craftModelFor(craftKind.value, local.value.craftModels);
+  return mixerList.find((mixer) => mixer.name === model)?.image ?? null;
 });
 
 // Option data

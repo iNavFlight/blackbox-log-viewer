@@ -15,6 +15,8 @@ export const useGraphStore = defineStore("graph", () => {
   const graph = shallowRef(null);
   const mapGrapher = shallowRef(null);
   const seekBar = shallowRef(null);
+  // What craft_kind.js made of the open log, for the settings dialog
+  const craftKind = shallowRef(null);
 
   // Canvas DOM refs — registered by main.js
   const canvasRefs = shallowRef(null);
@@ -194,6 +196,7 @@ export const useGraphStore = defineStore("graph", () => {
     hasAnalyserFullscreen,
     hasAnalyserSticks,
     hasCraft,
+    craftKind,
     hasSticks,
     hasMap,
     hasMarker,

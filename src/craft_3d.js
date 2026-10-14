@@ -1,8 +1,5 @@
-import { useSettingsStore } from "./stores/settings.js";
-
-export function Craft3D(flightLog, canvas, propColors) {
-  const { userSettings } = useSettingsStore();
-
+// mix: an entry of mixerList for its motor order, or null to place the motors by their count
+export function Craft3D(flightLog, canvas, propColors, mix = null) {
   const // Sets the distance between the center point and the center of the motor mount
     ARM_LENGTH = 1,
     NUM_PROP_LEVELS = 100,
@@ -10,7 +7,9 @@ export function Craft3D(flightLog, canvas, propColors) {
     CRAFT_DEPTH = ARM_LENGTH * 0.08,
     ARROW_DEPTH = CRAFT_DEPTH * 0.5;
 
-  const customMix = userSettings.customMix ?? null;
+  const customMix = mix
+    ? { motorOrder: mix.defaultMotorOrder, yawOffset: mix.defaultYawOffset }
+    : null;
 
   let numMotors;
   if (customMix === null) {

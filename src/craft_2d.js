@@ -1,8 +1,5 @@
-import { useSettingsStore } from "./stores/settings.js";
-
-export function Craft2D(flightLog, canvas, propColors) {
-  const { userSettings } = useSettingsStore();
-
+// mix: an entry of mixerList for its motor order, or null to place the motors by their count
+export function Craft2D(flightLog, canvas, propColors, mix = null) {
   const ARM_THICKNESS_MULTIPLIER = 0.18,
     ARM_EXTEND_BEYOND_MOTOR_MULTIPLIER = 1.1,
     CENTRAL_HUB_SIZE_MULTIPLIER = 0.3;
@@ -11,7 +8,9 @@ export function Craft2D(flightLog, canvas, propColors) {
 
   const craftParameters = {};
 
-  const customMix = userSettings.customMix ?? null;
+  const customMix = mix
+    ? { motorOrder: mix.defaultMotorOrder, yawOffset: mix.defaultYawOffset }
+    : null;
 
   let numMotors;
   if (!customMix) {
