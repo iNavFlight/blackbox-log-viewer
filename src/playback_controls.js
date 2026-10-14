@@ -6,10 +6,20 @@ import { usePlaybackStore, GRAPH_STATE_PAUSED, GRAPH_STATE_PLAY, PLAYBACK_MIN_RA
 import { useAppStore } from "./stores/app.js";
 import { useSettingsStore } from "./stores/settings.js";
 import { FlightLogParser } from "./flightlog_parser.js";
-import { blackboxTimeFromVideoTime, syncLogToVideo, setVideoTime, setVideoOffset } from "./video_handler.js";
+import {
+  blackboxTimeFromVideoTime,
+  syncLogToVideo,
+  setVideoTime,
+  setVideoOffset,
+  setVideoDrift,
+  videoSecondsFromLogMicros,
+} from "./video_handler.js";
 import { updateValuesChart } from "./values_display.js";
 
 const SMALL_JUMP_TIME = 100 * 1000;
+// Two syncs closer than this give too short a baseline for the drift; past 2% it is a mismatched pair
+const SYNC_DRIFT_MIN_SECONDS = 10;
+const SYNC_DRIFT_MAX = 0.02;
 
 let lastRenderTime = false;
 let animationFrameIsQueued = false;
@@ -141,8 +151,9 @@ export function setCurrentBlackboxTime(newTime) {
   const playbackStore = usePlaybackStore(pinia);
 
   if (logStore.hasVideo) {
-    playbackStore.videoElement.currentTime =
-      (newTime - logStore.flightLog.getMinTime()) / 1000000 + playbackStore.videoOffset;
+    playbackStore.videoElement.currentTime = videoSecondsFromLogMicros(
+      newTime - logStore.flightLog.getMinTime(),
+    );
 
     syncLogToVideo();
   } else {
@@ -317,13 +328,21 @@ export function logSmartSync() {
   const graphStore = useGraphStore(pinia);
 
   if (graphStore.hasMarker && logStore.hasVideo && logStore.hasLog) {
-    try {
-      setVideoOffset(
-        playbackStore.videoOffset + (logStore.currentBlackboxTime - graphStore.markerTime) / 1000000,
-        true,
-      );
-    } catch {
-      console.log("Failed to set video offset");
+    // The marker's log time belongs at the video's current time
+    const video = playbackStore.videoElement.currentTime;
+    const log = graphStore.markerTime - logStore.flightLog.getMinTime();
+    const anchor = playbackStore.syncAnchor;
+    const scale =
+      anchor && Math.abs(video - anchor.video) >= SYNC_DRIFT_MIN_SECONDS
+        ? (log - anchor.log) / ((video - anchor.video) * 1000000)
+        : null;
+    if (scale !== null && Math.abs(scale - 1) <= SYNC_DRIFT_MAX) {
+      // A second sync far enough from the first measures the drift, and both times stay aligned
+      setVideoDrift((scale - 1) * 1000000, false);
+      setVideoOffset(anchor.video - anchor.log / (scale * 1000000), true);
+    } else {
+      playbackStore.syncAnchor = { video, log };
+      setVideoOffset(video - log / (1000000 + playbackStore.videoDrift), true);
     }
   }
   setMarker(!graphStore.hasMarker);

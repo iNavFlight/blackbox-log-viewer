@@ -12,6 +12,11 @@ export const usePlaybackStore = defineStore("playback", () => {
   const graphState = ref(GRAPH_STATE_PAUSED);
   const playbackRate = ref(PLAYBACK_DEFAULT_RATE);
   const videoOffset = ref(0);
+  // The FC's and the camera's clocks run at slightly different rates (about 480 us/s for a DJI O4):
+  // microseconds of log per second of video, beyond the second itself
+  const videoDrift = ref(0);
+  // The first Smart Sync's video and log times, until a second one far enough away measures the drift
+  const syncAnchor = shallowRef(null);
   const videoExportInTime = ref(null);
   const videoExportOutTime = ref(null);
   const videoConfig = ref({ width: 1280, height: 720, frameRate: 30, videoDim: 0.4 });
@@ -39,6 +44,7 @@ export const usePlaybackStore = defineStore("playback", () => {
   const logSyncForward = shallowRef(null);
   const logSmartSync = shallowRef(null);
   const setVideoOffsetValue = shallowRef(null);
+  const setVideoDriftValue = shallowRef(null);
   const setGraphTime = shallowRef(null);
   const applyPlaybackRate = shallowRef(null);
 
@@ -57,6 +63,8 @@ export const usePlaybackStore = defineStore("playback", () => {
     graphState,
     playbackRate,
     videoOffset,
+    videoDrift,
+    syncAnchor,
     videoExportInTime,
     videoExportOutTime,
     videoConfig,
@@ -77,6 +85,7 @@ export const usePlaybackStore = defineStore("playback", () => {
     logSyncForward,
     logSmartSync,
     setVideoOffsetValue,
+    setVideoDriftValue,
     setGraphTime,
     applyPlaybackRate,
     setPlaybackRate,

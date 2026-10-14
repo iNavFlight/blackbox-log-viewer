@@ -14,6 +14,7 @@ import { useSettingsStore } from "./stores/settings.js";
  *     graphConfig - GraphConfig object to be used for drawing the graphs
  *     flightVideo - Flight video to display behind the graphs (optional)
  *     flightVideoOffset - Offset of flight video start time relative to start of log in seconds
+ *     flightVideoDrift - Microseconds of log per second of flight video beyond the second itself
  *
  * videoOptions - Object with these fields:
  *     frameRate
@@ -188,7 +189,8 @@ export function FlightLogVideoRenderer(
         };
 
         logParameters.flightVideo.currentTime =
-          (frameTime - flightLog.getMinTime()) / 1000000 +
+          (frameTime - flightLog.getMinTime()) /
+            (1000000 + (logParameters.flightVideoDrift || 0)) +
           (logParameters.flightVideoOffset || 0);
       };
 

@@ -68,6 +68,7 @@
           @sync-here="onSyncHere"
           @smart-sync="onSmartSync"
           @offset-change="onOffsetChange"
+          @drift-change="onDriftChange"
         />
       </Teleport>
       <Teleport to="#vue-workspace-panel">
@@ -288,6 +289,10 @@ function onSmartSync() {
 
 function onOffsetChange(val) {
   playbackStore.setVideoOffsetValue?.(val);
+}
+
+function onDriftChange(val) {
+  playbackStore.setVideoDriftValue?.(val);
 }
 
 function onTimeChange(timeStr) {

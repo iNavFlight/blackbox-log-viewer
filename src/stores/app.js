@@ -19,6 +19,7 @@ export const useAppStore = defineStore("app", () => {
   const statusViewerVersion = ref("-");
   const graphTimeDisplay = ref("1.0");
   const videoOffsetDisplay = ref("+0.0");
+  const videoDriftDisplay = ref("0");
 
   // Dialog open states (shared between legacy JS and Vue)
   const graphConfigDialogOpen = ref(false);
@@ -63,6 +64,7 @@ export const useAppStore = defineStore("app", () => {
     statusViewerVersion,
     graphTimeDisplay,
     videoOffsetDisplay,
+    videoDriftDisplay,
     graphConfigDialogOpen,
     headerDialogOpen,
     videoExportDialogOpen,

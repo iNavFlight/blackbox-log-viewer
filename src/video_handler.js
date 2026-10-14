@@ -4,11 +4,28 @@ import { useGraphStore } from "./stores/graph.js";
 import { usePlaybackStore } from "./stores/playback.js";
 import { useAppStore } from "./stores/app.js";
 
+// Microseconds since the log's start at a time of the video, with its offset and drift
+export function logMicrosFromVideoSeconds(seconds) {
+  const playbackStore = usePlaybackStore(pinia);
+  return (
+    (seconds - playbackStore.videoOffset) * (1000000 + playbackStore.videoDrift)
+  );
+}
+
+export function videoSecondsFromLogMicros(micros) {
+  const playbackStore = usePlaybackStore(pinia);
+  return (
+    micros / (1000000 + playbackStore.videoDrift) + playbackStore.videoOffset
+  );
+}
+
 export function blackboxTimeFromVideoTime() {
   const playbackStore = usePlaybackStore(pinia);
   const logStore = useLogStore(pinia);
-  const video = playbackStore.videoElement;
-  return (video.currentTime - playbackStore.videoOffset) * 1000000 + logStore.flightLog.getMinTime();
+  return (
+    logMicrosFromVideoSeconds(playbackStore.videoElement.currentTime) +
+    logStore.flightLog.getMinTime()
+  );
 }
 
 export function syncLogToVideo() {
@@ -25,6 +42,19 @@ export function setVideoOffset(offset, withRefresh) {
 
   playbackStore.videoOffset = offset;
   appStore.videoOffsetDisplay = (offset >= 0 ? "+" : "") + offset.toFixed(3);
+
+  if (withRefresh) {
+    graphStore.invalidateGraph?.();
+  }
+}
+
+export function setVideoDrift(drift, withRefresh) {
+  const playbackStore = usePlaybackStore(pinia);
+  const appStore = useAppStore(pinia);
+  const graphStore = useGraphStore(pinia);
+
+  playbackStore.videoDrift = drift;
+  appStore.videoDriftDisplay = (drift > 0 ? "+" : "") + Math.round(drift);
 
   if (withRefresh) {
     graphStore.invalidateGraph?.();
@@ -68,6 +98,7 @@ export function loadVideo(file) {
   const logStore = useLogStore(pinia);
 
   playbackStore.currentOffsetCache.video = file.name;
+  playbackStore.syncAnchor = null;
   if (logStore.videoURL) {
     URL.revokeObjectURL(logStore.videoURL);
     logStore.videoURL = null;
