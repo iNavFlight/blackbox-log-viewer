@@ -6,10 +6,11 @@ export const mixerList = [
   { name: "Bicopter", model: "custom", image: "bicopter", defaultMotorOrder: [0, 1], defaultYawOffset: 0 },
   { name: "Gimbal", model: "custom", image: "custom", defaultMotorOrder: [0, 1, 2], defaultYawOffset: 0 },
   { name: "Y6", model: "y6", image: "y6", defaultMotorOrder: [4, 1, 3, 5, 2, 0], defaultYawOffset: 0 },
-  { name: "Hex +", model: "hex_plus", image: "hex_p", defaultMotorOrder: [4, 1, 3, 5, 2, 0], defaultYawOffset: 0 },
+  // The two hexa entries had each other's orientation; motor positions checked against INAV's presets
+  { name: "Hex +", model: "hex_plus", image: "hex_p", defaultMotorOrder: [1, 4, 3, 2, 5, 0], defaultYawOffset: Math.PI / 6 },
   { name: "Flying Wing", model: "custom", image: "flying_wing", defaultMotorOrder: [0], defaultYawOffset: 0 },
   { name: "Y4", model: "y4", image: "y4", defaultMotorOrder: [1, 3, 2, 0], defaultYawOffset: Math.PI / 4 },
-  { name: "Hex X", model: "hex_x", image: "hex_x", defaultMotorOrder: [4, 1, 3, 5, 2, 0], defaultYawOffset: Math.PI / 6 },
+  { name: "Hex X", model: "hex_x", image: "hex_x", defaultMotorOrder: [4, 1, 3, 5, 2, 0], defaultYawOffset: 0 },
   { name: "Octo X8", model: "custom", image: "octo_x8", defaultMotorOrder: [5, 1, 4, 0, 7, 3, 6, 2], defaultYawOffset: Math.PI / 8 },
   { name: "Octo Flat +", model: "custom", image: "octo_flat_p", defaultMotorOrder: [5, 1, 4, 0, 7, 3, 6, 2], defaultYawOffset: 0 },
   { name: "Octo Flat X", model: "custom", image: "octo_flat_x", defaultMotorOrder: [5, 1, 4, 0, 7, 3, 6, 2], defaultYawOffset: Math.PI / 8 },
