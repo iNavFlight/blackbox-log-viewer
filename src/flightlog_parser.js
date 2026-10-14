@@ -1725,9 +1725,23 @@ export function FlightLogParser(logData) {
           stream.readUnsignedVB() + timeRolloverAccumulator;
         break;
       case FlightLogEvent.LOG_END: {
-        const endMessage = stream.readString(END_OF_LOG_MESSAGE.length);
+        let endMessage = stream.readString(END_OF_LOG_MESSAGE.length);
+        // INAV writes "End of log (disarm reason:N)" before the terminating zero
+        while (
+          endMessage.length < 40 &&
+          !endMessage.endsWith("\0") &&
+          !stream.eof
+        ) {
+          endMessage += stream.readChar();
+        }
+        const endMatch = /^End of log(?: \(disarm reason:(\d+)\))?\0$/.exec(
+          endMessage,
+        );
 
-        if (endMessage === END_OF_LOG_MESSAGE) {
+        if (endMatch) {
+          if (endMatch[1] !== undefined) {
+            lastEvent.data.disarmReason = Number(endMatch[1]);
+          }
           //Adjust the end of stream so we stop reading, this log is done
           stream.end = stream.pos;
         } else {
