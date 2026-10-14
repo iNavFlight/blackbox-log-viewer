@@ -181,8 +181,10 @@ GraphSpectrumCalc._dataLoadFrequencyVsX = function (
   const fftChunkLength = Math.round(
     (this._blackBoxRate * FREQ_VS_THR_CHUNK_TIME_MS) / 1000,
   );
-  const fftChunkWindow = Math.round(
-    fftChunkLength / FREQ_VS_THR_WINDOW_DIVISOR,
+  // Below 8.3 Hz of log rate the step rounds to 0 and the loop never ends
+  const fftChunkWindow = Math.max(
+    1,
+    Math.round(fftChunkLength / FREQ_VS_THR_WINDOW_DIVISOR),
   );
   const fftBufferSize = this.getNearPower2Value(fftChunkLength);
   const magnitudeLength = Math.floor(fftBufferSize / 2);
@@ -301,8 +303,9 @@ GraphSpectrumCalc._dataLoadPowerSpectralDensityVsX = function (
   const fftChunkLength = Math.round(
     (this._blackBoxRate * FREQ_VS_THR_CHUNK_TIME_MS) / 1000,
   );
-  const fftChunkWindow = Math.round(
-    fftChunkLength / FREQ_VS_THR_WINDOW_DIVISOR,
+  const fftChunkWindow = Math.max(
+    1,
+    Math.round(fftChunkLength / FREQ_VS_THR_WINDOW_DIVISOR),
   );
 
   let maxNoise = 0; // Stores the maximum amplitude of the fft over all chunks
@@ -605,8 +608,9 @@ GraphSpectrumCalc._getFlightSamplesFreqVsX = function (
   const fftChunkLength = Math.round(
     (this._blackBoxRate * FREQ_VS_THR_CHUNK_TIME_MS) / 1000,
   );
-  const fftChunkWindow = Math.round(
-    fftChunkLength / FREQ_VS_THR_WINDOW_DIVISOR,
+  const fftChunkWindow = Math.max(
+    1,
+    Math.round(fftChunkLength / FREQ_VS_THR_WINDOW_DIVISOR),
   );
   for (
     let fftChunkIndex = 0;
