@@ -52,6 +52,7 @@ export function FlightLogIndex(logData) {
         initialSlow: [],
         initialGPSHome: [],
         initialGPS: [],
+        initialTimeRollover: [],
         hasEvent: [],
         minTime: false,
         maxTime: false,
@@ -188,6 +189,9 @@ export function FlightLogIndex(logData) {
                   intraIndex.initialSlow.push(lastSlow);
                   intraIndex.initialGPSHome.push(lastGPSHome);
                   intraIndex.initialGPS.push(lastGPS);
+                  intraIndex.initialTimeRollover.push(
+                    parser.getTimeRolloverAccumulator(),
+                  );
                 }
 
                 iframeCount++;

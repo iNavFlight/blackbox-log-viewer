@@ -473,6 +473,8 @@ export function FlightLogParser(logData) {
   let lastSkippedFrames;
   // Details about the last main frame that was successfully parsed
   let lastMainFrameIteration, lastMainFrameTime;
+  // Logged time is a uint32 of microseconds: 2^32 for each wrap so far, one every 71.6 minutes of uptime
+  let timeRolloverAccumulator = 0;
   // INAV logs from before inav#12126 leave out the ninth value of a 9-field TAG8_8SVB run when it is zero
   let inavNinthFieldMayBeAbsent = false;
   // Frames where only one reading ended on a marker, by reading: the tie breaker of last resort
@@ -953,8 +955,26 @@ export function FlightLogParser(logData) {
     }
   };
 
+  // As blackbox-tools: a step back in the low 32 bits that is a short step forward modulo 2^32 is a wrap
+  const applyMainFrameTimeRollover = () => {
+    const time =
+      mainHistory[0][FlightLogParser.prototype.FLIGHT_LOG_FIELD_INDEX_TIME] >>>
+      0;
+    if (
+      lastMainFrameTime !== -1 &&
+      time < lastMainFrameTime >>> 0 &&
+      (time - lastMainFrameTime) >>> 0 < MAXIMUM_TIME_JUMP_BETWEEN_FRAMES
+    ) {
+      timeRolloverAccumulator += 2 ** 32;
+    }
+    mainHistory[0][FlightLogParser.prototype.FLIGHT_LOG_FIELD_INDEX_TIME] =
+      time + timeRolloverAccumulator;
+  };
+
   const completeIntraframe = (frameType, frameStart, frameEnd, raw) => {
     let acceptFrame = true;
+
+    applyMainFrameTimeRollover();
 
     // Do we have a previous frame to use as a reference to validate field values against?
     if (!raw && lastMainFrameIteration !== -1) {
@@ -1239,6 +1259,8 @@ export function FlightLogParser(logData) {
   };
 
   const completeInterframe = (frameType, frameStart, frameEnd, raw) => {
+    applyMainFrameTimeRollover();
+
     if (inavNinthFieldUnsure) {
       inavNinthFieldUnsure = false;
       mainStreamIsValid = false;
@@ -1644,7 +1666,7 @@ export function FlightLogParser(logData) {
 
     switch (eventType) {
       case FlightLogEvent.SYNC_BEEP:
-        lastEvent.data.time = stream.readUnsignedVB();
+        lastEvent.data.time = stream.readUnsignedVB() + timeRolloverAccumulator;
         lastEvent.time = lastEvent.data.time;
         break;
       case FlightLogEvent.FLIGHT_MODE: // get the flag status change
@@ -1699,7 +1721,8 @@ export function FlightLogParser(logData) {
       }
       case FlightLogEvent.LOGGING_RESUME:
         lastEvent.data.logIteration = stream.readUnsignedVB();
-        lastEvent.data.currentTime = stream.readUnsignedVB();
+        lastEvent.data.currentTime =
+          stream.readUnsignedVB() + timeRolloverAccumulator;
         break;
       case FlightLogEvent.LOG_END: {
         const endMessage = stream.readString(END_OF_LOG_MESSAGE.length);
@@ -1731,6 +1754,7 @@ export function FlightLogParser(logData) {
 
     lastMainFrameIteration = -1;
     lastMainFrameTime = -1;
+    timeRolloverAccumulator = 0;
 
     invalidateMainStream();
     gpsHomeIsValid = false;
@@ -1866,6 +1890,15 @@ export function FlightLogParser(logData) {
     } else {
       lastSlow = [];
     }
+  };
+
+  // Seeking into a chunk restarts the parser: the index hands back how many wraps came before it
+  this.getTimeRolloverAccumulator = function () {
+    return timeRolloverAccumulator;
+  };
+
+  this.setTimeRolloverAccumulator = function (accumulator) {
+    timeRolloverAccumulator = accumulator;
   };
 
   /**
