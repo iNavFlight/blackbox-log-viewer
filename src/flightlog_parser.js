@@ -1655,7 +1655,7 @@ export function FlightLogParser(logData) {
     }
   }
 
-  function parseEventFrame(_raw) {
+  const parseEventFrame = (_raw) => {
     const END_OF_LOG_MESSAGE = "End of log\0",
       eventType = stream.readByte();
 
@@ -1714,6 +1714,12 @@ export function FlightLogParser(logData) {
         parseInflightAdjustment(lastEvent.data);
         break;
       case FlightLogEvent.TWITCH_TEST: {
+        // INAV logs its IMU failure, one unsigned VB, under the number of Betaflight's twitch test
+        if (this.sysConfig.firmwareType === FIRMWARE_TYPE_INAV) {
+          lastEvent.event = FlightLogEvent.INAV_IMU_FAILURE;
+          lastEvent.data.errorCode = stream.readUnsignedVB();
+          break;
+        }
         const stage = stream.readU8();
         lastEvent.data.name = TWITCH_TEST_NAMES[stage];
         lastEvent.data.value = uint32ToFloat(stream.readU32());
@@ -1756,7 +1762,7 @@ export function FlightLogParser(logData) {
       default:
         lastEvent = null;
     }
-  }
+  };
 
   function getFrameType(command) {
     return frameTypes[command];

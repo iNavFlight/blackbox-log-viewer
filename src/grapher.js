@@ -603,6 +603,17 @@ export function FlightLogGrapher(
           2,
         );
         break;
+      case FlightLogEvent.INAV_IMU_FAILURE:
+        drawEventLine(
+          x,
+          labelY,
+          event.data.errorCode === 1
+            ? "IMU failure: attitude reset to the last good one"
+            : "IMU failure: attitude reset from the accelerometer",
+          "rgba(255,0,0,0.75)",
+          2,
+        );
+        break;
       case FlightLogEvent.FLIGHT_MODE:
         drawEventLine(
           x,

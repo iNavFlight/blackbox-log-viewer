@@ -42,6 +42,7 @@ export const FlightLogEvent = makeReadOnly({
 
   CUSTOM: 250, // Virtual Event Code - Never part of Log File.
   CUSTOM_BLANK: 251, // Virtual Event Code - Never part of Log File. - No line shown
+  INAV_IMU_FAILURE: 252, // Virtual Event Code - INAV's event 40, which is TWITCH_TEST in Betaflight
   LOG_END: 255,
 });
 
