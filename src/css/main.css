@@ -130,8 +130,9 @@ a:hover {
   margin-left: 6px;
   border-radius: 6px;
   border: 1px solid var(--border-color, #e5e5e5);
-  min-width: 135px;
-  flex-grow: 0.02;
+  /* A width from the content followed every value change and resized the graph with it */
+  flex: 0 0 16rem;
+  min-width: 0;
   flex-direction: column;
   display: none;
 }
@@ -365,12 +366,28 @@ html:not(.has-marker) .marker-offset {
   padding-right: 0.7em;
 }
 
+.graph-legend-field-row {
+  display: flex;
+  align-items: center;
+}
+
+.graph-legend-field-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .graph-legend-field-name:hover {
   text-decoration: underline;
 }
 
 .graph-legend-field-value {
-  float: right;
+  flex: none;
+  margin-left: 0.5em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .graph-legend-field-settings {
@@ -391,8 +408,8 @@ html:not(.has-marker) .marker-offset {
 }
 
 .graph-legend-field-visibility {
+  flex: none;
   cursor: pointer;
-  float: right;
   margin-left: 0.7em;
 }
 
