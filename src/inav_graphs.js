@@ -18,6 +18,7 @@ const GRAPHS = [
   { label: "Compass", fields: ["magADC[all]"] },
   { label: "Learned Mag Zero", fields: ["magBias[all]", "magBiasSectors", "magBiasSpread"] },
   { label: "Learned Earth Field", fields: ["magBiasField[all]"] },
+  { label: "Mag Learning Yaw Trim", fields: ["magBiasYawTrim"] },
   { label: "Yaw without Compass", fields: ["attitude[2]", "gsfYaw", "gsfYawStd"] },
   { label: "GSF Health", fields: ["gsfNis", "gsfExcitation", "gsfGpsDelay", "gsfFlags"] },
   { label: "Compass against GSF", fields: ["gsfMagErr", "gsfYawStd"] },

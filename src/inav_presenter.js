@@ -241,6 +241,7 @@ const INAV_SCALE = {
   magBias: 1,
   magBiasSpread: 10,
   magBiasField: 1,
+  magBiasYawTrim: 10,
   gsfYaw: 10,
   gsfYawStd: 10,
   gsfMagErr: 10,

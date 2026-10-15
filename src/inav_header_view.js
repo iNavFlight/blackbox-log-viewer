@@ -112,6 +112,7 @@ export const INAV_HEADER_SECTIONS = {
   acc_hardware: "Hardware",
   mag_zero: "Hardware",
   mag_learn: "Hardware",
+  mag_yaw_trim: "Hardware",
   ahrs_gsf_yaw: "Hardware",
   baro_hardware: "Hardware",
   mag_hardware: "Hardware",
@@ -223,6 +224,7 @@ export function inavHeaderView(s) {
     param("Magnetometer", pick(s.mag_hardware, t.mag_hardware)),
     param("Mag Zero", zero(s.mag_zero)),
     param("Mag Zero Learning", pick(s.mag_learn, learning)),
+    param("Mag Yaw Trim", num(s.mag_yaw_trim, "°", 10, 1)),
     param("Heading from GSF", pick(s.ahrs_gsf_yaw, learning)),
     param("Serial RX", pick(s.serialrx_provider, t.serial_rx)),
   ]);

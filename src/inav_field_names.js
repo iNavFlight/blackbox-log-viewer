@@ -83,6 +83,7 @@ export const INAV_FRIENDLY_FIELD_NAMES = Object.freeze({
   magBiasSectors: "Mag Learning Sectors",
   magBiasSpread: "Mag Learning Radius Spread",
   ...group("magBiasField", "Learned Earth Field", ["north", "west", "up"]),
+  magBiasYawTrim: "Mag Learning Yaw Trim",
   gsfYaw: "GSF Yaw",
   gsfYawStd: "GSF Yaw Sigma",
   gsfExcitation: "GSF Velocity Change Seen",
