@@ -23,8 +23,9 @@ function presentBits(value, names, offset = 0) {
 
 // Bits of magBiasFlags, as in INAV's compass_learn.h
 const MAG_BIAS_FLAG_NAMES = [
-  "COLLECTING", "PAUSED", "BIT2", "BIT3", "SAVE_DUE",
+  "COLLECTING", "PAUSED", "ATTITUDE_FIT", "MISFIT", "SAVE_DUE",
   "FEW_SECTORS", "FEW_HEADINGS", "NOT_A_SPHERE", "OFF_SCALE", "STEP_TOO_BIG", "SAVED_LAST_DISARM", "DISARMED_FLYING",
+  "DECLINATION_OFF", "FITS_DISAGREE", "CONFIRMED",
 ];
 
 // Bits of gsfFlags, as in INAV's gsf_yaw.h
@@ -239,6 +240,7 @@ const INAV_SCALE = {
   debug: 1,
   magBias: 1,
   magBiasSpread: 10,
+  magBiasField: 1,
   gsfYaw: 10,
   gsfYawStd: 10,
   gsfMagErr: 10,
