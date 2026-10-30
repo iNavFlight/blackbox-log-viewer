@@ -1,0 +1,64 @@
+/**
+ * Tailwind CSS + Nuxt UI theme
+ * Matches INAV Configurator 10: Open Sans, INAV blue #37a8db
+ */
+
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/* Open Sans as the Configurator ships it (Latin-1 subset; other glyphs fall back to the system font) */
+@font-face {
+  font-family: "Open Sans";
+  src: url("../assets/fonts/opensans-light.woff2") format("woff2");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("../assets/fonts/opensans-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("../assets/fonts/opensans-semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("../assets/fonts/opensans-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* Lightness steps of Tailwind's sky scale around #37a8db */
+@theme static {
+  --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary-50: #f2f9fd;
+  --color-primary-100: #e4f2fa;
+  --color-primary-200: #c4e5f7;
+  --color-primary-300: #92d2f4;
+  --color-primary-400: #56bbec;
+  --color-primary-500: #37a8db;
+  --color-primary-600: #1889b7;
+  --color-primary-700: #126d92;
+  --color-primary-800: #195b79;
+  --color-primary-900: #1a4b63;
+  --color-primary-950: #0e3040;
+
+  --color-neutral-850: oklch(23.5% 0 0);
+}
+
+:root, :host {
+  --ui-primary: var(--color-primary-500);
+  --ui-radius: 0.35rem;
+}
+
+.dark {
+  --ui-primary: var(--color-primary-400);
+}

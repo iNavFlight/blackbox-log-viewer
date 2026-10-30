@@ -1,0 +1,69 @@
+/**
+ * Theme System - CSS Variables
+ * Based on INAV Configurator 10's color scheme
+ *
+ * Only variables actually referenced by main.css or canvas JS are defined here.
+ * Tailwind primary/neutral colors are defined separately in tailwind.css.
+ */
+
+:root {
+  /* Primary Colors (used by main.css) */
+  --primary-400: #56bbec;
+  --primary-500: #37a8db;
+  --primary-600: #1889b7;
+  --primary-transparent-2: rgba(55, 168, 219, 0.2);
+
+  /* Surface Colors - Light Mode */
+  --surface-0: hsl(0, 0%, 100%);
+  --surface-100: hsl(0, 0%, 95%);
+  --surface-200: hsl(0, 0%, 92%);
+  --surface-800: hsl(0, 0%, 40%);
+
+  /* Text Colors - Light Mode */
+  --text-primary: hsl(0, 0%, 10%);
+  --text-secondary: hsl(0, 0%, 40%);
+  --text-inverse: hsl(0, 0%, 95%);
+
+  /* Graph/Canvas Colors - Light Mode (read by theme_colors.js) */
+  --graph-background: #000000;
+  --graph-grid: rgba(255, 255, 255, 0.15);
+  --graph-text: rgba(255, 255, 255, 0.9);
+  --graph-text-secondary: rgba(255, 255, 255, 0.65);
+  --graph-axis: rgba(255, 255, 255, 0.5);
+
+  /* UI Element Colors - Light Mode */
+  --border-color: #cccccc;
+  --button-text: #000;
+  --input-bg: #ffffff;
+  --input-border: #cccccc;
+  --input-border-focus: var(--primary-500);
+
+  /* Semantic Colors */
+  --error-500: #e2123f;
+  --error-transparent-2: rgba(226, 18, 63, 0.2);
+}
+
+/**
+ * Dark Theme Overrides
+ */
+:root.dark {
+  --surface-0: hsl(0, 0%, 4%);
+  --surface-100: #181818;
+  --surface-200: hsl(0, 0%, 13%);
+  --surface-800: hsl(0, 0%, 60%);
+
+  --text-primary: hsl(0, 0%, 95%);
+  --text-secondary: hsl(0, 0%, 70%);
+  --text-inverse: hsl(0, 0%, 10%);
+
+  --graph-background: #1a1a1a;
+  --graph-grid: rgba(255, 255, 255, 0.2);
+  --graph-text: rgba(255, 255, 255, 0.95);
+  --graph-text-secondary: rgba(255, 255, 255, 0.75);
+  --graph-axis: rgba(255, 255, 255, 0.6);
+
+  --border-color: #404040;
+  --button-text: #000;
+  --input-bg: #1a1a1a;
+  --input-border: #404040;
+}
