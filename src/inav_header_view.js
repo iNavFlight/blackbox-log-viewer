@@ -90,6 +90,9 @@ export const INAV_HEADER_SECTIONS = {
   motorOutput: "Motor / ESC",
   motor_pwm_protocol: "Motor / ESC",
   motor_pwm_rate: "Motor / ESC",
+  throttle_boost: "Motor / ESC",
+  throttle_boost_cutoff: "Motor / ESC",
+  thrust_linear: "Motor / ESC",
   gyro_lpf: "Gyro Filters",
   gyro_lpf_type: "Gyro Filters",
   gyro_lpf_hz: "Gyro Filters",
@@ -169,6 +172,10 @@ export function inavHeaderView(s) {
     param("Update Rate", num(s.motor_pwm_rate, "Hz")),
     param("Idle Throttle", num(s.minthrottle, "µs")),
     param("Max Throttle", num(s.maxthrottle, "µs")),
+    // logged since iNavFlight/inav#12120 and #12121, as set in the CLI
+    param("Throttle Boost", offOr(s.throttle_boost)),
+    param("Boost Cutoff", s.throttle_boost ? num(s.throttle_boost_cutoff, "Hz") : null),
+    param("Thrust Linear", offOr(s.thrust_linear)),
   ]);
 
   // INAV 7 still logged the hardware LPF and the main LPF type
