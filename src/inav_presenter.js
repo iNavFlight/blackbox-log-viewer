@@ -21,6 +21,12 @@ function presentBits(value, names, offset = 0) {
   return set.length ? set.join("|") : "NONE";
 }
 
+// Bits of magBiasFlags, as in INAV's compass_learn.h
+const MAG_BIAS_FLAG_NAMES = [
+  "COLLECTING", "PAUSED", "BIT2", "BIT3", "SAVE_DUE",
+  "FEW_SECTORS", "FEW_HEADINGS", "NOT_A_SPHERE", "OFF_SCALE", "STEP_TOO_BIG", "SAVED_LAST_DISARM", "DISARMED_FLYING",
+];
+
 function presentValue(value, names) {
   return names[value] ?? String(value);
 }
@@ -143,6 +149,13 @@ function decodeInavUnits(flightLog, fieldName, value, settings) {
       return `${value}`;
     case "rxUpdateRate":
       return `${value} Hz`;
+    // raw sensor counts, as magzero
+    case "magBias":
+      return `${value}`;
+    case "magBiasSectors":
+      return `${value} of 72`;
+    case "magBiasSpread":
+      return `${(value / 10).toFixed(1)} %`;
     default:
       return undefined;
   }
@@ -175,6 +188,8 @@ export function decodeInavField(flightLog, fieldName, value, settings) {
       return presentBits(value, INAV_NAV_FLAG_NAMES);
     case "hwHealthStatus":
       return presentHwHealth(value);
+    case "magBiasFlags":
+      return presentBits(value, MAG_BIAS_FLAG_NAMES);
     default:
       return undefined;
   }
@@ -204,6 +219,8 @@ const INAV_SCALE = {
   baroTemperature: 10,
   escTemperature: 1,
   debug: 1,
+  magBias: 1,
+  magBiasSpread: 10,
 };
 
 // value in graph units (toFriendly) or back in log units, or undefined for Betaflight's conversion

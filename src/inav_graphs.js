@@ -16,6 +16,7 @@ const GRAPHS = [
   { label: "Attitude", fields: ["attitude[all]"] },
   { label: "Accelerometers", fields: ["accSmooth[all]", "accVib"] },
   { label: "Compass", fields: ["magADC[all]"] },
+  { label: "Learned Mag Zero", fields: ["magBias[all]", "magBiasSectors", "magBiasSpread"] },
   { label: "Battery", fields: ["vbat", "sagCompensatedVBat", "amperage"] },
   { label: "Altitude", fields: ["navPos[2]", "navTgtPos[2]", "BaroAlt"] },
   { label: "Vertical Speed", fields: ["navVel[2]", "navTgtVel[2]"] },

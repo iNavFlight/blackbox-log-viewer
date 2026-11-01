@@ -78,5 +78,9 @@ export const INAV_FRIENDLY_FIELD_NAMES = Object.freeze({
   terrainAGL: "Terrain Height (AGL)",
   terrainAMSL: "Terrain Elevation (AMSL)",
   droneCANBusOffCount: "DroneCAN Bus-off Count",
+  ...group("magBias", "Learned Mag Zero", XYZ),
+  magBiasFlags: "Mag Zero Learning",
+  magBiasSectors: "Mag Learning Sectors",
+  magBiasSpread: "Mag Learning Radius Spread",
   ...Object.fromEntries(Array.from({ length: 8 }, (_, i) => [`sens${i}Temp`, `Temperature Sensor ${i}`])),
 });
