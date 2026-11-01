@@ -20,7 +20,8 @@ export const FIRMWARE_TYPE_BETAFLIGHT = 3;
 export const FIRMWARE_TYPE_INAV = 4;
 
 // Some constants used at different places
-export const MAX_MOTOR_NUMBER = 8;
+// INAV logs up to 12 motors (iNavFlight/inav#12127), Betaflight up to 8
+export const MAX_MOTOR_NUMBER = 12;
 export const DSHOT_MIN_VALUE = 48;
 const DSHOT_MAX_VALUE = 2047;
 export const DSHOT_RANGE = DSHOT_MAX_VALUE - DSHOT_MIN_VALUE;
