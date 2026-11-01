@@ -21,6 +21,18 @@ function presentBits(value, names, offset = 0) {
   return set.length ? set.join("|") : "NONE";
 }
 
+// Bits of magBiasFlags, as in INAV's compass_learn.h
+const MAG_BIAS_FLAG_NAMES = [
+  "COLLECTING", "PAUSED", "ATTITUDE_FIT", "MISFIT", "SAVE_DUE",
+  "FEW_SECTORS", "FEW_HEADINGS", "NOT_A_SPHERE", "OFF_SCALE", "STEP_TOO_BIG", "SAVED_LAST_DISARM", "DISARMED_FLYING",
+  "DECLINATION_OFF", "FITS_DISAGREE", "CONFIRMED",
+];
+
+// Bits of gsfFlags, as in INAV's gsf_yaw.h
+const GSF_FLAG_NAMES = [
+  "FUSING", "USABLE", "INCONSISTENT", "DELAY_MEASURED", "MAG_COMPARED", "MAG_DISAGREES", "IN_AHRS", "RESET",
+];
+
 function presentValue(value, names) {
   return names[value] ?? String(value);
 }
@@ -143,6 +155,24 @@ function decodeInavUnits(flightLog, fieldName, value, settings) {
       return `${value}`;
     case "rxUpdateRate":
       return `${value} Hz`;
+    // raw sensor counts, as magzero
+    case "magBias":
+      return `${value}`;
+    case "magBiasSectors":
+      return `${value} of 72`;
+    case "magBiasSpread":
+      return `${(value / 10).toFixed(1)} %`;
+    case "gsfYaw":
+    case "gsfYawStd":
+    case "gsfMagErr":
+      return `${(value / 10).toFixed(1)} °`;
+    case "gsfGpsDelay":
+      return `${value} ms`;
+    case "gsfExcitation":
+      return `${value} m/s`;
+    // about 2 while the leading model agrees with the GPS
+    case "gsfNis":
+      return `${(value / 100).toFixed(2)}`;
     default:
       return undefined;
   }
@@ -175,6 +205,10 @@ export function decodeInavField(flightLog, fieldName, value, settings) {
       return presentBits(value, INAV_NAV_FLAG_NAMES);
     case "hwHealthStatus":
       return presentHwHealth(value);
+    case "magBiasFlags":
+      return presentBits(value, MAG_BIAS_FLAG_NAMES);
+    case "gsfFlags":
+      return presentBits(value, GSF_FLAG_NAMES);
     default:
       return undefined;
   }
@@ -204,6 +238,14 @@ const INAV_SCALE = {
   baroTemperature: 10,
   escTemperature: 1,
   debug: 1,
+  magBias: 1,
+  magBiasSpread: 10,
+  magBiasField: 1,
+  magBiasYawTrim: 10,
+  gsfYaw: 10,
+  gsfYawStd: 10,
+  gsfMagErr: 10,
+  gsfNis: 100,
 };
 
 // value in graph units (toFriendly) or back in log units, or undefined for Betaflight's conversion

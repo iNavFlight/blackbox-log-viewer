@@ -110,6 +110,10 @@ export const INAV_HEADER_SECTIONS = {
   vbatref: "Battery",
   currentMeter: "Battery",
   acc_hardware: "Hardware",
+  mag_zero: "Hardware",
+  mag_learn: "Hardware",
+  mag_yaw_trim: "Hardware",
+  ahrs_gsf_yaw: "Hardware",
   baro_hardware: "Hardware",
   mag_hardware: "Hardware",
   serialrx_provider: "Hardware",
@@ -211,10 +215,17 @@ export function inavHeaderView(s) {
     param("Current Scale", num(s.currentMeterScale, "mV/A", 10, 1)),
   ]);
 
+  // Logged with mag_learn, so a zero saved at disarm shows up in the next log
+  const learning = ["OFF", "ON"];
+  const zero = (v) => (Array.isArray(v) ? v.join(", ") : null);
   const hardware = only([
     param("Accelerometer", pick(s.acc_hardware, t.acc_hardware)),
     param("Barometer", pick(s.baro_hardware, t.baro_hardware)),
     param("Magnetometer", pick(s.mag_hardware, t.mag_hardware)),
+    param("Mag Zero", zero(s.mag_zero)),
+    param("Mag Zero Learning", pick(s.mag_learn, learning)),
+    param("Mag Yaw Trim", num(s.mag_yaw_trim, "°", 10, 1)),
+    param("Heading from GSF", pick(s.ahrs_gsf_yaw, learning)),
     param("Serial RX", pick(s.serialrx_provider, t.serial_rx)),
   ]);
 
