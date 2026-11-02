@@ -9,6 +9,62 @@ import {
   INAV_HW_HEALTH_SENSORS,
   INAV_HW_HEALTH_STATUS,
 } from "./inav_defs.js";
+import { DEBUG_MODE } from "./flightlog_fielddefs.js";
+
+// INAV debug modes whose fields have names and units of their own (docs/Blackbox.md); the others stay "debug[n]
+// (MODE)" with the value as logged, since INAV's modes share Betaflight's names but not their contents
+const INAV_DEBUG_FIELDS = {
+  RPM_FILTER: {
+    label: "RPM filter",
+    names: Array.from({ length: 8 }, (_, i) => `Motor ${i + 1} RPM`),
+    // eRPM / 100 as logged, like Betaflight's eRPM[] fields; motor_poles is in the same firmware's header
+    // (the parser reads a missing one as 1)
+    decode: (index, value, sysConfig) =>
+      `${((value * 200) / (sysConfig?.motor_poles > 1 ? sysConfig.motor_poles : 14)).toFixed(0)} rpm`,
+    // One graph scale for all the motors
+    curveFields: () => Array.from({ length: 8 }, (_, i) => `debug[${i}]`),
+  },
+  DYN_IDLE: {
+    label: "Dynamic idle",
+    names: ["Idle P", "Idle I", "Idle D", "Slowest motor"],
+    // P, I and D in 0.0001 of the motor range; the slowest motor in 0.1 Hz
+    decode: (index, value) =>
+      index === 3
+        ? `${(value / 10).toFixed(1)} Hz / ${Math.round(value * 6)} rpm`
+        : `${(value / 100).toFixed(2)} % of range`,
+    // P, I and D on one scale, the slowest motor on its own
+    curveFields: (index) =>
+      index < 3 ? ["debug[0]", "debug[1]", "debug[2]"] : [`debug[${index}]`],
+  },
+};
+
+// The index of a debug[n] field under an INAV debug mode with its own names, or undefined
+function inavDebugFieldIndex(fieldName, spec) {
+  const index = /^debug\[(\d+)\]$/.exec(fieldName)?.[1];
+  return index !== undefined && spec.names[Number(index)] !== undefined
+    ? Number(index)
+    : undefined;
+}
+
+// The fields an INAV debug field shares its default graph scale with, or undefined
+export function inavDebugCurveFields(fieldName, debugModeName) {
+  const spec = INAV_DEBUG_FIELDS[debugModeName];
+  const index = spec && inavDebugFieldIndex(fieldName, spec);
+  return index === undefined ? undefined : spec.curveFields(index);
+}
+
+// The field's name under an INAV debug mode with its own names, or undefined
+export function inavDebugFieldName(fieldName, debugModeName) {
+  const spec = INAV_DEBUG_FIELDS[debugModeName];
+  if (!spec) {
+    return undefined;
+  }
+  if (fieldName === "debug[all]") {
+    return spec.label;
+  }
+  const index = /^debug\[(\d+)\]$/.exec(fieldName)?.[1];
+  return index === undefined ? undefined : spec.names[Number(index)];
+}
 
 // Names of the set bits; offset is the bit number of bit 0 (flightModeFlags2 carries RC modes 32-63)
 function presentBits(value, names, offset = 0) {
@@ -138,9 +194,14 @@ function decodeInavUnits(flightLog, fieldName, value, settings) {
       return value === -1250 ? "" : `${(value / 10).toFixed(1)} °C`;
     case "escRPM":
       return `${value} rpm`;
-    // INAV's debug modes share names with Betaflight's but not their units: as logged
-    case "debug":
-      return `${value}`;
+    case "debug": {
+      const sysConfig = flightLog?.getSysConfig();
+      const spec = INAV_DEBUG_FIELDS[DEBUG_MODE[sysConfig?.debug_mode]];
+      // Only the fields the mode names: the firmware leaves the others at 0
+      return spec && axis !== undefined && spec.names[Number(axis)] !== undefined
+        ? spec.decode(Number(axis), value, sysConfig)
+        : `${value}`;
+    }
     case "rxUpdateRate":
       return `${value} Hz`;
     default:

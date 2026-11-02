@@ -12,7 +12,11 @@ import {
   FIRMWARE_TYPE_INAV,
 } from "./flightlog_fielddefs";
 import { formatTime } from "./tools";
-import { convertInavField, decodeInavField } from "./inav_presenter.js";
+import {
+  convertInavField,
+  decodeInavField,
+  inavDebugFieldName,
+} from "./inav_presenter.js";
 import { INAV_FRIENDLY_FIELD_NAMES } from "./inav_field_names.js";
 import { useSettingsStore } from "./stores/settings.js";
 
@@ -2397,7 +2401,10 @@ FlightLogFieldPresenter.fieldNameToFriendly = function (fieldName, debugMode) {
       let debugFields;
 
       if (LOG_IS_INAV) {
-        return `${fieldName} (${debugModeName || debugMode})`;
+        return (
+          inavDebugFieldName(fieldName, debugModeName) ??
+          `${fieldName} (${debugModeName || debugMode})`
+        );
       }
 
       if (debugModeName) {

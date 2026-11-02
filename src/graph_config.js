@@ -1,5 +1,6 @@
 import { FlightLogFieldPresenter } from "./flightlog_fields_presenter";
 import { RATES_TYPE, DEBUG_MODE, FIRMWARE_TYPE_INAV } from "./flightlog_fielddefs";
+import { inavDebugCurveFields } from "./inav_presenter";
 import { inavExampleGraphs } from "./inav_graphs";
 import { escapeRegExp } from "./tools";
 
@@ -229,6 +230,10 @@ GraphConfig.getDefaultCurveForField = function (flightLog, fieldName) {
   const sysConfig = flightLog.getSysConfig();
 
   const isInav = sysConfig.firmwareType === FIRMWARE_TYPE_INAV;
+  // INAV's RPM_FILTER and DYN_IDLE hold other data than Betaflight's modes of those names
+  const inavDebugFields = isInav
+    ? inavDebugCurveFields(fieldName, DEBUG_MODE[sysConfig.debug_mode])
+    : undefined;
 
   const maxDegreesSecond = function (scale) {
     // INAV logs its rates in tens of degrees per second
@@ -449,6 +454,8 @@ GraphConfig.getDefaultCurveForField = function (flightLog, fieldName) {
           max: 90,
         },
       };
+    } else if (inavDebugFields) {
+      return getCurveForMinMaxFields(...inavDebugFields);
     } else if (fieldName.match(/^debug.*/) && sysConfig.debug_mode != null) {
       const debugModeName = DEBUG_MODE[sysConfig.debug_mode];
       switch (debugModeName) {
